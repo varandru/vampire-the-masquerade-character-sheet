@@ -1,19 +1,10 @@
 import 'package:flutter/material.dart';
-import 'common.dart';
+import 'provider.dart';
+import 'package:riverpod/riverpod.dart'
 
 void main() {
-  runApp(MainApp());
-}
-
-class MainApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Scaffold(
-      appBar: AppBar(
-        title: const Text('Sample Code'),
-      ),
-      body: Center(child: CommonCharacterInfo()),
-    ));
-  }
+  VampireCharacter character = VampireCharacter();
+  runApp(
+    // enable riverpod
+    ProviderScope(child: character.mainInfoWidget,),);
 }

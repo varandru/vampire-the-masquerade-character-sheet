@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 // import 'package:provider/provider.dart'
 
-class CommonCharacterInfo extends StatelessWidget {
+class CommonCharacterInfoWidget extends StatelessWidget {
   //TODO move these to provider, lul
   String characterName = "";
   String nature = "";
