@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'provider.dart';
-import 'package:riverpod/riverpod.dart'
+import 'common.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
-  VampireCharacter character = VampireCharacter();
   runApp(
     // enable riverpod
-    ProviderScope(child: character.mainInfoWidget,),);
+    ProviderScope(
+      child: VampireWidget(),
+    ),
+  );
 }

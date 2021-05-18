@@ -23,8 +23,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-    
-  riverpod: ^0.14.0+3
+  flutter_riverpod: ^0.14.0+3
 
 dev_dependencies:
   flutter_test:

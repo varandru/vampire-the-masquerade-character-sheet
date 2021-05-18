@@ -21,7 +21,13 @@ doc/api/
 *.js.map
 
 # We don't need implementation commited, it auto-generates anyway
-.idea/**
-android/**
-ios/**
-web/**
+**/.idea/**
+**/android/**
+**/ios/**
+**/linux/**
+**/macos/**
+**/windows/**
+**/web/**
+
+# VS Code workspace
+**/.vscode/**
