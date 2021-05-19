@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'common.dart';
 
-enum SelectedMenuItem { PrimaryInfo, Abilities }
+enum SelectedMenuItem { PrimaryInfo, Abilities, Disciplines }
 
 class DrawerMenu extends Drawer {
   DrawerMenu(SelectedMenuItem item) : _item = item;
@@ -44,6 +44,19 @@ class DrawerMenu extends Drawer {
               Navigator.of(context)
                   .pushReplacement(MaterialPageRoute(builder: (context) {
                 return abilitiesScaffold;
+              }));
+            },
+          ),
+          ListTile(
+            title: Text('Disciplines'),
+            trailing: Icon(Icons.auto_awesome),
+            tileColor: _item == SelectedMenuItem.Disciplines
+                ? Theme.of(context).buttonColor
+                : Theme.of(context).canvasColor,
+            onTap: () {
+              Navigator.of(context)
+                  .pushReplacement(MaterialPageRoute(builder: (context) {
+                return DetailScreen();
               }));
             },
           ),

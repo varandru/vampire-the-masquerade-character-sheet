@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vampire_the_masquerade_character_sheet/abilities.dart';
+import 'package:vampire_the_masquerade_character_sheet/advanatages.dart';
 
 import 'drawer_menu.dart';
 import 'main_info.dart';
@@ -12,12 +13,20 @@ final primaryInfoScaffold = Scaffold(
   appBar: AppBar(
     title: const Text("Primary Information"),
   ),
-  body: Column(
+  body: ListView(
     children: [
       CommonCharacterInfoWidget(),
-      Flexible(child: AttributesSectionWidget()),
+      Container(
+        child: AttributesSectionWidget(),
+        constraints: BoxConstraints(maxHeight: 250, minHeight: 250),
+      ),
+      Container(
+        child: AdvantagesWidget(),
+        constraints: BoxConstraints(maxHeight: 334, minHeight: 334),
+      ),
     ],
-    mainAxisAlignment: MainAxisAlignment.start,
+    // mainAxisAlignment: MainAxisAlignment.start,
+    // mainAxisSize: MainAxisSize.min,
   ),
   drawer: Drawer(
     child: DrawerMenu(SelectedMenuItem.PrimaryInfo),

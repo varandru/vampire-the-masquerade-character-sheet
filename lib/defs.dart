@@ -16,6 +16,18 @@ class Attribute {
   String specialization;
 }
 
+List<Widget> makeIconRow(
+    int current, int max, IconData filled, IconData empty) {
+  List<Widget> row = [];
+  for (int i = 0; i < current; i++) {
+    row.add(Icon(filled, size: 20));
+  }
+  for (int i = current; i < max; i++) {
+    row.add(Icon(empty, size: 20));
+  }
+  return row;
+}
+
 class AttributeWidget extends StatelessWidget {
   AttributeWidget({Key? key, required Attribute attribute})
       : this.attribute = attribute,
@@ -25,13 +37,8 @@ class AttributeWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> row = [];
-    for (int i = 0; i < attribute.current; i++) {
-      row.add(Icon(Icons.circle));
-    }
-    for (int i = attribute.current; i < attribute.max; i++) {
-      row.add(Icon(Icons.circle_outlined));
-    }
+    List<Widget> row = makeIconRow(
+        attribute.current, attribute.max, Icons.circle, Icons.circle_outlined);
 
     return ListTile(
       title: Text(
@@ -40,11 +47,35 @@ class AttributeWidget extends StatelessWidget {
                 ? " (" + attribute.specialization + ")"
                 : ""),
         overflow: TextOverflow.fade,
+        softWrap: false,
       ),
       trailing: Row(
         children: row,
         mainAxisSize: MainAxisSize.min,
       ),
+    );
+  }
+}
+
+class NoTitleCounterWidget extends StatelessWidget {
+  NoTitleCounterWidget({int current = 0, int max = 10})
+      : _current = current,
+        _max = max;
+
+  final _current;
+  final _max;
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> row =
+        makeIconRow(_current, _max, Icons.circle, Icons.circle_outlined);
+    row.insert(0, Spacer());
+    row.add(Spacer());
+
+    return Row(
+      children: row,
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
     );
   }
 }

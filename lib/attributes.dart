@@ -116,9 +116,9 @@ class AttributesColumnWidget extends ConsumerWidget {
       column.add(AttributeWidget(attribute: attr));
     }
 
-    return ListView(
+    return Column(
       children: column,
-      padding: EdgeInsets.zero,
+      // padding: EdgeInsets.zero,
     );
   }
 }
