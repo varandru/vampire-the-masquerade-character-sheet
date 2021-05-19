@@ -8,6 +8,75 @@ class CommonCharacterInfoWidget extends ConsumerWidget {
   Widget build(BuildContext context, ScopedReader watch) {
     //  I don't get WTF is happening. I think, MainInfo is available outside
     final mainInfo = watch(mainInfoProvider);
+    return Row(
+      children: [
+        Flexible(
+          child: Column(
+            children: [
+              Text(
+                mainInfo.state.characterName,
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              Text(
+                mainInfo.state.playerName,
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              Text(
+                mainInfo.state.chronicle,
+                style: Theme.of(context).textTheme.headline6,
+              ),
+            ],
+          ),
+        ),
+        Flexible(
+          child: Column(
+            children: [
+              Text(
+                mainInfo.state.nature,
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              Text(
+                mainInfo.state.demeanor,
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              Text(
+                mainInfo.state.concept,
+                style: Theme.of(context).textTheme.headline6,
+              ),
+            ],
+          ),
+        ),
+        Flexible(
+          child: Column(
+            children: [
+              Text(
+                mainInfo.state.clan,
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              Text(
+                mainInfo.state.generation.toString() + "th",
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              Text(
+                mainInfo.state.sire,
+                style: Theme.of(context).textTheme.headline6,
+              ),
+            ],
+            mainAxisSize: MainAxisSize.max,
+          ),
+        ),
+      ],
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisSize: MainAxisSize.max,
+    );
+  }
+}
+
+class CommonCharacterInfoEditWidget extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, ScopedReader watch) {
+    //  I don't get WTF is happening. I think, MainInfo is available outside
+    final mainInfo = watch(mainInfoProvider);
     // final characterName = watch(characterNameProvider);
     // final playerName = watch(playerNameProvider);
     // final chronicle = watch(chronicleProvider);
@@ -144,15 +213,15 @@ class CommonCharacterInfoWidget extends ConsumerWidget {
 
 class MainInfo {
   MainInfo({
-    String characterName = "",
-    String nature = "",
-    String clan = "",
-    String playerName = "",
-    String demeanor = "",
+    String characterName = "Character Name",
+    String nature = "Nature",
+    String clan = "Clan",
+    String playerName = "Player Name",
+    String demeanor = "Demeanor",
     int generation = 13,
-    String chronicle = "",
-    String concept = "",
-    String sire = "",
+    String chronicle = "Chronicle",
+    String concept = "Concept",
+    String sire = "Sire",
   })  : _characterName = characterName,
         _nature = nature,
         _clan = clan,
