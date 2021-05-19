@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
+import 'common.dart';
+
+enum SelectedMenuItem { PrimaryInfo, Abilities }
 
 class DrawerMenu extends Drawer {
+  DrawerMenu(SelectedMenuItem item) : _item = item;
+
+  final SelectedMenuItem _item;
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -17,16 +24,27 @@ class DrawerMenu extends Drawer {
           ListTile(
             title: Text('Primary information'),
             trailing: Icon(Icons.face),
+            tileColor: _item == SelectedMenuItem.PrimaryInfo
+                ? Theme.of(context).buttonColor
+                : Theme.of(context).canvasColor,
             onTap: () {
-              // Update the state of the app.
-              // ...
+              Navigator.of(context)
+                  .pushReplacement(MaterialPageRoute(builder: (context) {
+                return primaryInfoScaffold;
+              }));
             },
           ),
           ListTile(
-            title: Text('Item 2'),
+            title: Text('Abilities'),
+            trailing: Icon(Icons.accessibility_new),
+            tileColor: _item == SelectedMenuItem.Abilities
+                ? Theme.of(context).buttonColor
+                : Theme.of(context).canvasColor,
             onTap: () {
-              // Update the state of the app.
-              // ...
+              Navigator.of(context)
+                  .pushReplacement(MaterialPageRoute(builder: (context) {
+                return abilitiesScaffold;
+              }));
             },
           ),
           ListTile(
@@ -40,5 +58,22 @@ class DrawerMenu extends Drawer {
       ),
     );
     ;
+  }
+}
+
+class DetailScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(),
+      body: Center(
+        child: TextButton(
+          child: Text('Pop!'),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+    );
   }
 }

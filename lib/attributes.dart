@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vampire_the_masquerade_character_sheet/common.dart';
+
+import 'defs.dart';
 
 // Как выглядит этот виджет: Общий заголовок, под ним три колонки
 // У каждой колонки есть заголовок и три атрибута
@@ -118,55 +119,6 @@ class AttributesColumnWidget extends ConsumerWidget {
     return ListView(
       children: column,
       padding: EdgeInsets.zero,
-    );
-  }
-}
-
-class Attribute {
-  Attribute(
-      {required String name,
-      int current = 1,
-      int max = 5,
-      String specialization = ""})
-      : this.name = name,
-        this.current = current,
-        this.max = max,
-        this.specialization = specialization;
-  String name;
-  int current;
-  int max;
-  String specialization;
-}
-
-class AttributeWidget extends ConsumerWidget {
-  AttributeWidget({Key? key, required Attribute attribute})
-      : this.attribute = attribute,
-        super(key: key);
-
-  final Attribute attribute;
-
-  @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    List<Widget> row = [];
-    for (int i = 0; i < attribute.current; i++) {
-      row.add(Icon(Icons.circle));
-    }
-    for (int i = attribute.current; i < attribute.max; i++) {
-      row.add(Icon(Icons.circle_outlined));
-    }
-
-    return ListTile(
-      title: Text(
-        attribute.name +
-            (attribute.specialization.isNotEmpty
-                ? " (" + attribute.specialization + ")"
-                : ""),
-        overflow: TextOverflow.fade,
-      ),
-      trailing: Row(
-        children: row,
-        mainAxisSize: MainAxisSize.min,
-      ),
     );
   }
 }
