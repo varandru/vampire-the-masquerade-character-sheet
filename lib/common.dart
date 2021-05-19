@@ -22,7 +22,7 @@ final primaryInfoScaffold = Scaffold(
       ),
       Container(
         child: AdvantagesWidget(),
-        constraints: BoxConstraints(maxHeight: 334, minHeight: 334),
+        constraints: BoxConstraints(maxHeight: 360, minHeight: 100),
       ),
     ],
     // mainAxisAlignment: MainAxisAlignment.start,

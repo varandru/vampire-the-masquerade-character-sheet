@@ -85,14 +85,46 @@ class SummarizedInfoWidget extends ConsumerWidget {
       Flexible(
         child: Column(
           children: [
-            ListTile(
-                title: Text(
+            Text(
               "Humanity",
               style: Theme.of(context).textTheme.headline6,
               textAlign: TextAlign.center,
-            )),
-            Flexible(child: NoTitleCounterWidget(current: 2 + 3)),
+            ),
+            Container(
+              child: NoTitleCounterWidget(current: 5),
+              constraints: BoxConstraints(maxHeight: 22, minHeight: 22),
+            ),
+            Text(
+              "Willpower",
+              style: Theme.of(context).textTheme.headline6,
+              textAlign: TextAlign.center,
+            ),
+            Container(
+              child: NoTitleCounterWidget(current: 10),
+              constraints: BoxConstraints(maxHeight: 22, minHeight: 22),
+            ),
+            Container(
+              child: ClickableSquareCounterWidget(
+                  current: 10, localMax: 10, max: 10),
+              constraints: BoxConstraints(maxHeight: 22, minHeight: 22),
+            ),
+            Text(
+              "Bloodpool",
+              style: Theme.of(context).textTheme.headline6,
+              textAlign: TextAlign.center,
+            ),
+            Container(
+              child: ClickableSquareCounterWidget(
+                  current: 0, localMax: 10, max: 10),
+              constraints: BoxConstraints(maxHeight: 22, minHeight: 22),
+            ),
+            Container(
+              child: ClickableSquareCounterWidget(
+                  current: 0, localMax: 10, max: 10),
+              constraints: BoxConstraints(maxHeight: 22, minHeight: 22),
+            ),
           ],
+          mainAxisSize: MainAxisSize.min,
         ),
       ),
     );
