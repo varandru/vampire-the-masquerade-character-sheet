@@ -25,7 +25,7 @@ class DrawerMenu extends Drawer {
             title: Text('Primary information'),
             trailing: Icon(Icons.face),
             tileColor: _item == SelectedMenuItem.PrimaryInfo
-                ? Theme.of(context).buttonColor
+                ? Theme.of(context).appBarTheme.foregroundColor
                 : Theme.of(context).canvasColor,
             onTap: () {
               Navigator.of(context)
@@ -38,7 +38,7 @@ class DrawerMenu extends Drawer {
             title: Text('Abilities'),
             trailing: Icon(Icons.accessibility_new),
             tileColor: _item == SelectedMenuItem.Abilities
-                ? Theme.of(context).buttonColor
+                ? Theme.of(context).appBarTheme.foregroundColor
                 : Theme.of(context).canvasColor,
             onTap: () {
               Navigator.of(context)
@@ -51,7 +51,7 @@ class DrawerMenu extends Drawer {
             title: Text('Disciplines'),
             trailing: Icon(Icons.auto_awesome),
             tileColor: _item == SelectedMenuItem.Disciplines
-                ? Theme.of(context).buttonColor
+                ? Theme.of(context).appBarTheme.foregroundColor
                 : Theme.of(context).canvasColor,
             onTap: () {
               Navigator.of(context)
@@ -70,7 +70,6 @@ class DrawerMenu extends Drawer {
         ],
       ),
     );
-    ;
   }
 }
 

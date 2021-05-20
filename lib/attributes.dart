@@ -26,26 +26,15 @@ class AttributesSectionWidget extends ConsumerWidget {
     return Column(
       children: [
         Text("Attributes", style: Theme.of(context).textTheme.headline4),
-        Expanded(
-            child: Row(
+        Wrap(
           children: [
-            Flexible(
-              child: AttributesColumnWidget(AttributeColumnType.Physical),
-              fit: FlexFit.loose,
-            ),
-            Flexible(
-              child: AttributesColumnWidget(AttributeColumnType.Social),
-              fit: FlexFit.loose,
-            ),
-            Flexible(
-              child: AttributesColumnWidget(AttributeColumnType.Mental),
-              fit: FlexFit.loose,
-            ),
+            AttributesColumnWidget(AttributeColumnType.Physical),
+            AttributesColumnWidget(AttributeColumnType.Social),
+            AttributesColumnWidget(AttributeColumnType.Mental),
           ],
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          mainAxisSize: MainAxisSize.max,
-        ))
+        ),
       ],
+      mainAxisSize: MainAxisSize.min,
     );
   }
 }
@@ -105,7 +94,7 @@ class AttributesColumnWidget extends ConsumerWidget {
         break;
     }
 
-    List<Widget> column = [
+    List<Widget> columns = [
       Text(
         header,
         textAlign: TextAlign.center,
@@ -113,12 +102,13 @@ class AttributesColumnWidget extends ConsumerWidget {
       ),
     ];
     for (var attr in attributes) {
-      column.add(AttributeWidget(attribute: attr));
+      columns.add(AttributeWidget(attribute: attr));
     }
 
+    // Attribute column
     return Column(
-      children: column,
-      // padding: EdgeInsets.zero,
+      children: columns,
+      mainAxisSize: MainAxisSize.min,
     );
   }
 }

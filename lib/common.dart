@@ -18,13 +18,15 @@ final primaryInfoScaffold = Scaffold(
       CommonCharacterInfoWidget(),
       Container(
         child: AttributesSectionWidget(),
-        constraints: BoxConstraints(maxHeight: 250, minHeight: 250),
+        constraints: BoxConstraints(maxHeight: 650, minHeight: 250),
       ),
       Container(
         child: AdvantagesWidget(),
-        constraints: BoxConstraints(maxHeight: 360, minHeight: 100),
+        constraints: BoxConstraints(maxHeight: 650, minHeight: 250),
       ),
     ],
+    shrinkWrap: true,
+    primary: true,
     // mainAxisAlignment: MainAxisAlignment.start,
     // mainAxisSize: MainAxisSize.min,
   ),
@@ -37,11 +39,10 @@ final abilitiesScaffold = Scaffold(
   appBar: AppBar(
     title: const Text("Abilities"),
   ),
-  body: Center(
-    child: Column(
-      children: [Flexible(child: AbilitiesSectionWidget())],
-      mainAxisAlignment: MainAxisAlignment.start,
-    ),
+  body: ListView(
+    children: [
+      AbilitiesSectionWidget(),
+    ],
   ),
   drawer: Drawer(
     child: DrawerMenu(SelectedMenuItem.Abilities),

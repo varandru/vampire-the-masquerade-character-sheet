@@ -6,68 +6,51 @@ final mainInfoProvider = StateProvider<MainInfo>((ref) => MainInfo());
 class CommonCharacterInfoWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    //  I don't get WTF is happening. I think, MainInfo is available outside
+    final textStyle = Theme.of(context).textTheme.headline6;
+    final margin = const EdgeInsets.all(10.0);
     final mainInfo = watch(mainInfoProvider);
-    return Row(
+    return Wrap(
+      spacing: 0.0,
+      runSpacing: 0.0,
       children: [
-        Flexible(
-          child: Column(
-            children: [
-              Text(
-                mainInfo.state.characterName,
-                style: Theme.of(context).textTheme.headline6,
-              ),
-              Text(
-                mainInfo.state.playerName,
-                style: Theme.of(context).textTheme.headline6,
-              ),
-              Text(
-                mainInfo.state.chronicle,
-                style: Theme.of(context).textTheme.headline6,
-              ),
-            ],
-          ),
+        Container(
+          margin: margin,
+          child: Text(mainInfo.state.characterName, style: textStyle),
         ),
-        Flexible(
-          child: Column(
-            children: [
-              Text(
-                mainInfo.state.nature,
-                style: Theme.of(context).textTheme.headline6,
-              ),
-              Text(
-                mainInfo.state.demeanor,
-                style: Theme.of(context).textTheme.headline6,
-              ),
-              Text(
-                mainInfo.state.concept,
-                style: Theme.of(context).textTheme.headline6,
-              ),
-            ],
-          ),
+        Container(
+          margin: margin,
+          child: Text(mainInfo.state.playerName, style: textStyle),
         ),
-        Flexible(
-          child: Column(
-            children: [
-              Text(
-                mainInfo.state.clan,
-                style: Theme.of(context).textTheme.headline6,
-              ),
-              Text(
-                mainInfo.state.generation.toString() + "th",
-                style: Theme.of(context).textTheme.headline6,
-              ),
-              Text(
-                mainInfo.state.sire,
-                style: Theme.of(context).textTheme.headline6,
-              ),
-            ],
-            mainAxisSize: MainAxisSize.max,
-          ),
+        Container(
+          margin: margin,
+          child: Text(mainInfo.state.chronicle, style: textStyle),
+        ),
+        Container(
+          margin: margin,
+          child: Text(mainInfo.state.nature, style: textStyle),
+        ),
+        Container(
+          margin: margin,
+          child: Text(mainInfo.state.demeanor, style: textStyle),
+        ),
+        Container(
+          margin: margin,
+          child: Text(mainInfo.state.concept, style: textStyle),
+        ),
+        Container(
+          margin: margin,
+          child: Text(mainInfo.state.clan, style: textStyle),
+        ),
+        Container(
+          margin: margin,
+          child: Text(mainInfo.state.generation.toString() + "th",
+              style: textStyle),
+        ),
+        Container(
+          margin: margin,
+          child: Text(mainInfo.state.sire, style: textStyle),
         ),
       ],
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      mainAxisSize: MainAxisSize.max,
     );
   }
 }
@@ -87,7 +70,7 @@ class CommonCharacterInfoEditWidget extends ConsumerWidget {
     // final generation = watch(generationProvider);
     // final sire = watch(sireProvider);
 
-    return Row(
+    return Wrap(
       children: [
         Flexible(
           child: Column(

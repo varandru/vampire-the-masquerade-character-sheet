@@ -54,19 +54,23 @@ class AttributeWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> row = makeIconRow(
         attribute.current, attribute.max, Icons.circle, Icons.circle_outlined);
+    final header = Text(
+      attribute.name +
+          (attribute.specialization.isNotEmpty
+              ? " (" + attribute.specialization + ")"
+              : ""),
+      overflow: TextOverflow.fade,
+      softWrap: false,
+    );
 
-    return ListTile(
-      title: Text(
-        attribute.name +
-            (attribute.specialization.isNotEmpty
-                ? " (" + attribute.specialization + ")"
-                : ""),
-        overflow: TextOverflow.fade,
-        softWrap: false,
-      ),
-      trailing: Row(
-        children: row,
-        mainAxisSize: MainAxisSize.min,
+    return Container(
+      constraints: BoxConstraints(maxWidth: 200),
+      child: ListTile(
+        title: header,
+        trailing: Row(
+          children: row,
+          mainAxisSize: MainAxisSize.min,
+        ),
       ),
     );
   }

@@ -20,26 +20,16 @@ class AbilitiesSectionWidget extends ConsumerWidget {
     return Column(
       children: [
         Text("Abilities", style: Theme.of(context).textTheme.headline4),
-        Expanded(
-            child: Row(
+        Wrap(
           children: [
-            Flexible(
-              child: AbilitiesColumnWidget(AbilityColumnType.Talents),
-              fit: FlexFit.loose,
-            ),
-            Flexible(
-              child: AbilitiesColumnWidget(AbilityColumnType.Skills),
-              fit: FlexFit.loose,
-            ),
-            Flexible(
-              child: AbilitiesColumnWidget(AbilityColumnType.Knowledges),
-              fit: FlexFit.loose,
-            ),
+            AbilitiesColumnWidget(AbilityColumnType.Talents),
+            AbilitiesColumnWidget(AbilityColumnType.Skills),
+            AbilitiesColumnWidget(AbilityColumnType.Knowledges),
           ],
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          mainAxisSize: MainAxisSize.max,
-        ))
+          // mainAxisAlignment: MainAxisAlignment.spaceAround,
+        ),
       ],
+      mainAxisSize: MainAxisSize.min,
     );
   }
 }
@@ -131,9 +121,9 @@ class AbilitiesColumnWidget extends ConsumerWidget {
       column.add(AttributeWidget(attribute: attr));
     }
 
-    return ListView(
+    return Column(
       children: column,
-      padding: EdgeInsets.zero,
+      mainAxisSize: MainAxisSize.min,
     );
   }
 }

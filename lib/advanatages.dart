@@ -62,73 +62,72 @@ class VirtuesColumnWidget extends ConsumerWidget {
 class AdvantagesWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    return Column(children: [
-      Expanded(
-        child: Row(
+    return Column(
+      children: [
+        Text("Advantages", style: Theme.of(context).textTheme.headline4),
+        Wrap(
           children: [
-            Flexible(child: BackgroundColumnWidget()),
-            Flexible(child: VirtuesColumnWidget()),
+            BackgroundColumnWidget(),
+            VirtuesColumnWidget(),
+            SummarizedInfoWidget(),
           ],
         ),
-      ),
-      Flexible(child: SummarizedInfoWidget()),
-    ]);
+      ],
+    );
   }
 }
 
 class SummarizedInfoWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    List<Widget> row = [];
+    final noTitleRestraint = BoxConstraints(
+        maxHeight: 22, minHeight: 22, maxWidth: 250, minWidth: 250);
 
-    row.add(
-      Flexible(
-        child: Column(
-          children: [
-            Text(
-              "Humanity",
-              style: Theme.of(context).textTheme.headline6,
-              textAlign: TextAlign.center,
-            ),
-            Container(
-              child: NoTitleCounterWidget(current: 5),
-              constraints: BoxConstraints(maxHeight: 22, minHeight: 22),
-            ),
-            Text(
-              "Willpower",
-              style: Theme.of(context).textTheme.headline6,
-              textAlign: TextAlign.center,
-            ),
-            Container(
-              child: NoTitleCounterWidget(current: 10),
-              constraints: BoxConstraints(maxHeight: 22, minHeight: 22),
-            ),
-            Container(
-              child: ClickableSquareCounterWidget(
-                  current: 10, localMax: 10, max: 10),
-              constraints: BoxConstraints(maxHeight: 22, minHeight: 22),
-            ),
-            Text(
-              "Bloodpool",
-              style: Theme.of(context).textTheme.headline6,
-              textAlign: TextAlign.center,
-            ),
-            Container(
-              child: ClickableSquareCounterWidget(
-                  current: 0, localMax: 10, max: 10),
-              constraints: BoxConstraints(maxHeight: 22, minHeight: 22),
-            ),
-            Container(
-              child: ClickableSquareCounterWidget(
-                  current: 0, localMax: 10, max: 10),
-              constraints: BoxConstraints(maxHeight: 22, minHeight: 22),
-            ),
-          ],
-          mainAxisSize: MainAxisSize.min,
-        ),
-      ),
+    List<Widget> elements = [];
+
+    // Humanity
+    elements.add(Text(
+      "Humanity",
+      style: Theme.of(context).textTheme.headline6,
+      textAlign: TextAlign.center,
+    ));
+    elements.add(Container(
+      child: NoTitleCounterWidget(current: 5),
+      constraints: noTitleRestraint,
+    ));
+
+    // Willpower
+    elements.add(Text(
+      "Willpower",
+      style: Theme.of(context).textTheme.headline6,
+      textAlign: TextAlign.center,
+    ));
+    elements.add(Container(
+      child: NoTitleCounterWidget(current: 10),
+      constraints: noTitleRestraint,
+    ));
+    elements.add(Container(
+        child: ClickableSquareCounterWidget(current: 10, localMax: 10, max: 10),
+        constraints: noTitleRestraint));
+
+    elements.add(Text(
+      "Bloodpool",
+      style: Theme.of(context).textTheme.headline6,
+      textAlign: TextAlign.center,
+    ));
+    elements.add(Container(
+      child: ClickableSquareCounterWidget(current: 0, localMax: 10, max: 10),
+      constraints: noTitleRestraint,
+    ));
+    elements.add(Container(
+      child: ClickableSquareCounterWidget(current: 0, localMax: 10, max: 10),
+      constraints: noTitleRestraint,
+    ));
+
+    return Column(
+      children: elements,
+      // mainAxisSize: MainAxisSize.min,
     );
-
-    return Row(children: row);
+    // );
   }
 }
