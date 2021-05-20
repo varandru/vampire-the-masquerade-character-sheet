@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vampire_the_masquerade_character_sheet/abilities.dart';
 import 'package:vampire_the_masquerade_character_sheet/advanatages.dart';
 
+import 'disciplines.dart';
 import 'drawer_menu.dart';
 import 'main_info.dart';
 import 'attributes.dart';
@@ -35,6 +36,7 @@ final primaryInfoScaffold = Scaffold(
   ),
 );
 
+// Abilities Menu
 final abilitiesScaffold = Scaffold(
   appBar: AppBar(
     title: const Text("Abilities"),
@@ -46,6 +48,21 @@ final abilitiesScaffold = Scaffold(
   ),
   drawer: Drawer(
     child: DrawerMenu(SelectedMenuItem.Abilities),
+  ),
+);
+
+// Disciplines Menu
+final disciplinesScaffold = Scaffold(
+  appBar: AppBar(
+    title: const Text("Disciplines"),
+  ),
+  body: ListView(
+    children: [
+      DisciplinesSectionWidget(),
+    ],
+  ),
+  drawer: Drawer(
+    child: DrawerMenu(SelectedMenuItem.Disciplines),
   ),
 );
 

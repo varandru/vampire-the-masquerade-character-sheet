@@ -93,7 +93,7 @@ class NoTitleCounterWidget extends StatelessWidget {
 
     return Row(
       children: row,
-      mainAxisSize: MainAxisSize.max,
+      mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
     );
   }

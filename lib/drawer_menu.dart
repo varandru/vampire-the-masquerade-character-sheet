@@ -25,8 +25,8 @@ class DrawerMenu extends Drawer {
             title: Text('Primary information'),
             trailing: Icon(Icons.face),
             tileColor: _item == SelectedMenuItem.PrimaryInfo
-                ? Theme.of(context).appBarTheme.foregroundColor
-                : Theme.of(context).canvasColor,
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.onPrimary,
             onTap: () {
               Navigator.of(context)
                   .pushReplacement(MaterialPageRoute(builder: (context) {
@@ -38,8 +38,8 @@ class DrawerMenu extends Drawer {
             title: Text('Abilities'),
             trailing: Icon(Icons.accessibility_new),
             tileColor: _item == SelectedMenuItem.Abilities
-                ? Theme.of(context).appBarTheme.foregroundColor
-                : Theme.of(context).canvasColor,
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.onPrimary,
             onTap: () {
               Navigator.of(context)
                   .pushReplacement(MaterialPageRoute(builder: (context) {
@@ -51,12 +51,12 @@ class DrawerMenu extends Drawer {
             title: Text('Disciplines'),
             trailing: Icon(Icons.auto_awesome),
             tileColor: _item == SelectedMenuItem.Disciplines
-                ? Theme.of(context).appBarTheme.foregroundColor
-                : Theme.of(context).canvasColor,
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.onPrimary,
             onTap: () {
               Navigator.of(context)
                   .pushReplacement(MaterialPageRoute(builder: (context) {
-                return DetailScreen();
+                return disciplinesScaffold;
               }));
             },
           ),
