@@ -1,4 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final bloodPoolProvider = StateProvider((ref) => 0);
+final willpowerProvider = StateProvider((ref) => 0);
+
+class BloodNotifier extends StateNotifier<int> {
+  BloodNotifier(int? bloodCount) : super(bloodCount ?? 0);
+}
+
+class WillPowerNotifier extends StateNotifier<int> {
+  WillPowerNotifier(int? will) : super(will ?? 0);
+}
 
 class Attribute {
   Attribute(
@@ -28,18 +40,58 @@ List<Widget> makeIconRow(
   return row;
 }
 
-List<Widget> makeThreeIconRow(int current, int localMax, int max,
-    IconData filled, IconData empty, IconData blocked) {
+List<Widget> makeBloodPoolRow(
+    int current, int localMax, int max, BuildContext context) {
   List<Widget> row = [];
   for (int i = 0; i < current; i++) {
-    row.add(Icon(filled, size: 20));
+    row.add(IconButton(
+      icon: Icon(Icons.add_box),
+      iconSize: 20,
+      onPressed: () => context.read(bloodPoolProvider).state = i + 1,
+    ));
   }
   for (int i = current; i < localMax; i++) {
-    row.add(Icon(empty, size: 20));
+    row.add(IconButton(
+      icon: Icon(Icons.check_box_outline_blank),
+      iconSize: 20,
+      onPressed: () {
+        context.read(bloodPoolProvider).state = i + 1;
+      },
+    ));
   }
   for (int i = localMax; i < max; i++) {
-    row.add(Icon(blocked, size: 20));
+    row.add(Icon(Icons.select_all, size: 20));
   }
+
+  row.insert(0, Spacer());
+  row.add(Spacer());
+
+  return row;
+}
+
+List<Widget> makeWillPowerRow(
+    int current, int localMax, int max, BuildContext context) {
+  List<Widget> row = [];
+  for (int i = 0; i < current; i++) {
+    row.add(IconButton(
+      icon: Icon(Icons.add_box),
+      iconSize: 20,
+      onPressed: () => context.read(willpowerProvider).state = i + 1,
+    ));
+  }
+  for (int i = current; i < localMax; i++) {
+    row.add(IconButton(
+      icon: Icon(Icons.check_box_outline_blank),
+      iconSize: 20,
+      onPressed: () {
+        context.read(willpowerProvider).state = i + 1;
+      },
+    ));
+  }
+  for (int i = localMax; i < max; i++) {
+    row.add(Icon(Icons.select_all, size: 20));
+  }
+
   return row;
 }
 
@@ -94,34 +146,6 @@ class NoTitleCounterWidget extends StatelessWidget {
     return Row(
       children: row,
       mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    );
-  }
-}
-
-// TODO: it's not... Y'know... Clickable
-// But it really should be
-class ClickableSquareCounterWidget extends StatelessWidget {
-  ClickableSquareCounterWidget(
-      {int current = 0, int localMax = 10, int max = 10})
-      : _current = current,
-        _max = max,
-        _localMax = localMax;
-
-  final _current;
-  final _max;
-  final _localMax;
-
-  @override
-  Widget build(BuildContext context) {
-    List<Widget> row = makeThreeIconRow(_current, _localMax, _max,
-        Icons.add_box, Icons.check_box_outline_blank, Icons.select_all);
-    row.insert(0, Spacer());
-    row.add(Spacer());
-
-    return Row(
-      children: row,
-      mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
     );
   }

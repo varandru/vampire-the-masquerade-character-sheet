@@ -83,7 +83,7 @@ class SummarizedInfoWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final noTitleRestraint = BoxConstraints(
-        maxHeight: 22, minHeight: 22, maxWidth: 250, minWidth: 250);
+        maxHeight: 22, minHeight: 22, maxWidth: 220, minWidth: 220);
 
     List<Widget> elements = [];
 
@@ -99,18 +99,24 @@ class SummarizedInfoWidget extends ConsumerWidget {
     ));
 
     // Willpower
+    final will = watch(willpowerProvider).state;
+
     elements.add(Text(
       "Willpower",
       style: Theme.of(context).textTheme.headline6,
       textAlign: TextAlign.center,
     ));
     elements.add(Container(
-      child: NoTitleCounterWidget(current: 10),
+      child: NoTitleCounterWidget(current: 10, max: 10),
       constraints: noTitleRestraint,
     ));
     elements.add(Container(
-        child: ClickableSquareCounterWidget(current: 10, localMax: 10, max: 10),
-        constraints: noTitleRestraint));
+      child: Wrap(
+        children: makeWillPowerRow(will, 10, 10, context),
+      ),
+    ));
+
+    final bloodCount = watch(bloodPoolProvider);
 
     elements.add(Text(
       "Bloodpool",
@@ -118,12 +124,9 @@ class SummarizedInfoWidget extends ConsumerWidget {
       textAlign: TextAlign.center,
     ));
     elements.add(Container(
-      child: ClickableSquareCounterWidget(current: 0, localMax: 10, max: 10),
-      constraints: noTitleRestraint,
-    ));
-    elements.add(Container(
-      child: ClickableSquareCounterWidget(current: 0, localMax: 10, max: 10),
-      constraints: noTitleRestraint,
+      child: Wrap(
+        children: makeBloodPoolRow(bloodCount.state, 20, 20, context),
+      ),
     ));
 
     return Column(
