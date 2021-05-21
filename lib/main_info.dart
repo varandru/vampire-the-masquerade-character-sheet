@@ -10,6 +10,7 @@ class CommonCharacterInfoWidget extends ConsumerWidget {
     final margin = const EdgeInsets.all(10.0);
     final mainInfo = watch(mainInfoProvider);
     return Wrap(
+      alignment: WrapAlignment.center,
       spacing: 0.0,
       runSpacing: 0.0,
       children: [
@@ -71,6 +72,7 @@ class CommonCharacterInfoEditWidget extends ConsumerWidget {
     // final sire = watch(sireProvider);
 
     return Wrap(
+      alignment: WrapAlignment.center,
       children: [
         Flexible(
           child: Column(

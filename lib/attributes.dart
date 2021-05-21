@@ -27,6 +27,7 @@ class AttributesSectionWidget extends ConsumerWidget {
       children: [
         Text("Attributes", style: Theme.of(context).textTheme.headline4),
         Wrap(
+          alignment: WrapAlignment.center,
           children: [
             AttributesColumnWidget(AttributeColumnType.Physical),
             AttributesColumnWidget(AttributeColumnType.Social),

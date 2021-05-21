@@ -68,6 +68,7 @@ class DisciplinesSectionWidget extends ConsumerWidget {
       children: [
         Text("Disciplines", style: Theme.of(context).textTheme.headline4),
         Wrap(
+          alignment: WrapAlignment.center,
           children: [
             DisciplineWidget(discipline),
           ],

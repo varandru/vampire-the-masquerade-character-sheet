@@ -66,6 +66,7 @@ class AdvantagesWidget extends ConsumerWidget {
       children: [
         Text("Advantages", style: Theme.of(context).textTheme.headline4),
         Wrap(
+          alignment: WrapAlignment.center,
           children: [
             BackgroundColumnWidget(),
             VirtuesColumnWidget(),

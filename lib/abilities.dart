@@ -21,6 +21,7 @@ class AbilitiesSectionWidget extends ConsumerWidget {
       children: [
         Text("Abilities", style: Theme.of(context).textTheme.headline4),
         Wrap(
+          alignment: WrapAlignment.center,
           children: [
             AbilitiesColumnWidget(AbilityColumnType.Talents),
             AbilitiesColumnWidget(AbilityColumnType.Skills),
