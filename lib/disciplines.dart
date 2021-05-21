@@ -64,6 +64,15 @@ class DisciplinesSectionWidget extends ConsumerWidget {
               "The number of successes gained determines how many blood points are brought to boil. The subject suffers one health level of aggravated damage for each point boiled (individuals with Fortitude may soak this damage using only their Fortitude dice). A single success kills any mortal, though some ghouls are said to have survived."),
     );
 
+    Ritual ritual = Ritual(
+      name: "Scent of the Lupine’s Passing",
+      level: 1,
+      description:
+          "Developed in a besieged Carpathian chantry where Tremere fell as often to the claws of night-black Lupines as to the other clans, this simple ritual lets the caster scent Lupines in the area. The Thaumaturge prepares a small herbal bundle with milkweed, wolfs bane, sage and a handful of simple grass. With a short set of phrases she takes a whiff of the mixture, after which she can immediately tell any Lupine by scent. This does not mean that she can detect lupine at a distance, merely that she can tell if a specific person’s smell happens to be Lupine, which can be useful when combined with augmented senses.",
+      system:
+          "The Thaumaturge simply completes the ritual and sniffs from the herbal bundle. Afterward, she can detect Lupines by scent; actually sniffing someone up close would require no roll, but catching a scent at a distance of a few feet might take a Perception + Alertness roll (Diff 6). Detecting a lupine hidden around a corner, for example, could increase the difficulty to 8. This scent distinction lasts for an entire scene.",
+    );
+
     return Column(
       children: [
         Text("Disciplines", style: Theme.of(context).textTheme.headline4),
@@ -71,6 +80,13 @@ class DisciplinesSectionWidget extends ConsumerWidget {
           alignment: WrapAlignment.center,
           children: [
             DisciplineWidget(discipline),
+          ],
+        ),
+        Text("Rituals", style: Theme.of(context).textTheme.headline4),
+        Wrap(
+          alignment: WrapAlignment.center,
+          children: [
+            RitualWidget(ritual),
           ],
         ),
       ],
@@ -191,4 +207,58 @@ class DisciplineDot {
 
   final int level;
   final int max;
+}
+
+class Ritual {
+  Ritual({
+    required this.name,
+    this.level = 1,
+    this.description = "",
+    this.system = "",
+  });
+  final int level;
+  final String name;
+  final String description;
+  final String system;
+}
+
+class RitualWidget extends StatelessWidget {
+  RitualWidget(this._ritual);
+
+  final Ritual _ritual;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(_ritual.name),
+      trailing: Container(
+        constraints: BoxConstraints(maxWidth: 100.0),
+        child: NoTitleCounterWidget(
+          current: _ritual.level,
+          max: 5,
+        ),
+      ),
+      onTap: () {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return SimpleDialog(
+                title: Text("Description"),
+                children: [
+                  Text(
+                    "Description",
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
+                  Text(_ritual.description),
+                  Text(
+                    "System",
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
+                  Text(_ritual.system),
+                ],
+              );
+            }).then((value) => null);
+      },
+    );
+  }
 }

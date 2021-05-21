@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vampire_the_masquerade_character_sheet/abilities.dart';
 import 'package:vampire_the_masquerade_character_sheet/advanatages.dart';
+import 'package:vampire_the_masquerade_character_sheet/merits_and_flaws.dart';
 
 import 'disciplines.dart';
 import 'drawer_menu.dart';
@@ -61,6 +62,17 @@ final disciplinesScaffold = Scaffold(
       DisciplinesSectionWidget(),
     ],
   ),
+  drawer: Drawer(
+    child: DrawerMenu(SelectedMenuItem.Disciplines),
+  ),
+);
+
+// Disciplines Menu
+final meritsFlawsScaffold = Scaffold(
+  appBar: AppBar(
+    title: const Text("Merits & Flaws"),
+  ),
+  body: MeritsAndFlawsSectionWidget(),
   drawer: Drawer(
     child: DrawerMenu(SelectedMenuItem.Disciplines),
   ),

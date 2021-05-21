@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'common.dart';
 
-enum SelectedMenuItem { PrimaryInfo, Abilities, Disciplines }
+enum SelectedMenuItem { PrimaryInfo, Abilities, Disciplines, MeritsFlaws }
 
 class DrawerMenu extends Drawer {
   DrawerMenu(SelectedMenuItem item) : _item = item;
@@ -61,6 +61,19 @@ class DrawerMenu extends Drawer {
             },
           ),
           ListTile(
+            title: Text('Merits & Flaws'),
+            trailing: Icon(Icons.exposure),
+            tileColor: _item == SelectedMenuItem.MeritsFlaws
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.onPrimary,
+            onTap: () {
+              Navigator.of(context)
+                  .pushReplacement(MaterialPageRoute(builder: (context) {
+                return meritsFlawsScaffold;
+              }));
+            },
+          ),
+          ListTile(
             title: Text('Close'),
             trailing: Icon(Icons.exit_to_app),
             onTap: () {
@@ -68,23 +81,6 @@ class DrawerMenu extends Drawer {
             },
           ),
         ],
-      ),
-    );
-  }
-}
-
-class DetailScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Center(
-        child: TextButton(
-          child: Text('Pop!'),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
       ),
     );
   }
