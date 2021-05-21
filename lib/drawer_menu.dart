@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'common.dart';
 
-enum SelectedMenuItem { PrimaryInfo, Abilities, Disciplines, MeritsFlaws }
+enum SelectedMenuItem {
+  PrimaryInfo,
+  Abilities,
+  Disciplines,
+  MeritsFlaws,
+  WeaponsArmor
+}
 
 class DrawerMenu extends Drawer {
   DrawerMenu(SelectedMenuItem item) : _item = item;
@@ -70,6 +76,19 @@ class DrawerMenu extends Drawer {
               Navigator.of(context)
                   .pushReplacement(MaterialPageRoute(builder: (context) {
                 return meritsFlawsScaffold;
+              }));
+            },
+          ),
+          ListTile(
+            title: Text('Weapons and Armor'),
+            trailing: Icon(Icons.devices),
+            tileColor: _item == SelectedMenuItem.WeaponsArmor
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.onPrimary,
+            onTap: () {
+              Navigator.of(context)
+                  .pushReplacement(MaterialPageRoute(builder: (context) {
+                return weaponsArmorScaffold;
               }));
             },
           ),
