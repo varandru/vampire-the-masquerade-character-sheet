@@ -14,6 +14,7 @@ class BackgroundColumnWidget extends ConsumerWidget {
       Attribute(name: "Mentor", current: 2),
       Attribute(name: "Herd", current: 1),
       Attribute(name: "Resources", current: 2),
+      Attribute(name: "Generation", current: 3),
     ];
 
     List<Widget> column = [

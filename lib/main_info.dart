@@ -203,7 +203,7 @@ class MainInfo {
     String clan = "Tremere",
     String playerName = "Vladimir Aranovskiy",
     String demeanor = "Perfectionist",
-    int generation = 13,
+    int generation = 10,
     String chronicle = "?",
     String concept = "Intellectual",
     String sire = "Lawrence",
