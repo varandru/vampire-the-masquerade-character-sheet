@@ -198,15 +198,15 @@ class CommonCharacterInfoEditWidget extends ConsumerWidget {
 
 class MainInfo {
   MainInfo({
-    String characterName = "Character Name",
-    String nature = "Nature",
-    String clan = "Clan",
-    String playerName = "Player Name",
-    String demeanor = "Demeanor",
+    String characterName = "Noah Brendel",
+    String nature = "Perfectionist",
+    String clan = "Tremere",
+    String playerName = "Vladimir Aranovskiy",
+    String demeanor = "Perfectionist",
     int generation = 13,
-    String chronicle = "Chronicle",
-    String concept = "Concept",
-    String sire = "Sire",
+    String chronicle = "?",
+    String concept = "Intellectual",
+    String sire = "Lawrence",
   })  : _characterName = characterName,
         _nature = nature,
         _clan = clan,
@@ -239,12 +239,10 @@ class MainInfo {
 
   void setCharacterName(String name) {
     _characterName = name;
-    print("$_characterName");
   }
 
   void setNature(String nature) {
     _nature = nature;
-    print(_nature);
   }
 
   void setClan(String clan) {

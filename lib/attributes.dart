@@ -44,9 +44,9 @@ class PhysicalAttributesColumn {
   final header = "Physical";
 
   var attributes = [
-    Attribute(name: "Strength"),
-    Attribute(name: "Dexterity"),
-    Attribute(name: "Stamina")
+    Attribute(name: "Strength", current: 1),
+    Attribute(name: "Dexterity", current: 5),
+    Attribute(name: "Stamina", current: 2),
   ];
 }
 
@@ -54,9 +54,9 @@ class SocialAttributesColumn {
   final header = "Social";
 
   var attributes = [
-    Attribute(name: "Charisma"),
-    Attribute(name: "Manipulation"),
-    Attribute(name: "Appearance")
+    Attribute(name: "Charisma", current: 1),
+    Attribute(name: "Manipulation", current: 1),
+    Attribute(name: "Appearance", current: 4),
   ];
 }
 
@@ -64,9 +64,9 @@ class MentalAttributesColumn {
   final header = "Mental";
 
   var attributes = [
-    Attribute(name: "Perception"),
-    Attribute(name: "Intelligence"),
-    Attribute(name: "Wits")
+    Attribute(name: "Perception", current: 1),
+    Attribute(name: "Intelligence", current: 5),
+    Attribute(name: "Wits", current: 4)
   ];
 }
 
