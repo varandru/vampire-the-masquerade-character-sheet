@@ -45,7 +45,8 @@ class PhysicalAttributesColumn {
 
   var attributes = [
     Attribute(name: "Strength", current: 1),
-    Attribute(name: "Dexterity", current: 5),
+    Attribute(
+        name: "Dexterity", current: 5, specialization: "Lightning Reflexes"),
     Attribute(name: "Stamina", current: 2),
   ];
 }
@@ -65,8 +66,11 @@ class MentalAttributesColumn {
 
   var attributes = [
     Attribute(name: "Perception", current: 1),
-    Attribute(name: "Intelligence", current: 5),
-    Attribute(name: "Wits", current: 4)
+    Attribute(
+        name: "Intelligence",
+        current: 5,
+        specialization: "Analytical Thinking"),
+    Attribute(name: "Wits", current: 4, specialization: "Adapt to others")
   ];
 }
 

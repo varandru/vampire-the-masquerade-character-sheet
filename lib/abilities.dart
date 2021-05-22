@@ -74,7 +74,8 @@ class KnowledgeAbilitiesColumn {
 
   var attributes = [
     Attribute(name: "Academics", current: 0),
-    Attribute(name: "Computers", current: 4),
+    Attribute(
+        name: "Computers", current: 4, specialization: "Passwords Hacking"),
     Attribute(name: "Finance", current: 0),
     Attribute(name: "Investigation", current: 3),
     Attribute(name: "Law", current: 0),

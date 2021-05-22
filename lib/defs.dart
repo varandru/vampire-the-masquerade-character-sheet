@@ -95,18 +95,16 @@ class AttributeWidget extends StatelessWidget {
     List<Widget> row = makeIconRow(
         attribute.current, attribute.max, Icons.circle, Icons.circle_outlined);
     final header = Text(
-      attribute.name +
-          (attribute.specialization.isNotEmpty
-              ? " (" + attribute.specialization + ")"
-              : ""),
+      attribute.name,
       overflow: TextOverflow.fade,
       softWrap: false,
     );
 
     return Container(
-      constraints: BoxConstraints(maxWidth: 200),
+      constraints: BoxConstraints(maxWidth: 500),
       child: ListTile(
         title: header,
+        subtitle: Text(attribute.specialization),
         trailing: Row(
           children: row,
           mainAxisSize: MainAxisSize.min,
