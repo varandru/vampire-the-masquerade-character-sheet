@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'common.dart';
 import 'defs.dart';
 
 // Are separated on the character sheet. Go into primary info in the app.
@@ -99,7 +100,7 @@ class SummarizedInfoWidget extends ConsumerWidget {
     ));
 
     // Willpower
-    final will = watch(willpowerProvider).state;
+    final will = watch(willpowerProvider);
 
     elements.add(Text(
       "Willpower",
@@ -110,11 +111,11 @@ class SummarizedInfoWidget extends ConsumerWidget {
       child: NoTitleCounterWidget(current: 10, max: 10),
       constraints: noTitleRestraint,
     ));
-    elements.add(Container(
-      child: Wrap(
-        children: makeWillPowerRow(will, 10, 10, context),
+    elements.add(
+      Wrap(
+        children: makeWillPowerRow(will.state, 10, 10, context),
       ),
-    ));
+    );
 
     final bloodCount = watch(bloodPoolProvider);
 
@@ -123,11 +124,12 @@ class SummarizedInfoWidget extends ConsumerWidget {
       style: Theme.of(context).textTheme.headline6,
       textAlign: TextAlign.center,
     ));
-    elements.add(Container(
-      child: Wrap(
+
+    elements.add(
+      Wrap(
         children: makeBloodPoolRow(bloodCount.state, 20, 20, context),
       ),
-    ));
+    );
 
     return Column(
       children: elements,

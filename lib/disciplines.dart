@@ -103,11 +103,6 @@ class DisciplineWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    List<Widget> row = makeIconRow(_discipline.level, _discipline.max,
-        Icons.circle, Icons.circle_outlined);
-    row.insert(0, Spacer());
-    row.add(Spacer());
-
     List<Widget> disciplineDots = [];
     for (int i = 0; i < _discipline.level; i++) {
       disciplineDots.add(DisciplineDotWidget(dot: _discipline.levels[i]));

@@ -1,16 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final bloodPoolProvider = StateProvider((ref) => 0);
-final willpowerProvider = StateProvider((ref) => 0);
-
-class BloodNotifier extends StateNotifier<int> {
-  BloodNotifier(int? bloodCount) : super(bloodCount ?? 0);
-}
-
-class WillPowerNotifier extends StateNotifier<int> {
-  WillPowerNotifier(int? will) : super(will ?? 0);
-}
+import 'common.dart';
 
 class Attribute {
   Attribute(
@@ -62,9 +53,6 @@ List<Widget> makeBloodPoolRow(
   for (int i = localMax; i < max; i++) {
     row.add(Icon(Icons.select_all, size: 20));
   }
-
-  row.insert(0, Spacer());
-  row.add(Spacer());
 
   return row;
 }
@@ -140,8 +128,6 @@ class NoTitleCounterWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> row =
         makeIconRow(_current, _max, Icons.circle, Icons.circle_outlined);
-    row.insert(0, Spacer());
-    row.add(Spacer());
 
     return Row(
       children: row,
