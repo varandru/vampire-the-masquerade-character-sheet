@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'common.dart';
 import 'defs.dart';
 
 // Are separated on the character sheet. Go into primary info in the app.
@@ -14,6 +15,7 @@ class BackgroundColumnWidget extends ConsumerWidget {
       Attribute(name: "Mentor", current: 2),
       Attribute(name: "Herd", current: 1),
       Attribute(name: "Resources", current: 2),
+      Attribute(name: "Generation", current: 3),
     ];
 
     List<Widget> column = [
@@ -82,7 +84,7 @@ class SummarizedInfoWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final noTitleRestraint = BoxConstraints(
-        maxHeight: 22, minHeight: 22, maxWidth: 250, minWidth: 250);
+        maxHeight: 22, minHeight: 22, maxWidth: 220, minWidth: 220);
 
     List<Widget> elements = [];
 
@@ -98,32 +100,36 @@ class SummarizedInfoWidget extends ConsumerWidget {
     ));
 
     // Willpower
+    final will = watch(willpowerProvider);
+
     elements.add(Text(
       "Willpower",
       style: Theme.of(context).textTheme.headline6,
       textAlign: TextAlign.center,
     ));
     elements.add(Container(
-      child: NoTitleCounterWidget(current: 10),
+      child: NoTitleCounterWidget(current: 10, max: 10),
       constraints: noTitleRestraint,
     ));
-    elements.add(Container(
-        child: ClickableSquareCounterWidget(current: 10, localMax: 10, max: 10),
-        constraints: noTitleRestraint));
+    elements.add(
+      Wrap(
+        children: makeWillPowerRow(will.state, 10, 10, context),
+      ),
+    );
+
+    final bloodCount = watch(bloodPoolProvider);
 
     elements.add(Text(
       "Bloodpool",
       style: Theme.of(context).textTheme.headline6,
       textAlign: TextAlign.center,
     ));
-    elements.add(Container(
-      child: ClickableSquareCounterWidget(current: 0, localMax: 10, max: 10),
-      constraints: noTitleRestraint,
-    ));
-    elements.add(Container(
-      child: ClickableSquareCounterWidget(current: 0, localMax: 10, max: 10),
-      constraints: noTitleRestraint,
-    ));
+
+    elements.add(
+      Wrap(
+        children: makeBloodPoolRow(bloodCount.state, 20, 20, context),
+      ),
+    );
 
     return Column(
       children: elements,

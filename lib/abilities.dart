@@ -39,10 +39,10 @@ class TalentsAbilitiesColumn {
   final header = "Talents";
 
   var attributes = [
-    Attribute(name: "Alertness", current: 0),
+    Attribute(name: "Alertness", current: 2),
     Attribute(name: "Athletics", current: 0),
     Attribute(name: "Brawl", current: 0),
-    Attribute(name: "Dodge", current: 0),
+    Attribute(name: "Dodge", current: 3),
     Attribute(name: "Empathy", current: 0),
     Attribute(name: "Expression", current: 0),
     Attribute(name: "Intimidation", current: 0),
@@ -60,11 +60,11 @@ class SkillsAbilitiesColumn {
     Attribute(name: "Crafts", current: 0),
     Attribute(name: "Drive", current: 0),
     Attribute(name: "Etiquette", current: 0),
-    Attribute(name: "Firearms", current: 0),
+    Attribute(name: "Firearms", current: 3),
     Attribute(name: "Melee", current: 0),
     Attribute(name: "Performance", current: 0),
-    Attribute(name: "Security", current: 0),
-    Attribute(name: "Stealth", current: 0),
+    Attribute(name: "Security", current: 3),
+    Attribute(name: "Stealth", current: 3),
     Attribute(name: "Survival", current: 0),
   ];
 }
@@ -74,13 +74,14 @@ class KnowledgeAbilitiesColumn {
 
   var attributes = [
     Attribute(name: "Academics", current: 0),
-    Attribute(name: "Computers", current: 0),
+    Attribute(
+        name: "Computers", current: 4, specialization: "Passwords Hacking"),
     Attribute(name: "Finance", current: 0),
-    Attribute(name: "Investigation", current: 0),
+    Attribute(name: "Investigation", current: 3),
     Attribute(name: "Law", current: 0),
-    Attribute(name: "Linguistics", current: 0),
-    Attribute(name: "Medicine", current: 0),
-    Attribute(name: "Occult", current: 0),
+    Attribute(name: "Linguistics", current: 2),
+    Attribute(name: "Medicine", current: 2),
+    Attribute(name: "Occult", current: 3),
     Attribute(name: "Politics", current: 0),
     Attribute(name: "Science", current: 0),
   ];
