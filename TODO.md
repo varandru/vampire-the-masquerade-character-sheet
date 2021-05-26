@@ -6,6 +6,7 @@
    - [x] UI, in a more or less finalized state
    - [ ] Move attributes and skills into the same place
    - [ ] Attributes and skills should display a pop-up with expanded information
+   - [ ] There are alternatives to Humanity. Make them pickable.
    - [ ] Disciplines, rituals and attributes should display their name, not placeholder on top of expanded information
      - [ ] Disciplines
      - [ ] Rituals
@@ -26,6 +27,7 @@
  - [ ] Logic
    - [ ] *All* serialized information must load on startup
    - [ ] Bloodpool maximum must depend on vampire's generation
+   - [ ] Some stats depend on vampire's generation as well
  - [ ] Serialization
    - [ ] Main character information: name, sire, etc.
    - [ ] Attributes and their descriptions/specialization
@@ -34,3 +36,4 @@
    - [ ] Disciplines, sublevels of disciplines
    - [ ] Rituals
    - [ ] Merits & Flaws
+   - [ ] Alternatives to Humanity: Paths, Instincts, etc. 
