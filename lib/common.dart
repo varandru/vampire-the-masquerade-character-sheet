@@ -49,6 +49,8 @@ final abilitiesScaffold = MenuScaffold(
       AttributesSectionWidget(),
       AbilitiesSectionWidget(),
     ],
+    shrinkWrap: true,
+    primary: true,
   ),
   item: SelectedMenuItem.Abilities,
 );

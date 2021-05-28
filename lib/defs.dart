@@ -5,18 +5,18 @@ import 'common.dart';
 
 class Attribute {
   Attribute(
-      {required String name,
-      int current = 1,
-      int max = 5,
-      String specialization = ""})
-      : this.name = name,
-        this.current = current,
-        this.max = max,
-        this.specialization = specialization;
+      {required this.name,
+      this.current = 1,
+      this.min = 0,
+      this.max = 5,
+      this.specialization = "",
+      this.description = ""});
   String name;
   int current;
+  int min;
   int max;
   String specialization;
+  String description;
 }
 
 List<Widget> makeIconRow(
@@ -109,6 +109,26 @@ class AttributeWidget extends StatelessWidget {
           children: row,
           mainAxisSize: MainAxisSize.min,
         ),
+        onTap: () {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return SimpleDialog(
+                  title: Text(attribute.name),
+                  children: [
+                    Text(attribute.description),
+                  ],
+                  // actions: <Widget>[
+                  //   TextButton(
+                  //     child: const Text('Approve'),
+                  //     onPressed: () {
+                  //       Navigator.of(context).pop();
+                  //     },
+                  //   ),
+                  // ],
+                );
+              }).then((value) => null);
+        },
       ),
     );
   }

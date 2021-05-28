@@ -181,7 +181,7 @@ class DisciplineDotWidget extends StatelessWidget {
               context: context,
               builder: (BuildContext context) {
                 return SimpleDialog(
-                  title: Text("Description"),
+                  title: Text(dot.name),
                   children: [
                     Text(
                       "Description",
@@ -257,7 +257,7 @@ class RitualWidget extends StatelessWidget {
             context: context,
             builder: (BuildContext context) {
               return SimpleDialog(
-                title: Text("Description"),
+                title: Text(_ritual.name),
                 children: [
                   Text(
                     "Description",

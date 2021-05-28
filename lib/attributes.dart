@@ -43,7 +43,7 @@ class AttributesSectionWidget extends ConsumerWidget {
 class PhysicalAttributesColumn {
   final header = "Physical";
 
-  var attributes = [
+  final List<Attribute> attributes = [
     Attribute(name: "Strength", current: 1),
     Attribute(
         name: "Dexterity", current: 5, specialization: "Lightning Reflexes"),
