@@ -5,9 +5,9 @@
  - [ ] Basic design
    - [x] UI, in a more or less finalized state
    - [x] Move attributes and skills into the same place
-   - [ ] Attributes and skills should display a pop-up with expanded information
+   - [x] Attributes and skills should display a pop-up with expanded information
    - [ ] There are alternatives to Humanity. Make them pickable.
-   - [ ] Disciplines, rituals and attributes should display their name, not placeholder on top of expanded information
+   - [x] Disciplines, rituals and attributes should display their name, not placeholder on top of expanded information
      - [ ] Disciplines
      - [ ] Rituals
      - [ ] Attributes
