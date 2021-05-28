@@ -8,10 +8,10 @@
    - [x] Attributes and skills should display a pop-up with expanded information
    - [ ] There are alternatives to Humanity. Make them pickable.
    - [x] Disciplines, rituals and attributes should display their name, not placeholder on top of expanded information
-     - [ ] Disciplines
-     - [ ] Rituals
-     - [ ] Attributes
-     - [ ] Merits and Flaws
+     - [x] Disciplines
+     - [x] Rituals
+     - [x] Attributes
+     - [x] Merits and Flaws
    - [ ] A theme should exist
      - [ ] Color theme
      - [ ] Android icon and app name

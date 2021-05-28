@@ -47,7 +47,7 @@ class MeritWidget extends ConsumerWidget {
             context: context,
             builder: (BuildContext context) {
               return SimpleDialog(
-                title: Text("Description"),
+                title: Text(_merit.name),
                 children: [
                   Text(
                     "Description",
