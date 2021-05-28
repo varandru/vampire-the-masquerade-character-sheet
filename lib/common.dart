@@ -32,7 +32,6 @@ final primaryInfoScaffold = MenuScaffold(
     body: ListView(
       children: [
         CommonCharacterInfoWidget(),
-        AttributesSectionWidget(),
         AdvantagesWidget(),
       ],
       shrinkWrap: true,
@@ -47,6 +46,7 @@ final abilitiesScaffold = MenuScaffold(
   name: "Abilities",
   body: ListView(
     children: [
+      AttributesSectionWidget(),
       AbilitiesSectionWidget(),
     ],
   ),
