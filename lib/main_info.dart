@@ -1,196 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:vampire_the_masquerade_character_sheet/defs.dart';
 
-final mainInfoProvider = StateProvider<MainInfo>((ref) => MainInfo());
+final mainInfoProvider = StateProvider<MainInfo>((ref) {
+  return MainInfo();
+});
+
+final mainInfoCharacterNameProvider = StateProvider<String>(
+    (ref) => ref.watch(mainInfoProvider).state.characterName);
+final mainInfoPlayerNameProvider = StateProvider<String>(
+    (ref) => ref.watch(mainInfoProvider).state.playerName);
+final mainInfoChronicleProvider =
+    StateProvider<String>((ref) => ref.watch(mainInfoProvider).state.chronicle);
+final mainInfoNatureProvider =
+    StateProvider<String>((ref) => ref.watch(mainInfoProvider).state.nature);
+final mainInfoDemeanorProvider =
+    StateProvider<String>((ref) => ref.watch(mainInfoProvider).state.demeanor);
+final mainInfoConceptProvider =
+    StateProvider<String>((ref) => ref.watch(mainInfoProvider).state.concept);
+final mainInfoClanProvider =
+    StateProvider<String>((ref) => ref.watch(mainInfoProvider).state.clan);
+final mainInfoGenerationProvider =
+    StateProvider<String>((ref) => ref.watch(mainInfoProvider).state.nature);
+final mainInfoSireProvider =
+    StateProvider<String>((ref) => ref.watch(mainInfoProvider).state.sire);
 
 class CommonCharacterInfoWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    final textStyle = Theme.of(context).textTheme.headline6;
-    final margin = const EdgeInsets.all(10.0);
-    final mainInfo = watch(mainInfoProvider);
     return Wrap(
       alignment: WrapAlignment.center,
       spacing: 0.0,
       runSpacing: 0.0,
       children: [
-        Container(
-          margin: margin,
-          child: Text(mainInfo.state.characterName, style: textStyle),
-        ),
-        Container(
-          margin: margin,
-          child: Text(mainInfo.state.playerName, style: textStyle),
-        ),
-        Container(
-          margin: margin,
-          child: Text(mainInfo.state.chronicle, style: textStyle),
-        ),
-        Container(
-          margin: margin,
-          child: Text(mainInfo.state.nature, style: textStyle),
-        ),
-        Container(
-          margin: margin,
-          child: Text(mainInfo.state.demeanor, style: textStyle),
-        ),
-        Container(
-          margin: margin,
-          child: Text(mainInfo.state.concept, style: textStyle),
-        ),
-        Container(
-          margin: margin,
-          child: Text(mainInfo.state.clan, style: textStyle),
-        ),
-        Container(
-          margin: margin,
-          child: Text(mainInfo.state.generation.toString() + "th",
-              style: textStyle),
-        ),
-        Container(
-          margin: margin,
-          child: Text(mainInfo.state.sire, style: textStyle),
-        ),
-      ],
-    );
-  }
-}
-
-class CommonCharacterInfoEditWidget extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    //  I don't get WTF is happening. I think, MainInfo is available outside
-    final mainInfo = watch(mainInfoProvider);
-    // final characterName = watch(characterNameProvider);
-    // final playerName = watch(playerNameProvider);
-    // final chronicle = watch(chronicleProvider);
-    // final nature = watch(natureProvider);
-    // final demeanor = watch(demeanorProvider);
-    // final concept = watch(conceptProvider);
-    // final clan = watch(clanProvider);
-    // final generation = watch(generationProvider);
-    // final sire = watch(sireProvider);
-
-    return Wrap(
-      alignment: WrapAlignment.center,
-      children: [
-        Flexible(
-          child: Column(
-            children: [
-              // character name
-              Flexible(
-                  child: TextField(
-                onChanged: (text) {
-                  mainInfo.state.setCharacterName(text);
-                },
-                decoration: InputDecoration(
-                  helperText: "Name",
-                  hintText: "Character Name",
-                ),
-              )),
-              // nature
-              Flexible(
-                  child: TextField(
-                onChanged: (text) {
-                  mainInfo.state.setPlayerName(text);
-                },
-                decoration: InputDecoration(
-                  helperText: "Player",
-                  hintText: "Player",
-                ),
-              )),
-              // clan
-              Flexible(
-                  child: TextField(
-                onChanged: (text) {
-                  mainInfo.state.setChronicle(text);
-                },
-                decoration: InputDecoration(
-                  helperText: "Chronicle",
-                  hintText: "Chronicle",
-                ),
-              )),
-            ],
-          ),
-        ),
-        Flexible(
-          child: Column(
-            children: [
-              // character name
-              Flexible(
-                  child: TextField(
-                onChanged: (text) {
-                  mainInfo.state.setNature(text);
-                },
-                decoration: InputDecoration(
-                  helperText: "Nature",
-                  hintText: "Nature",
-                ),
-              )),
-              // nature
-              Flexible(
-                  child: TextField(
-                onChanged: (text) {
-                  mainInfo.state.setDemeanor(text);
-                },
-                decoration: InputDecoration(
-                  helperText: "Demeanor",
-                  hintText: "Demeanor",
-                ),
-              )),
-              // clan
-              Flexible(
-                  child: TextField(
-                onChanged: (text) {
-                  mainInfo.state.setConcept(text);
-                },
-                decoration: InputDecoration(
-                  helperText: "Concept",
-                  hintText: "Concept",
-                ),
-              )),
-            ],
-          ),
-        ),
-        Flexible(
-          child: Column(
-            children: [
-              // clan
-              Flexible(
-                  child: TextField(
-                onChanged: (text) {
-                  mainInfo.state.setClan(text);
-                },
-                decoration: InputDecoration(
-                  helperText: "Clan",
-                  hintText: "Clan",
-                ),
-              )),
-              // generation
-              Flexible(
-                  child: TextField(
-                onChanged: (text) {
-                  mainInfo.state.setGeneration(int.parse(text));
-                },
-                decoration: InputDecoration(
-                  helperText: "Generation",
-                  hintText: "Generation",
-                ),
-              )),
-              // clan
-              Flexible(
-                  child: TextField(
-                onChanged: (text) {
-                  mainInfo.state.setSire(text);
-                },
-                decoration: InputDecoration(
-                  helperText: "Sire",
-                  hintText: "Sire",
-                ),
-              )),
-            ],
-          ),
-        ),
+        MainInfoWidget(mainInfoCharacterNameProvider),
+        MainInfoWidget(mainInfoPlayerNameProvider),
+        MainInfoWidget(mainInfoChronicleProvider),
+        MainInfoWidget(mainInfoNatureProvider),
+        MainInfoWidget(mainInfoDemeanorProvider),
+        MainInfoWidget(mainInfoConceptProvider),
+        MainInfoWidget(mainInfoClanProvider),
+        MainInfoWidget(mainInfoGenerationProvider),
+        MainInfoWidget(mainInfoSireProvider),
       ],
     );
   }

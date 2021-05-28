@@ -118,14 +118,6 @@ class AttributeWidget extends StatelessWidget {
                   children: [
                     Text(attribute.description),
                   ],
-                  // actions: <Widget>[
-                  //   TextButton(
-                  //     child: const Text('Approve'),
-                  //     onPressed: () {
-                  //       Navigator.of(context).pop();
-                  //     },
-                  //   ),
-                  // ],
                 );
               }).then((value) => null);
         },
@@ -151,6 +143,52 @@ class NoTitleCounterWidget extends StatelessWidget {
       children: row,
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    );
+  }
+}
+
+class MainInfoWidget extends ConsumerWidget {
+  MainInfoWidget(this._text);
+
+  StateProvider<String> _text;
+
+  @override
+  Widget build(BuildContext context, ScopedReader watch) {
+    final text = watch(_text);
+    return Container(
+      margin: EdgeInsets.all(10.0),
+      child: TextButton(
+        child: Text(
+          text.state,
+          style: Theme.of(context).textTheme.headline6,
+        ),
+        onPressed: () async {
+          TextEditingController _controller =
+              TextEditingController(text: text.state);
+          var string = await showDialog<String?>(
+              context: context,
+              builder: (context) => AlertDialog(
+                    content: TextField(
+                      controller: _controller,
+                    ),
+                    actions: [
+                      TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(_controller.text);
+                          },
+                          child: Text("Ok")),
+                      TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(Null);
+                          },
+                          child: Text("Cancel")),
+                    ],
+                  ));
+          if (string != null) {
+            context.read(_text).state = string;
+          }
+        },
+      ),
     );
   }
 }
