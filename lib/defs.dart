@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'common.dart';
+import 'package:get/get.dart';
+import 'main_info_logic.dart';
 
 class Attribute {
   Attribute(
@@ -31,23 +30,21 @@ List<Widget> makeIconRow(
   return row;
 }
 
-List<Widget> makeBloodPoolRow(
-    int current, int localMax, int max, BuildContext context) {
+List<Widget> makeBloodPoolRow(int current, int localMax, int max) {
   List<Widget> row = [];
+  final MostVariedController c = Get.find();
   for (int i = 0; i < current; i++) {
     row.add(IconButton(
       icon: Icon(Icons.add_box),
       iconSize: 20,
-      onPressed: () => context.read(bloodPoolProvider).state = i + 1,
+      onPressed: () => c.blood = RxInt(i + 1),
     ));
   }
   for (int i = current; i < localMax; i++) {
     row.add(IconButton(
       icon: Icon(Icons.check_box_outline_blank),
       iconSize: 20,
-      onPressed: () {
-        context.read(bloodPoolProvider).state = i + 1;
-      },
+      onPressed: () => c.blood = RxInt(i + 1),
     ));
   }
   for (int i = localMax; i < max; i++) {
@@ -60,20 +57,19 @@ List<Widget> makeBloodPoolRow(
 List<Widget> makeWillPowerRow(
     int current, int localMax, int max, BuildContext context) {
   List<Widget> row = [];
+  final MostVariedController c = Get.find();
   for (int i = 0; i < current; i++) {
     row.add(IconButton(
       icon: Icon(Icons.add_box),
       iconSize: 20,
-      onPressed: () => context.read(willpowerProvider).state = i + 1,
+      onPressed: () => c.will = RxInt(i + 1),
     ));
   }
   for (int i = current; i < localMax; i++) {
     row.add(IconButton(
       icon: Icon(Icons.check_box_outline_blank),
       iconSize: 20,
-      onPressed: () {
-        context.read(willpowerProvider).state = i + 1;
-      },
+      onPressed: () => c.will = RxInt(i + 1),
     ));
   }
   for (int i = localMax; i < max; i++) {
@@ -147,24 +143,26 @@ class NoTitleCounterWidget extends StatelessWidget {
   }
 }
 
-class MainInfoWidget extends ConsumerWidget {
-  MainInfoWidget(this._text);
+class MainInfoWidget extends StatelessWidget {
+  MainInfoWidget(this._type);
 
-  StateProvider<String> _text;
+  final MainInfoFieldType _type;
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final text = watch(_text);
+  Widget build(BuildContext context) {
+    final MainInfo controller = Get.find();
     return Container(
       margin: EdgeInsets.all(10.0),
       child: TextButton(
-        child: Text(
-          text.state,
-          style: Theme.of(context).textTheme.headline6,
+        child: Obx(
+          () => Text(
+            "${controller.getByType(_type)}",
+            style: Theme.of(context).textTheme.headline6,
+          ),
         ),
         onPressed: () async {
           TextEditingController _controller =
-              TextEditingController(text: text.state);
+              TextEditingController(text: "${controller.getByType(_type)}");
           var string = await showDialog<String?>(
               context: context,
               builder: (context) => AlertDialog(
@@ -174,18 +172,20 @@ class MainInfoWidget extends ConsumerWidget {
                     actions: [
                       TextButton(
                           onPressed: () {
+                            // TODO: Get Dialog
                             Navigator.of(context).pop(_controller.text);
                           },
                           child: Text("Ok")),
                       TextButton(
                           onPressed: () {
-                            Navigator.of(context).pop(Null);
+                            Navigator.of(context).pop(null);
                           },
                           child: Text("Cancel")),
                     ],
                   ));
           if (string != null) {
-            context.read(_text).state = string;
+            print("$string");
+            controller.setByType(_type, string);
           }
         },
       ),

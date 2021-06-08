@@ -1,8 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:vampire_the_masquerade_character_sheet/main_info_logic.dart';
 import 'dart:io';
 
 import 'abilities.dart';
@@ -14,73 +15,74 @@ import 'drawer_menu.dart';
 import 'main_info.dart';
 import 'attributes.dart';
 
-const headerText = "Header text goes here";
-
-final bloodPoolProvider = StateProvider((ref) => 0);
-final willpowerProvider = StateProvider((ref) => 0);
+// class MainInfoController extends GetxController {
+//   var blood = 0.obs;
+//   var willPower = 0.obs;
+// }
 
 // Основной виджет, пока что. На самом деле их несколько, но этот организует все
 // Рисует главный виджет, включает в себя файлы с разделами
-class VampireWidget extends ConsumerWidget {
-  Widget build(BuildContext context, ScopedReader watch) {
-    return MaterialApp(home: primaryInfoScaffold);
+class VampireWidget extends StatelessWidget {
+  Widget build(BuildContext context) {
+    Get.put(MainInfo());
+    Get.put(MostVariedController());
+    return GetMaterialApp(home: primaryInfoScaffold);
   }
 }
 
 final primaryInfoScaffold = MenuScaffold(
-    name: "Primary Information",
-    body: ListView(
-      children: [
-        CommonCharacterInfoWidget(),
-        AdvantagesWidget(),
-      ],
-      shrinkWrap: true,
-      primary: true,
-      // mainAxisAlignment: MainAxisAlignment.start,
-      // mainAxisSize: MainAxisSize.min,
-    ),
-    item: SelectedMenuItem.PrimaryInfo);
-
-// Abilities Menu
-final abilitiesScaffold = MenuScaffold(
-  name: "Abilities",
+  name: "Primary Information",
   body: ListView(
     children: [
-      AttributesSectionWidget(),
-      AbilitiesSectionWidget(),
+      CommonCharacterInfoWidget(),
+      // AdvantagesWidget(),
     ],
     shrinkWrap: true,
     primary: true,
   ),
-  item: SelectedMenuItem.Abilities,
+  item: SelectedMenuItem.PrimaryInfo,
 );
 
-// Disciplines Menu
-final disciplinesScaffold = MenuScaffold(
-  name: "Disciplines",
-  body: ListView(
-    children: [
-      DisciplinesSectionWidget(),
-    ],
-  ),
-  item: SelectedMenuItem.Disciplines,
-);
+// // Abilities Menu
+// final abilitiesScaffold = MenuScaffold(
+//   name: "Abilities",
+//   body: ListView(
+//     children: [
+//       AttributesSectionWidget(),
+//       AbilitiesSectionWidget(),
+//     ],
+//     shrinkWrap: true,
+//     primary: true,
+//   ),
+//   item: SelectedMenuItem.Abilities,
+// );
 
-// Disciplines Menu
-final meritsFlawsScaffold = MenuScaffold(
-  name: "Merits & Flaws",
-  body: MeritsAndFlawsSectionWidget(),
-  item: SelectedMenuItem.Disciplines,
-);
+// // Disciplines Menu
+// final disciplinesScaffold = MenuScaffold(
+//   name: "Disciplines",
+//   body: ListView(
+//     children: [
+//       DisciplinesSectionWidget(),
+//     ],
+//   ),
+//   item: SelectedMenuItem.Disciplines,
+// );
 
-// Disciplines Menu
-final weaponsArmorScaffold = MenuScaffold(
-  name: "Weapons & Armor",
-  body: WeaponsAndArmorSectionWidget(),
-  item: SelectedMenuItem.WeaponsArmor,
-);
+// // Disciplines Menu
+// final meritsFlawsScaffold = MenuScaffold(
+//   name: "Merits & Flaws",
+//   body: MeritsAndFlawsSectionWidget(),
+//   item: SelectedMenuItem.Disciplines,
+// );
 
-class MenuScaffold extends ConsumerWidget {
+// // Disciplines Menu
+// final weaponsArmorScaffold = MenuScaffold(
+//   name: "Weapons & Armor",
+//   body: WeaponsAndArmorSectionWidget(),
+//   item: SelectedMenuItem.WeaponsArmor,
+// );
+
+class MenuScaffold extends StatelessWidget {
   MenuScaffold(
       {required String name,
       required Widget body,
@@ -93,57 +95,57 @@ class MenuScaffold extends ConsumerWidget {
   final Widget _body;
   final SelectedMenuItem _item;
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(_name),
-        actions: [
-          IconButton(
-            onPressed: () {
-              getApplicationDocumentsDirectory().then((value) {
-                File file = File(value.path + '/saved.json');
+        // actions: [
+        // IconButton(
+        //   onPressed: () {
+        //     getApplicationDocumentsDirectory().then((value) {
+        //       File file = File(value.path + '/saved.json');
 
-                if (!file.existsSync()) {
-                  context.read(bloodPoolProvider).state = 0;
-                  context.read(willpowerProvider).state = 0;
-                } else {
-                  Map<String, dynamic> json =
-                      jsonDecode(file.readAsStringSync());
+        //       if (!file.existsSync()) {
+        //         context.read(bloodPoolProvider).state = 0;
+        //         context.read(willpowerProvider).state = 0;
+        //       } else {
+        //         Map<String, dynamic> json =
+        //             jsonDecode(file.readAsStringSync());
 
-                  final blood = json["blood"];
-                  final will = json["will"];
+        //         final blood = json["blood"];
+        //         final will = json["will"];
 
-                  context.read(bloodPoolProvider).state = blood;
-                  context.read(willpowerProvider).state = will;
-                }
-              });
-            },
-            icon: Icon(Icons.read_more),
-          ),
-          IconButton(
-            onPressed: () {
-              getApplicationDocumentsDirectory().then((value) {
-                File file = File(value.path + '/saved.json');
+        //         context.read(bloodPoolProvider).state = blood;
+        //         context.read(willpowerProvider).state = will;
+        //       }
+        //     });
+        //   },
+        //   icon: Icon(Icons.read_more),
+        // ),
+        // IconButton(
+        //   onPressed: () {
+        //     getApplicationDocumentsDirectory().then((value) {
+        //       File file = File(value.path + '/saved.json');
 
-                Map<String, dynamic> json = Map();
+        //       Map<String, dynamic> json = Map();
 
-                final blood = context.read(bloodPoolProvider).state;
-                final will = context.read(willpowerProvider).state;
+        //       final blood = context.read(bloodPoolProvider).state;
+        //       final will = context.read(willpowerProvider).state;
 
-                json["blood"] = blood;
-                json["will"] = will;
+        //       json["blood"] = blood;
+        //       json["will"] = will;
 
-                file.writeAsStringSync(jsonEncode(json));
-              });
-            },
-            icon: Icon(Icons.save),
-          ),
-        ],
+        //       file.writeAsStringSync(jsonEncode(json));
+        //     });
+        //   },
+        //   icon: Icon(Icons.save),
+        // ),
+        // ],
       ),
       body: _body,
-      drawer: Drawer(
-        child: DrawerMenu(_item),
-      ),
+      // drawer: Drawer(
+      //   child: DrawerMenu(_item),
+      // ),
     );
   }
 }

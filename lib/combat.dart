@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 enum ConcealmentType { Pocket, Jacket, Trenchcoat, NotConcealed }
 
@@ -126,9 +125,9 @@ TableRow buildArmorRow(Armor armor) {
   ]);
 }
 
-class WeaponsAndArmorSectionWidget extends ConsumerWidget {
+class WeaponsAndArmorSectionWidget extends StatelessWidget {
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
+  Widget build(BuildContext context) {
     List<TableRow> armorRows = [];
     List<TableRow> meleeRows = [];
     List<TableRow> rangedRows = [];
