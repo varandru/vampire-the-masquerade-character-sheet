@@ -130,7 +130,21 @@ class MainInfo extends GetxController {
 /// Blood, willpower, experience controller. I don't have a better name
 class MostVariedController extends GetxController {
   var blood = 0.obs;
-  var bloodMax = 0.obs;
+  var bloodMax = 20.obs;
   var will = 0.obs;
-  var willMax = 0.obs;
+
+  var xp = 0.obs;
+}
+
+class VirtuesController extends GetxController {
+  var consience = 2.obs;
+  var selfControl = 3.obs;
+  var courage = 5.obs;
+
+  var additionalHumanity = 0.obs;
+  var additionalWillpower = 5.obs;
+
+  int get humanity =>
+      consience.value + selfControl.value + additionalHumanity.value;
+  int get willpower => courage.value + additionalWillpower.value;
 }

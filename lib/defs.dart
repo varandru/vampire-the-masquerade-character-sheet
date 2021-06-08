@@ -30,55 +30,6 @@ List<Widget> makeIconRow(
   return row;
 }
 
-List<Widget> makeBloodPoolRow(int current, int localMax, int max) {
-  List<Widget> row = [];
-  final MostVariedController c = Get.find();
-  for (int i = 0; i < current; i++) {
-    row.add(IconButton(
-      icon: Icon(Icons.add_box),
-      iconSize: 20,
-      onPressed: () => c.blood = RxInt(i + 1),
-    ));
-  }
-  for (int i = current; i < localMax; i++) {
-    row.add(IconButton(
-      icon: Icon(Icons.check_box_outline_blank),
-      iconSize: 20,
-      onPressed: () => c.blood = RxInt(i + 1),
-    ));
-  }
-  for (int i = localMax; i < max; i++) {
-    row.add(Icon(Icons.select_all, size: 20));
-  }
-
-  return row;
-}
-
-List<Widget> makeWillPowerRow(
-    int current, int localMax, int max, BuildContext context) {
-  List<Widget> row = [];
-  final MostVariedController c = Get.find();
-  for (int i = 0; i < current; i++) {
-    row.add(IconButton(
-      icon: Icon(Icons.add_box),
-      iconSize: 20,
-      onPressed: () => c.will = RxInt(i + 1),
-    ));
-  }
-  for (int i = current; i < localMax; i++) {
-    row.add(IconButton(
-      icon: Icon(Icons.check_box_outline_blank),
-      iconSize: 20,
-      onPressed: () => c.will = RxInt(i + 1),
-    ));
-  }
-  for (int i = localMax; i < max; i++) {
-    row.add(Icon(Icons.select_all, size: 20));
-  }
-
-  return row;
-}
-
 class AttributeWidget extends StatelessWidget {
   AttributeWidget({Key? key, required Attribute attribute})
       : this.attribute = attribute,
@@ -132,11 +83,9 @@ class NoTitleCounterWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> row =
-        makeIconRow(_current, _max, Icons.circle, Icons.circle_outlined);
-
     return Row(
-      children: row,
+      children:
+          makeIconRow(_current, _max, Icons.circle, Icons.circle_outlined),
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
     );
