@@ -49,7 +49,9 @@ class VampireCharacter extends GetxController {
           // else just use the defaults
         });
       } else if (GetPlatform.isWeb) {
-        // Get Web path to file
+        // Web can't really store local files. Being in the, y'know, Web
+        // But I use Chrome for debugging, so I kinda need it to not throw
+        print("You are launching in Web. File operations are not available");
       }
     } else {
       // I haven't handled this platform yet. It may or may not support local file access
@@ -63,27 +65,10 @@ class VampireCharacter extends GetxController {
       getApplicationDocumentsDirectory().then((value) {
         io.File file = io.File(value.path + '/' + _characterFileName);
         Map<String, dynamic> json = _saveFromControllers();
-
-        //! Debug
-        for (var entry in json.values) {
-          if (entry.runtimeType == Map) {
-            for (var field in entry.values) {
-              print("   $field");
-            }
-          } else {
-            print("$entry");
-          }
-        }
-
-        String encoded = jsonEncode(json);
-
-        //! Debug
-        print("Encoded json: $encoded");
-
-        file.writeAsStringSync(encoded);
+        file.writeAsStringSync(jsonEncode(json));
       });
     } else if (GetPlatform.isWeb) {
-      throw ("Web can't store files. I may have ");
+      throw ("Web can't store files");
     } else {
       // I haven't handled this platform yet. It may or may not support local file access
       throw ("This platform is not supported in file handling yet");
