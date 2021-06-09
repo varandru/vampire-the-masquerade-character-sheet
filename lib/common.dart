@@ -1,11 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:path_provider/path_provider.dart';
-import 'main_info.dart';
-import 'dart:io';
 
+import 'character.dart';
 import 'advanatages_widget.dart';
 import 'merits_and_flaws.dart';
 import 'disciplines.dart';
@@ -17,12 +13,10 @@ import 'attributes.dart';
 // Рисует главный виджет, включает в себя файлы с разделами
 class VampireWidget extends StatelessWidget {
   Widget build(BuildContext context) {
-    Get.put(MainInfo());
-    Get.put(MostVariedController());
-    Get.put(VirtuesController());
-    Get.put(AttributesController());
-    final AttributesController ac = Get.find();
-    ac.initializeFromConstants();
+    final VampireCharacter vc = Get.put(VampireCharacter());
+    vc.initialize();
+    vc.load();
+
     return GetMaterialApp(
       home: MenuScaffold(
         name: "Primary Information",
@@ -80,49 +74,15 @@ class MenuScaffold extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
-              getApplicationDocumentsDirectory().then((value) {
-                File file = File(value.path + '/saved.json');
-                final MostVariedController c = Get.find();
-                final VirtuesController v = Get.find();
-                if (!file.existsSync()) {
-                  c.blood.value = 0;
-                  c.bloodMax.value = 20;
-                  c.will.value = 0;
-                  v.additionalWillpower.value = 5;
-                } else {
-                  Map<String, dynamic> json =
-                      jsonDecode(file.readAsStringSync());
-
-                  final blood = json["blood"];
-                  final will = json["will"];
-                  final bloodMax = json["blood_max"];
-                  final willMax = json["will_max"];
-
-                  c.blood.value = blood;
-                  c.bloodMax.value = bloodMax;
-                  c.will.value = will;
-                  v.additionalWillpower.value = willMax;
-                }
-              });
+              final VampireCharacter vc = Get.find();
+              vc.load();
             },
             icon: Icon(Icons.read_more),
           ),
           IconButton(
             onPressed: () {
-              getApplicationDocumentsDirectory().then((value) {
-                File file = File(value.path + '/saved.json');
-
-                Map<String, dynamic> json = Map();
-                final MostVariedController c = Get.find();
-                final VirtuesController v = Get.find();
-
-                json["blood"] = c.blood.value;
-                json["blood_max"] = c.bloodMax.value;
-                json["will"] = c.will.value;
-                json["will_max"] = v.additionalWillpower.value;
-
-                file.writeAsStringSync(jsonEncode(json));
-              });
+              final VampireCharacter vc = Get.find();
+              vc.save();
             },
             icon: Icon(Icons.save),
           ),
