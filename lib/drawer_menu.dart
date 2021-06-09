@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'abilities_widget.dart';
 import 'advanatages_widget.dart';
 import 'attributes_widget.dart';
 import 'combat.dart';
-import 'common.dart';
+import 'vampire_character_widget.dart';
 import 'main_info_widget.dart';
 
 enum SelectedMenuItem {
@@ -69,7 +70,7 @@ class DrawerMenu extends Drawer {
                   body: ListView(
                     children: [
                       AttributesSectionWidget(),
-                      // AbilitiesSectionWidget(),
+                      AbilitiesSectionWidget(),
                     ],
                     shrinkWrap: true,
                     primary: true,

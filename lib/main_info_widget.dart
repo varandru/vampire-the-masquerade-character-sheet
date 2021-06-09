@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'defs.dart';
 import 'main_info.dart';
 
 class CommonCharacterInfoWidget extends StatelessWidget {
@@ -46,28 +45,24 @@ class MainInfoWidget extends StatelessWidget {
         onPressed: () async {
           TextEditingController _controller =
               TextEditingController(text: "${controller.getByType(_type)}");
-          var string = await showDialog<String?>(
-              context: context,
-              builder: (context) => AlertDialog(
-                    content: TextField(
-                      controller: _controller,
-                    ),
-                    actions: [
-                      TextButton(
-                          onPressed: () {
-                            // TODO: Get Dialog
-                            Navigator.of(context).pop(_controller.text);
-                          },
-                          child: Text("Ok")),
-                      TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop(null);
-                          },
-                          child: Text("Cancel")),
-                    ],
-                  ));
+          var string = await Get.dialog<String?>(AlertDialog(
+            content: TextField(
+              controller: _controller,
+            ),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Get.back(result: _controller.text);
+                  },
+                  child: Text("Ok")),
+              TextButton(
+                  onPressed: () {
+                    Get.back();
+                  },
+                  child: Text("Cancel")),
+            ],
+          ));
           if (string != null) {
-            print("$string");
             controller.setByType(_type, string);
           }
         },

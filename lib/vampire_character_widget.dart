@@ -34,8 +34,6 @@ class VampireWidget extends StatelessWidget {
   }
 }
 
-// Abilities Menu
-
 // // Disciplines Menu
 // final disciplinesScaffold = MenuScaffold(
 //   name: "Disciplines",
@@ -47,7 +45,7 @@ class VampireWidget extends StatelessWidget {
 //   item: SelectedMenuItem.Disciplines,
 // );
 
-// // Disciplines Menu
+// // Merits & Flaws Menu
 // final meritsFlawsScaffold = MenuScaffold(
 //   name: "Merits & Flaws",
 //   body: MeritsAndFlawsSectionWidget(),

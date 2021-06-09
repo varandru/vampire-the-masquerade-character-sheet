@@ -1,12 +1,14 @@
 import 'package:get/get.dart';
+import 'common_logic.dart';
 
 enum AttributeColumnType { Physical, Mental, Social }
 
-// TODO: it builds. Carry on from here
 class AttributesController extends GetxController {
-  RxList<Attribute> physicalAttributes = RxList<Attribute>();
-  RxList<Attribute> socialAttributes = RxList<Attribute>();
-  RxList<Attribute> mentalAttributes = RxList<Attribute>();
+  var attributeListFile = 'attributes.json';
+
+  RxList<ComplexAbility> physicalAttributes = RxList<ComplexAbility>();
+  RxList<ComplexAbility> socialAttributes = RxList<ComplexAbility>();
+  RxList<ComplexAbility> mentalAttributes = RxList<ComplexAbility>();
 
   final Map<AttributeColumnType, String> _headers = {
     AttributeColumnType.Physical: 'Physical',
@@ -22,7 +24,7 @@ class AttributesController extends GetxController {
 
   String getHeaderByType(AttributeColumnType type) => _headers[type]!;
 
-  RxList<Attribute> getColumnByType(AttributeColumnType type) {
+  List<ComplexAbility> getColumnByType(AttributeColumnType type) {
     switch (type) {
       case AttributeColumnType.Physical:
         return physicalAttributes;
@@ -34,30 +36,15 @@ class AttributesController extends GetxController {
   }
 }
 
-class Attribute {
-  Attribute(
-      {required this.name,
-      this.current = 1,
-      this.min = 0,
-      this.max = 5,
-      this.specialization = "",
-      this.description = ""});
-  String name;
-  int current;
-  int min;
-  int max;
-  String specialization;
-  String description;
-}
-
+//CRUTCH: constants for debugging and web
 class PhysicalAttributesColumn {
   final header = "Physical";
 
-  final List<Attribute> attributes = [
-    Attribute(name: "Strength", current: 1),
-    Attribute(
+  final List<ComplexAbility> attributes = [
+    ComplexAbility(name: "Strength", current: 1),
+    ComplexAbility(
         name: "Dexterity", current: 5, specialization: "Lightning Reflexes"),
-    Attribute(name: "Stamina", current: 2),
+    ComplexAbility(name: "Stamina", current: 2),
   ];
 }
 
@@ -65,9 +52,9 @@ class SocialAttributesColumn {
   final header = "Social";
 
   var attributes = [
-    Attribute(name: "Charisma", current: 1),
-    Attribute(name: "Manipulation", current: 1),
-    Attribute(name: "Appearance", current: 4),
+    ComplexAbility(name: "Charisma", current: 1),
+    ComplexAbility(name: "Manipulation", current: 1),
+    ComplexAbility(name: "Appearance", current: 4),
   ];
 }
 
@@ -75,11 +62,11 @@ class MentalAttributesColumn {
   final header = "Mental";
 
   var attributes = [
-    Attribute(name: "Perception", current: 1),
-    Attribute(
+    ComplexAbility(name: "Perception", current: 1),
+    ComplexAbility(
         name: "Intelligence",
         current: 5,
         specialization: "Analytical Thinking"),
-    Attribute(name: "Wits", current: 4, specialization: "Adapt to others")
+    ComplexAbility(name: "Wits", current: 4, specialization: "Adapt to others")
   ];
 }

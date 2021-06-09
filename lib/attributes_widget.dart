@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'attributes.dart';
-import 'defs.dart';
+import 'common_logic.dart';
+import 'common_widget.dart';
 
 // Как выглядит этот виджет: Общий заголовок, под ним три колонки
 // У каждой колонки есть заголовок и три атрибута
@@ -46,56 +47,13 @@ class AttributesColumnWidget extends StatelessWidget {
       ),
     ];
     for (var attr in ac.getColumnByType(type)) {
-      columns.add(AttributeWidget(attribute: attr));
+      columns.add(ComplexAbilityWidget(attribute: attr));
     }
 
     // Attribute column
     return Column(
       children: columns,
       mainAxisSize: MainAxisSize.min,
-    );
-  }
-}
-
-class AttributeWidget extends StatelessWidget {
-  AttributeWidget({Key? key, required Attribute attribute})
-      : this.attribute = attribute,
-        super(key: key);
-
-  final Attribute attribute;
-
-  @override
-  Widget build(BuildContext context) {
-    List<Widget> row = makeIconRow(
-        attribute.current, attribute.max, Icons.circle, Icons.circle_outlined);
-    final header = Text(
-      attribute.name,
-      overflow: TextOverflow.fade,
-      softWrap: false,
-    );
-
-    return Container(
-      constraints: BoxConstraints(maxWidth: 500),
-      child: ListTile(
-        title: header,
-        subtitle: Text(attribute.specialization),
-        trailing: Row(
-          children: row,
-          mainAxisSize: MainAxisSize.min,
-        ),
-        onTap: () {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return SimpleDialog(
-                  title: Text(attribute.name),
-                  children: [
-                    Text(attribute.description),
-                  ],
-                );
-              }).then((value) => null);
-        },
-      ),
     );
   }
 }

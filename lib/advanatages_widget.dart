@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'attributes.dart';
-import 'attributes_widget.dart';
-import 'defs.dart';
+import 'common_widget.dart';
+import 'common_logic.dart';
 import 'main_info.dart';
 
 const maxBloodCount = 20;
@@ -16,11 +15,11 @@ class BackgroundColumnWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String header = "Backgrounds";
-    List<Attribute> attributes = [
-      Attribute(name: "Mentor", current: 2),
-      Attribute(name: "Herd", current: 1),
-      Attribute(name: "Resources", current: 2),
-      Attribute(name: "Generation", current: 3),
+    List<ComplexAbility> attributes = [
+      ComplexAbility(name: "Mentor", current: 2),
+      ComplexAbility(name: "Herd", current: 1),
+      ComplexAbility(name: "Resources", current: 2),
+      ComplexAbility(name: "Generation", current: 3),
     ];
 
     List<Widget> column = [
@@ -31,7 +30,7 @@ class BackgroundColumnWidget extends StatelessWidget {
       ),
     ];
     for (var attr in attributes) {
-      column.add(AttributeWidget(attribute: attr));
+      column.add(ComplexAbilityWidget(attribute: attr));
     }
 
     return Column(
@@ -45,10 +44,10 @@ class VirtuesColumnWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String header = "Virtues";
-    List<Attribute> attributes = [
-      Attribute(name: "Conscience", current: 2),
-      Attribute(name: "Self-Control", current: 3),
-      Attribute(name: "Courage", current: 5),
+    List<ComplexAbility> attributes = [
+      ComplexAbility(name: "Conscience", current: 2),
+      ComplexAbility(name: "Self-Control", current: 3),
+      ComplexAbility(name: "Courage", current: 5),
     ];
 
     List<Widget> column = [
@@ -59,7 +58,7 @@ class VirtuesColumnWidget extends StatelessWidget {
       ),
     ];
     for (var attr in attributes) {
-      column.add(AttributeWidget(attribute: attr));
+      column.add(ComplexAbilityWidget(attribute: attr));
     }
 
     return Column(children: column);
@@ -93,7 +92,6 @@ class SummarizedInfoWidget extends StatelessWidget {
 
     List<Widget> elements = [];
 
-    // TODO: humanity logic, huh
     final MostVariedController mvc = Get.find();
     final VirtuesController vc = Get.find();
 

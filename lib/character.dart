@@ -3,15 +3,18 @@ import 'dart:io' as io;
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'abilities.dart';
 import 'attributes.dart';
 import 'main_info.dart';
 
 /// Controller for the whole character. Handles saving and loading data from files, and, possibly, any other character-wide operations
 class VampireCharacter extends GetxController {
-  late MainInfo mainInfo;
-  late AttributesController attributesController;
-  late MostVariedController mostVariedController;
-  late VirtuesController virtuesController;
+  // Comments mean: can save/can load. Not ++ means I'm not done
+  late MostVariedController mostVariedController; // ++
+  late VirtuesController virtuesController; // ++
+  late MainInfo mainInfo; // ++
+  late AttributesController attributesController; // --
+  late AbilitiesController abilitiesController; // --
 
   final String _characterFileName = "character.json";
 
@@ -20,6 +23,7 @@ class VampireCharacter extends GetxController {
     virtuesController = Get.put(VirtuesController());
     mainInfo = Get.put(MainInfo());
     attributesController = Get.put(AttributesController());
+    abilitiesController = Get.put(AbilitiesController());
   }
 
   void _loadToControllers(Map<String, dynamic> json) {
@@ -52,6 +56,8 @@ class VampireCharacter extends GetxController {
         // Web can't really store local files. Being in the, y'know, Web
         // But I use Chrome for debugging, so I kinda need it to not throw
         print("You are launching in Web. File operations are not available");
+        attributesController.initializeFromConstants();
+        abilitiesController.initializeFromConstants();
       }
     } else {
       // I haven't handled this platform yet. It may or may not support local file access
