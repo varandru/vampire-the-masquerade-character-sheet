@@ -1,0 +1,154 @@
+{
+  "locale": "en-US",
+  "attribute_names": {
+    "physical": "Physical",
+    "social": "Social",
+    "mental": "Mental"
+  },
+  "level_prefixes": [
+    {
+      "level": 1,
+      "prefix": "Poor"
+    },
+    {
+      "level": 2,
+      "prefix": "Average"
+    },
+    {
+      "level": 3,
+      "prefix": "Good"
+    },
+    {
+      "level": 4,
+      "prefix": "Exceptional"
+    },
+    {
+      "level": 5,
+      "prefix": "Outstanding"
+    }
+  ],
+  "physical": [
+    {
+      "name": "Strength",
+      "specialization": [
+        "Never Lets Go",
+        "Powerful Arms",
+        "Reserves of Strength",
+        "Vicious"
+      ],
+      "levels": [
+        "You can lift 40 lbs (about 20  kgs).",
+        "You can lift 100 lbs (close to 50 kgs).",
+        "You can lift 250 lbs (a little over 100 kgs).",
+        "You can lift 400 lbs (close to 200 kgs).",
+        "You can lift 650 lbs (nearly 300 kgs) and crush skulls like grapes."
+      ],
+      "description": "Strength is the raw, brute power of a character. It governs how much weight a character can lift, how much he can physically push, and how hard he can hit another character or object. The Strength Trait is added to a character’s damage dice pool when he hits his opponent in hand-to-hand combat. It is also used when a character wishes to break, lift, or carry something, as well as when a character tries to jump a distance."
+    },
+    {
+      "name": "Dexterity",
+      "specialization": [
+        "Precise",
+        "Swift",
+        "Feline Grace",
+        "Lightning Reflexes"
+      ],
+      "levels": [
+        "You are clumsy and awkward. Put that gun down before you hurt yourself.",
+        "You’re no clod, but you’re no ballerina, either.",
+        "You possess some degree of athletic potential.",
+        "You could be an acrobat if you wished.",
+        "Your movements are liquid and hypnotic — almost superhuman."
+      ],
+      "description": "The Dexterity Attribute measures a character’s general physical prowess. It encompasses the character’s speed, agility, and overall quickness, as well as indicating the character’s ability to manipulate objects with control and precision. Also included under Dexterity’s heading are hand-eye coordination, reflexes, and bodily grace."
+    },
+    {
+      "name": "Stamina",
+      "specialization": [
+        "Tireless",
+        "Determined",
+        "Tough as Nails",
+        "Vigorous"
+      ],
+      "levels": [
+        "You bruise in a stiff wind",
+        "You are moderately healthy and can take a punch or two.",
+        "You are in good shape and rarely fall ill.",
+        "You can run — and perhaps win — any marathon you choose.",
+        "Your constitution is truly herculean."
+      ],
+      "description": "The Stamina Trait reflects a character’s health, toughness, and resilience. It indicates how long a character can exert herself and how much punishment she can withstand before suffering physical trauma. Stamina also includes a bit of psychic fortitude, indicating a character’s grit and tenacity."
+    }
+  ],
+  "social": [
+    {
+      "name": "Charisma",
+      "specialization": [
+        "Graceful",
+        "Smooth Talker",
+        "Forceful",
+        "Urbane",
+        "Witty",
+        "Eloquent",
+        "Hustler"
+      ],
+      "description": ""
+    },
+    {
+      "name": "Manipulation",
+      "specialization": [
+        "Persuasive",
+        "Seductive",
+        "Well-Reasoned",
+        "Misdirection",
+        "Conjurer of “Facts”"
+      ],
+      "description": ""
+    },
+    {
+      "name": "Appearance",
+      "specialization": [
+        "Unconventional Looks",
+        "Photogenic",
+        "Fashion Sense",
+        "Unforgettable Face",
+        "Memorable Pose"
+      ],
+      "description": ""
+    }
+  ],
+  "mental": [
+    {
+      "name": "Perception",
+      "specialization": [
+        "Attentive",
+        "Insightful",
+        "Careful",
+        "Discerning",
+        "Tactical"
+      ],
+      "description": ""
+    },
+    {
+      "name": "Intelligence",
+      "specialization": [
+        "Book Knowledge",
+        "Creative",
+        "Analytical",
+        "Problem Solver",
+        "Subject Authority"
+      ],
+      "description": ""
+    },
+    {
+      "name": "Wits",
+      "specialization": [
+        "Getting the Jump on Others",
+        "Witty Bon Mots",
+        "Changes in Strategy",
+        "Ambushes"
+      ],
+      "description": ""
+    }
+  ]
+}

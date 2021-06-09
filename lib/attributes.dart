@@ -4,7 +4,7 @@ import 'common_logic.dart';
 enum AttributeColumnType { Physical, Mental, Social }
 
 class AttributesController extends GetxController {
-  var attributeListFile = 'attributes.json';
+  final attributeListFile = 'default_attributes_en_US.json';
 
   RxList<ComplexAbility> physicalAttributes = RxList<ComplexAbility>();
   RxList<ComplexAbility> socialAttributes = RxList<ComplexAbility>();
@@ -33,6 +33,33 @@ class AttributesController extends GetxController {
       case AttributeColumnType.Social:
         return socialAttributes;
     }
+  }
+
+  // TODO: loading from dictionary, filling attributes with info.
+  // Also, not here. App should move the assets with defaults, including dictionaries,
+  // to it's working folder. I guess, it's done on installation.
+  // Assets are pregens, not real files to work with
+  void load(Map<String, dynamic> json, AttributeDictionary dictionary) {}
+
+  Map<String, dynamic> save() {
+    Map<String, dynamic> json = Map();
+    json["physical"] = _getAttributeListByType(AttributeColumnType.Physical);
+    json["mental"] = _getAttributeListByType(AttributeColumnType.Mental);
+    json["social"] = _getAttributeListByType(AttributeColumnType.Social);
+    return json;
+  }
+
+  List<Map<String, dynamic>> _getAttributeListByType(AttributeColumnType type) {
+    var column = getColumnByType(type);
+    List<Map<String, dynamic>> shortAttributes = [];
+    for (var attribute in column) {
+      Map<String, dynamic> attr = Map();
+      attr["name"] = attribute.name;
+      attr["current"] = attribute.current;
+      attr["specialization"] = attribute.specialization;
+      shortAttributes.add(attr);
+    }
+    return shortAttributes;
   }
 }
 
@@ -69,4 +96,90 @@ class MentalAttributesColumn {
         specialization: "Analytical Thinking"),
     ComplexAbility(name: "Wits", current: 4, specialization: "Adapt to others")
   ];
+}
+
+class AttributeDictionaryEntry {
+  String name = "";
+  List<String> specializations = [];
+  List<String> level = [];
+  String? description;
+
+  bool loadFromJson(Map<String, dynamic> json) {
+    if (json["name"] == null) return false;
+    name = json["name"];
+    if (json["specialization"] != null) {
+      for (String specialization in json["specialization"]) {
+        specializations.add(specialization);
+      }
+    }
+    if (json["levels"] != null) {
+      for (String levelDesc in json["levels"]) {
+        level.add(levelDesc);
+      }
+    }
+    description = json["description"];
+    return true;
+  }
+}
+
+class AttributeDictionary {
+  List<AttributeDictionaryEntry> physical = [];
+  List<AttributeDictionaryEntry> social = [];
+  List<AttributeDictionaryEntry> mental = [];
+
+  String physicalAttributesName = "Physical";
+  String socialAttributesName = "Social";
+  String mentalAttributesName = "Mental";
+
+  // Attributes will work in the same way, with the same schema
+  Map<int, String> levelPrefixes = Map();
+
+  void load(Map<String, dynamic> json) {
+    // 1. Get locale, not done at all
+
+    // 2. Get level prefixes
+    if (json["level_prefixes"] != null && json["level_prefixes"] is List) {
+      for (var prefix in json["level_prefixes"]) {
+        levelPrefixes[prefix["level"]] = prefix["prefix"];
+      }
+    }
+    // 3. Get attribute categories
+    if (json["attribute_names"] != null) {
+      physicalAttributesName = json["physical"];
+      socialAttributesName = json["social"];
+      mentalAttributesName = json["mental"];
+    }
+
+    // 4. Get physical attributes
+    if (json["physical"] != null && json["physical"] is List) {
+      for (var attribute in json["physical"]) {
+        physical.add(_getAttributeFromJson(attribute));
+      }
+    }
+    // 5. Get social attributes
+    if (json["social"] != null && json["social"] is List) {
+      for (var attribute in json["social"]) {
+        social.add(_getAttributeFromJson(attribute));
+      }
+    }
+    // 6. Get mental attributes
+    if (json["mental"] != null && json["mental"] is List) {
+      for (var attribute in json["mental"]) {
+        mental.add(_getAttributeFromJson(attribute));
+      }
+    }
+  }
+
+  AttributeDictionaryEntry _getAttributeFromJson(
+      Map<String, dynamic> attribute) {
+    // TODO: schema checking. On entry as well
+    AttributeDictionaryEntry entry = AttributeDictionaryEntry();
+    entry.name = attribute["name"];
+    // Does this actually work?
+    entry.specializations = attribute["specialization"] as List<String>;
+    entry.level = attribute["levels"] as List<String>;
+    entry.description = attribute["description"];
+
+    return entry;
+  }
 }

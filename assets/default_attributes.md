@@ -24,10 +24,10 @@ These go in front of levels. Can be empty, but the field `level_prefixes` must b
 
 * `name` and `specialization` are mandatory fields. The rest can be omitted.
 * `specialization` can be empty
-* `levels.level` must be contigous. `max_level` goes up to the maximum level in it.
+
 * As long as they are available, prefixes will be used in levels.
 
-TODO: probably, only descriptions are neccessary.
+**TODO**: probably, only level descriptions are neccessary.
 
 
 ```json
@@ -38,12 +38,8 @@ TODO: probably, only descriptions are neccessary.
         "Specialization 1",
         "Specialization 2"
       ],
-      "max_level": 1,
       "levels": [
-        {
-          "level": 1,
-          "description": "You can lift 40 lbs (about 20  kgs)."
-        }
+        "You can lift 40 lbs (about 20  kgs)."
       ],
       "description": "Descriptions go here"
     }
