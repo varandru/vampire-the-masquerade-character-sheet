@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
-import 'common.dart';
+import 'package:get/get.dart';
+import 'abilities_widget.dart';
+import 'advanatages_widget.dart';
+import 'attributes_widget.dart';
+import 'combat.dart';
+import 'vampire_character_widget.dart';
+import 'main_info_widget.dart';
 
 enum SelectedMenuItem {
   PrimaryInfo,
@@ -34,10 +40,20 @@ class DrawerMenu extends Drawer {
                 ? Theme.of(context).colorScheme.primary
                 : Theme.of(context).colorScheme.onPrimary,
             onTap: () {
-              Navigator.of(context)
-                  .pushReplacement(MaterialPageRoute(builder: (context) {
-                return primaryInfoScaffold;
-              }));
+              Get.offAll(
+                () => MenuScaffold(
+                  name: "Primary Information",
+                  body: ListView(
+                    children: [
+                      CommonCharacterInfoWidget(),
+                      AdvantagesWidget(),
+                    ],
+                    shrinkWrap: true,
+                    primary: true,
+                  ),
+                  selectedItem: SelectedMenuItem.PrimaryInfo,
+                ),
+              );
             },
           ),
           ListTile(
@@ -49,36 +65,48 @@ class DrawerMenu extends Drawer {
             onTap: () {
               Navigator.of(context)
                   .pushReplacement(MaterialPageRoute(builder: (context) {
-                return abilitiesScaffold;
+                return MenuScaffold(
+                  name: "Attributes & Abilities",
+                  body: ListView(
+                    children: [
+                      AttributesSectionWidget(),
+                      AbilitiesSectionWidget(),
+                    ],
+                    shrinkWrap: true,
+                    primary: true,
+                  ),
+                  selectedItem: SelectedMenuItem.Abilities,
+                );
+                ;
               }));
             },
           ),
-          ListTile(
-            title: Text('Disciplines'),
-            trailing: Icon(Icons.auto_awesome),
-            tileColor: _item == SelectedMenuItem.Disciplines
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.onPrimary,
-            onTap: () {
-              Navigator.of(context)
-                  .pushReplacement(MaterialPageRoute(builder: (context) {
-                return disciplinesScaffold;
-              }));
-            },
-          ),
-          ListTile(
-            title: Text('Merits & Flaws'),
-            trailing: Icon(Icons.exposure),
-            tileColor: _item == SelectedMenuItem.MeritsFlaws
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.onPrimary,
-            onTap: () {
-              Navigator.of(context)
-                  .pushReplacement(MaterialPageRoute(builder: (context) {
-                return meritsFlawsScaffold;
-              }));
-            },
-          ),
+          // ListTile(
+          //   title: Text('Disciplines'),
+          //   trailing: Icon(Icons.auto_awesome),
+          //   tileColor: _item == SelectedMenuItem.Disciplines
+          //       ? Theme.of(context).colorScheme.primary
+          //       : Theme.of(context).colorScheme.onPrimary,
+          //   onTap: () {
+          //     Navigator.of(context)
+          //         .pushReplacement(MaterialPageRoute(builder: (context) {
+          //       return disciplinesScaffold;
+          //     }));
+          //   },
+          // ),
+          // ListTile(
+          //   title: Text('Merits & Flaws'),
+          //   trailing: Icon(Icons.exposure),
+          //   tileColor: _item == SelectedMenuItem.MeritsFlaws
+          //       ? Theme.of(context).colorScheme.primary
+          //       : Theme.of(context).colorScheme.onPrimary,
+          //   onTap: () {
+          //     Navigator.of(context)
+          //         .pushReplacement(MaterialPageRoute(builder: (context) {
+          //       return meritsFlawsScaffold;
+          //     }));
+          //   },
+          // ),
           ListTile(
             title: Text('Weapons and Armor'),
             trailing: Icon(Icons.devices),
@@ -86,17 +114,20 @@ class DrawerMenu extends Drawer {
                 ? Theme.of(context).colorScheme.primary
                 : Theme.of(context).colorScheme.onPrimary,
             onTap: () {
-              Navigator.of(context)
-                  .pushReplacement(MaterialPageRoute(builder: (context) {
-                return weaponsArmorScaffold;
-              }));
+              Get.offAll(
+                () => MenuScaffold(
+                  name: "Weapons & Armor",
+                  body: WeaponsAndArmorSectionWidget(),
+                  selectedItem: SelectedMenuItem.WeaponsArmor,
+                ),
+              );
             },
           ),
           ListTile(
             title: Text('Close'),
             trailing: Icon(Icons.exit_to_app),
             onTap: () {
-              Navigator.pop(context);
+              Get.back();
             },
           ),
         ],

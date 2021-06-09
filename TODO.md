@@ -28,6 +28,7 @@
    - [ ] *All* serialized information must load on startup
    - [ ] Bloodpool maximum must depend on vampire's generation
    - [ ] Some stats depend on vampire's generation as well
+   - [ ] Clicking on a field square button should zero it. Makes, say, a blood pool of 0 possible
  - [ ] Serialization
    - [ ] Main character information: name, sire, etc.
    - [ ] Attributes and their descriptions/specialization

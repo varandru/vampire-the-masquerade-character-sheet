@@ -1,37 +1,41 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/get.dart';
 
-import 'defs.dart';
+import 'common_logic.dart';
 
 enum AbilityColumnType { Talents, Skills, Knowledges }
 
-final talentsAbilitiesProvider =
-    StateProvider<TalentsAbilitiesColumn>((ref) => TalentsAbilitiesColumn());
+class AbilitiesController extends GetxController {
+  RxList<ComplexAbility> talents = RxList<ComplexAbility>();
+  RxList<ComplexAbility> skills = RxList<ComplexAbility>();
+  RxList<ComplexAbility> knowledges = RxList<ComplexAbility>();
 
-final skillsAbilitiesProvider =
-    StateProvider<SkillsAbilitiesColumn>((ref) => SkillsAbilitiesColumn());
+  List<ComplexAbility> getAbilitiesByType(AbilityColumnType type) {
+    switch (type) {
+      case AbilityColumnType.Talents:
+        return talents;
+      case AbilityColumnType.Skills:
+        return skills;
+      case AbilityColumnType.Knowledges:
+        return knowledges;
+    }
+  }
 
-final knowledgeAbilitiesProvider = StateProvider<KnowledgeAbilitiesColumn>(
-    (ref) => KnowledgeAbilitiesColumn());
+  String getHeaderByType(AbilityColumnType type) {
+    switch (type) {
+      case AbilityColumnType.Talents:
+        return "Talents";
+      case AbilityColumnType.Skills:
+        return "Skills";
+      case AbilityColumnType.Knowledges:
+        return "Knowledges";
+    }
+  }
 
-class AbilitiesSectionWidget extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    return Column(
-      children: [
-        Text("Abilities", style: Theme.of(context).textTheme.headline4),
-        Wrap(
-          alignment: WrapAlignment.center,
-          children: [
-            AbilitiesColumnWidget(AbilityColumnType.Talents),
-            AbilitiesColumnWidget(AbilityColumnType.Skills),
-            AbilitiesColumnWidget(AbilityColumnType.Knowledges),
-          ],
-          // mainAxisAlignment: MainAxisAlignment.spaceAround,
-        ),
-      ],
-      mainAxisSize: MainAxisSize.min,
-    );
+  //CRUTCH: This is a crutch for Web debug
+  void initializeFromConstants() {
+    talents.value = TalentsAbilitiesColumn().attributes;
+    skills.value = SkillsAbilitiesColumn().attributes;
+    knowledges.value = KnowledgeAbilitiesColumn().attributes;
   }
 }
 
@@ -39,16 +43,16 @@ class TalentsAbilitiesColumn {
   final header = "Talents";
 
   var attributes = [
-    Attribute(name: "Alertness", current: 2),
-    Attribute(name: "Athletics", current: 0),
-    Attribute(name: "Brawl", current: 0),
-    Attribute(name: "Dodge", current: 3),
-    Attribute(name: "Empathy", current: 0),
-    Attribute(name: "Expression", current: 0),
-    Attribute(name: "Intimidation", current: 0),
-    Attribute(name: "Leadership", current: 0),
-    Attribute(name: "Streetwise", current: 0),
-    Attribute(name: "Subterfuge", current: 0),
+    ComplexAbility(name: "Alertness", current: 2),
+    ComplexAbility(name: "Athletics", current: 0),
+    ComplexAbility(name: "Brawl", current: 0),
+    ComplexAbility(name: "Dodge", current: 3),
+    ComplexAbility(name: "Empathy", current: 0),
+    ComplexAbility(name: "Expression", current: 0),
+    ComplexAbility(name: "Intimidation", current: 0),
+    ComplexAbility(name: "Leadership", current: 0),
+    ComplexAbility(name: "Streetwise", current: 0),
+    ComplexAbility(name: "Subterfuge", current: 0),
   ];
 }
 
@@ -56,16 +60,16 @@ class SkillsAbilitiesColumn {
   final header = "Skills";
 
   var attributes = [
-    Attribute(name: "Animal", current: 0),
-    Attribute(name: "Crafts", current: 0),
-    Attribute(name: "Drive", current: 0),
-    Attribute(name: "Etiquette", current: 0),
-    Attribute(name: "Firearms", current: 3),
-    Attribute(name: "Melee", current: 0),
-    Attribute(name: "Performance", current: 0),
-    Attribute(name: "Security", current: 3),
-    Attribute(name: "Stealth", current: 3),
-    Attribute(name: "Survival", current: 0),
+    ComplexAbility(name: "Animal", current: 0),
+    ComplexAbility(name: "Crafts", current: 0),
+    ComplexAbility(name: "Drive", current: 0),
+    ComplexAbility(name: "Etiquette", current: 0),
+    ComplexAbility(name: "Firearms", current: 3),
+    ComplexAbility(name: "Melee", current: 0),
+    ComplexAbility(name: "Performance", current: 0),
+    ComplexAbility(name: "Security", current: 3),
+    ComplexAbility(name: "Stealth", current: 3),
+    ComplexAbility(name: "Survival", current: 0),
   ];
 }
 
@@ -73,59 +77,16 @@ class KnowledgeAbilitiesColumn {
   final header = "Knowledges";
 
   var attributes = [
-    Attribute(name: "Academics", current: 0),
-    Attribute(
+    ComplexAbility(name: "Academics", current: 0),
+    ComplexAbility(
         name: "Computers", current: 4, specialization: "Passwords Hacking"),
-    Attribute(name: "Finance", current: 0),
-    Attribute(name: "Investigation", current: 3),
-    Attribute(name: "Law", current: 0),
-    Attribute(name: "Linguistics", current: 2),
-    Attribute(name: "Medicine", current: 2),
-    Attribute(name: "Occult", current: 3),
-    Attribute(name: "Politics", current: 0),
-    Attribute(name: "Science", current: 0),
+    ComplexAbility(name: "Finance", current: 0),
+    ComplexAbility(name: "Investigation", current: 3),
+    ComplexAbility(name: "Law", current: 0),
+    ComplexAbility(name: "Linguistics", current: 2),
+    ComplexAbility(name: "Medicine", current: 2),
+    ComplexAbility(name: "Occult", current: 3),
+    ComplexAbility(name: "Politics", current: 0),
+    ComplexAbility(name: "Science", current: 0),
   ];
-}
-
-class AbilitiesColumnWidget extends ConsumerWidget {
-  AbilitiesColumnWidget(AbilityColumnType type) : _type = type;
-
-  final _type;
-
-  @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    String header = "";
-    List<Attribute> attributes = [];
-
-    switch (_type) {
-      case AbilityColumnType.Talents:
-        header = watch(talentsAbilitiesProvider).state.header;
-        attributes = watch(talentsAbilitiesProvider).state.attributes;
-        break;
-      case AbilityColumnType.Skills:
-        header = watch(skillsAbilitiesProvider).state.header;
-        attributes = watch(skillsAbilitiesProvider).state.attributes;
-        break;
-      case AbilityColumnType.Knowledges:
-        header = watch(knowledgeAbilitiesProvider).state.header;
-        attributes = watch(knowledgeAbilitiesProvider).state.attributes;
-        break;
-    }
-
-    List<Widget> column = [
-      Text(
-        header,
-        textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.headline6,
-      ),
-    ];
-    for (var attr in attributes) {
-      column.add(AttributeWidget(attribute: attr));
-    }
-
-    return Column(
-      children: column,
-      mainAxisSize: MainAxisSize.min,
-    );
-  }
 }
