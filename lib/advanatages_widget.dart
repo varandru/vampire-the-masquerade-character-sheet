@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:vampire_the_masquerade_character_sheet/main_info_logic.dart';
 
-import 'common.dart';
+import 'attributes.dart';
+import 'attributes_widget.dart';
 import 'defs.dart';
+import 'main_info.dart';
 
 const maxBloodCount = 20;
 const maxWillpowerCount = 10;

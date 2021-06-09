@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'advanatages.dart';
+import 'advanatages_widget.dart';
+import 'attributes_widget.dart';
 import 'combat.dart';
 import 'common.dart';
-import 'main_info.dart';
+import 'main_info_widget.dart';
 
 enum SelectedMenuItem {
   PrimaryInfo,
@@ -54,19 +55,31 @@ class DrawerMenu extends Drawer {
               );
             },
           ),
-          // ListTile(
-          //   title: Text('Abilities'),
-          //   trailing: Icon(Icons.accessibility_new),
-          //   tileColor: _item == SelectedMenuItem.Abilities
-          //       ? Theme.of(context).colorScheme.primary
-          //       : Theme.of(context).colorScheme.onPrimary,
-          //   onTap: () {
-          //     Navigator.of(context)
-          //         .pushReplacement(MaterialPageRoute(builder: (context) {
-          //       return abilitiesScaffold;
-          //     }));
-          //   },
-          // ),
+          ListTile(
+            title: Text('Abilities'),
+            trailing: Icon(Icons.accessibility_new),
+            tileColor: _item == SelectedMenuItem.Abilities
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.onPrimary,
+            onTap: () {
+              Navigator.of(context)
+                  .pushReplacement(MaterialPageRoute(builder: (context) {
+                return MenuScaffold(
+                  name: "Attributes & Abilities",
+                  body: ListView(
+                    children: [
+                      AttributesSectionWidget(),
+                      // AbilitiesSectionWidget(),
+                    ],
+                    shrinkWrap: true,
+                    primary: true,
+                  ),
+                  selectedItem: SelectedMenuItem.Abilities,
+                );
+                ;
+              }));
+            },
+          ),
           // ListTile(
           //   title: Text('Disciplines'),
           //   trailing: Icon(Icons.auto_awesome),
@@ -100,10 +113,6 @@ class DrawerMenu extends Drawer {
                 ? Theme.of(context).colorScheme.primary
                 : Theme.of(context).colorScheme.onPrimary,
             onTap: () {
-              // Navigator.of(context)
-              //     .pushReplacement(MaterialPageRoute(builder: (context) {
-              //   return weaponsArmorScaffold;
-              // }));
               Get.offAll(
                 () => MenuScaffold(
                   name: "Weapons & Armor",

@@ -1,119 +1,101 @@
-// import 'package:flutter/material.dart';
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-// import 'defs.dart';
+import 'attributes.dart';
+import 'defs.dart';
 
-// // Как выглядит этот виджет: Общий заголовок, под ним три колонки
-// // У каждой колонки есть заголовок и три атрибута
-// // Итого: общий AttributesSection(Widget)
-// // В нём AttributesColumn(Widget)
-// // В них Attribute(Widget)
+// Как выглядит этот виджет: Общий заголовок, под ним три колонки
+// У каждой колонки есть заголовок и три атрибута
+// Итого: общий AttributesSection(Widget)
+// В нём AttributesColumn(Widget)
+// В них Attribute(Widget)
 
-// enum AttributeColumnType { Physical, Mental, Social }
+class AttributesSectionWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text("Attributes", style: Theme.of(context).textTheme.headline4),
+        Wrap(
+          alignment: WrapAlignment.center,
+          children: [
+            AttributesColumnWidget(AttributeColumnType.Physical),
+            AttributesColumnWidget(AttributeColumnType.Social),
+            AttributesColumnWidget(AttributeColumnType.Mental),
+          ],
+        ),
+      ],
+      mainAxisSize: MainAxisSize.min,
+    );
+  }
+}
 
-// final physicalAttributesProvider = StateProvider<PhysicalAttributesColumn>(
-//     (ref) => PhysicalAttributesColumn());
+class AttributesColumnWidget extends StatelessWidget {
+  AttributesColumnWidget(AttributeColumnType this.type);
 
-// final socialAttributesProvider =
-//     StateProvider<SocialAttributesColumn>((ref) => SocialAttributesColumn());
+  final type;
 
-// final mentalAttributesProvider =
-//     StateProvider<MentalAttributesColumn>((ref) => MentalAttributesColumn());
+  @override
+  Widget build(BuildContext context) {
+    final AttributesController ac = Get.find();
+    List<Widget> columns = [
+      Text(
+        ac.getHeaderByType(type),
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.headline6,
+      ),
+    ];
+    for (var attr in ac.getColumnByType(type)) {
+      columns.add(AttributeWidget(attribute: attr));
+    }
 
-// class AttributesSectionWidget extends ConsumerWidget {
-//   @override
-//   Widget build(BuildContext context, ScopedReader watch) {
-//     return Column(
-//       children: [
-//         Text("Attributes", style: Theme.of(context).textTheme.headline4),
-//         Wrap(
-//           alignment: WrapAlignment.center,
-//           children: [
-//             AttributesColumnWidget(AttributeColumnType.Physical),
-//             AttributesColumnWidget(AttributeColumnType.Social),
-//             AttributesColumnWidget(AttributeColumnType.Mental),
-//           ],
-//         ),
-//       ],
-//       mainAxisSize: MainAxisSize.min,
-//     );
-//   }
-// }
+    // Attribute column
+    return Column(
+      children: columns,
+      mainAxisSize: MainAxisSize.min,
+    );
+  }
+}
 
-// class PhysicalAttributesColumn {
-//   final header = "Physical";
+class AttributeWidget extends StatelessWidget {
+  AttributeWidget({Key? key, required Attribute attribute})
+      : this.attribute = attribute,
+        super(key: key);
 
-//   final List<Attribute> attributes = [
-//     Attribute(name: "Strength", current: 1),
-//     Attribute(
-//         name: "Dexterity", current: 5, specialization: "Lightning Reflexes"),
-//     Attribute(name: "Stamina", current: 2),
-//   ];
-// }
+  final Attribute attribute;
 
-// class SocialAttributesColumn {
-//   final header = "Social";
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> row = makeIconRow(
+        attribute.current, attribute.max, Icons.circle, Icons.circle_outlined);
+    final header = Text(
+      attribute.name,
+      overflow: TextOverflow.fade,
+      softWrap: false,
+    );
 
-//   var attributes = [
-//     Attribute(name: "Charisma", current: 1),
-//     Attribute(name: "Manipulation", current: 1),
-//     Attribute(name: "Appearance", current: 4),
-//   ];
-// }
-
-// class MentalAttributesColumn {
-//   final header = "Mental";
-
-//   var attributes = [
-//     Attribute(name: "Perception", current: 1),
-//     Attribute(
-//         name: "Intelligence",
-//         current: 5,
-//         specialization: "Analytical Thinking"),
-//     Attribute(name: "Wits", current: 4, specialization: "Adapt to others")
-//   ];
-// }
-
-// class AttributesColumnWidget extends ConsumerWidget {
-//   AttributesColumnWidget(AttributeColumnType type) : _type = type;
-
-//   final _type;
-
-//   @override
-//   Widget build(BuildContext context, ScopedReader watch) {
-//     String header = "";
-//     List<Attribute> attributes = [];
-
-//     switch (_type) {
-//       case AttributeColumnType.Physical:
-//         header = watch(physicalAttributesProvider).state.header;
-//         attributes = watch(physicalAttributesProvider).state.attributes;
-//         break;
-//       case AttributeColumnType.Mental:
-//         header = watch(mentalAttributesProvider).state.header;
-//         attributes = watch(mentalAttributesProvider).state.attributes;
-//         break;
-//       case AttributeColumnType.Social:
-//         header = watch(socialAttributesProvider).state.header;
-//         attributes = watch(socialAttributesProvider).state.attributes;
-//         break;
-//     }
-
-//     List<Widget> columns = [
-//       Text(
-//         header,
-//         textAlign: TextAlign.center,
-//         style: Theme.of(context).textTheme.headline6,
-//       ),
-//     ];
-//     for (var attr in attributes) {
-//       columns.add(AttributeWidget(attribute: attr));
-//     }
-
-//     // Attribute column
-//     return Column(
-//       children: columns,
-//       mainAxisSize: MainAxisSize.min,
-//     );
-//   }
-// }
+    return Container(
+      constraints: BoxConstraints(maxWidth: 500),
+      child: ListTile(
+        title: header,
+        subtitle: Text(attribute.specialization),
+        trailing: Row(
+          children: row,
+          mainAxisSize: MainAxisSize.min,
+        ),
+        onTap: () {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return SimpleDialog(
+                  title: Text(attribute.name),
+                  children: [
+                    Text(attribute.description),
+                  ],
+                );
+              }).then((value) => null);
+        },
+      ),
+    );
+  }
+}

@@ -3,16 +3,15 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:vampire_the_masquerade_character_sheet/main_info_logic.dart';
+import 'main_info.dart';
 import 'dart:io';
 
-import 'abilities.dart';
-import 'advanatages.dart';
+import 'advanatages_widget.dart';
 import 'merits_and_flaws.dart';
 import 'disciplines.dart';
 import 'drawer_menu.dart';
-import 'main_info.dart';
-import 'attributes_widget.dart';
+import 'main_info_widget.dart';
+import 'attributes.dart';
 
 // Основной виджет, пока что. На самом деле их несколько, но этот организует все
 // Рисует главный виджет, включает в себя файлы с разделами
@@ -21,6 +20,9 @@ class VampireWidget extends StatelessWidget {
     Get.put(MainInfo());
     Get.put(MostVariedController());
     Get.put(VirtuesController());
+    Get.put(AttributesController());
+    final AttributesController ac = Get.find();
+    ac.initializeFromConstants();
     return GetMaterialApp(
       home: MenuScaffold(
         name: "Primary Information",
@@ -38,19 +40,7 @@ class VampireWidget extends StatelessWidget {
   }
 }
 
-// // Abilities Menu
-// final abilitiesScaffold = MenuScaffold(
-//   name: "Abilities",
-//   body: ListView(
-//     children: [
-//       AttributesSectionWidget(),
-//       AbilitiesSectionWidget(),
-//     ],
-//     shrinkWrap: true,
-//     primary: true,
-//   ),
-//   item: SelectedMenuItem.Abilities,
-// );
+// Abilities Menu
 
 // // Disciplines Menu
 // final disciplinesScaffold = MenuScaffold(
