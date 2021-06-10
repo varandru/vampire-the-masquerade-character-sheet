@@ -1,36 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'character.dart';
+import 'vampite_character.dart';
 import 'advanatages_widget.dart';
 import 'merits_and_flaws.dart';
 import 'disciplines.dart';
 import 'drawer_menu.dart';
 import 'main_info_widget.dart';
-import 'attributes.dart';
 
 // Основной виджет, пока что. На самом деле их несколько, но этот организует все
 // Рисует главный виджет, включает в себя файлы с разделами
 class VampireWidget extends StatelessWidget {
   Widget build(BuildContext context) {
-    final VampireCharacter vc = Get.put(VampireCharacter());
-    vc.initialize();
-    vc.load();
+    var vc = Get.put(VampireCharacter());
 
-    return GetMaterialApp(
-      home: MenuScaffold(
-        name: "Primary Information",
-        body: ListView(
-          children: [
-            CommonCharacterInfoWidget(),
-            AdvantagesWidget(),
-          ],
-          shrinkWrap: true,
-          primary: true,
-        ),
-        selectedItem: SelectedMenuItem.PrimaryInfo,
-      ),
-    );
+    return FutureBuilder(
+        future: vc.init(),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+            case ConnectionState.waiting:
+            case ConnectionState.active:
+              print("Loading");
+              return CircularProgressIndicator();
+            case ConnectionState.done:
+              print("Done");
+              return GetMaterialApp(
+                home: MenuScaffold(
+                  name: "Primary Information",
+                  body: ListView(
+                    children: [
+                      CommonCharacterInfoWidget(),
+                      AdvantagesWidget(),
+                    ],
+                    shrinkWrap: true,
+                    primary: true,
+                  ),
+                  selectedItem: SelectedMenuItem.PrimaryInfo,
+                ),
+              );
+          }
+        });
   }
 }
 
@@ -56,7 +66,8 @@ class MenuScaffold extends StatelessWidget {
   MenuScaffold(
       {required String name,
       required Widget body,
-      required SelectedMenuItem selectedItem})
+      required SelectedMenuItem selectedItem,
+      this.floatingActionButton})
       : _name = name,
         _body = body,
         _item = selectedItem;
@@ -64,6 +75,7 @@ class MenuScaffold extends StatelessWidget {
   final String _name;
   final Widget _body;
   final SelectedMenuItem _item;
+  final Widget? floatingActionButton;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,6 +102,7 @@ class MenuScaffold extends StatelessWidget {
       drawer: Drawer(
         child: DrawerMenu(_item),
       ),
+      floatingActionButton: floatingActionButton,
     );
   }
 }

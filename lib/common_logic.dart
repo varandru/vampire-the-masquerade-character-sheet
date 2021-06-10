@@ -6,6 +6,7 @@ class ComplexAbility {
       this.max = 5,
       this.specialization = "",
       this.description = "",
+      this.levelDescriptions,
       this.isIncremental = true});
   String name;
   int current;
@@ -13,7 +14,7 @@ class ComplexAbility {
   int max;
   String specialization;
   String description;
-  List<String> levelDescriptions = [];
+  List<String>? levelDescriptions = [];
 
   /// Does this ability get directly better at higher levels?
   /// If there is variety, this is false

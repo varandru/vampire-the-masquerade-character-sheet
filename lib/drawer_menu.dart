@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'abilities_widget.dart';
 import 'advanatages_widget.dart';
 import 'attributes_widget.dart';
@@ -57,30 +58,57 @@ class DrawerMenu extends Drawer {
             },
           ),
           ListTile(
-            title: Text('Abilities'),
-            trailing: Icon(Icons.accessibility_new),
-            tileColor: _item == SelectedMenuItem.Abilities
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.onPrimary,
-            onTap: () {
-              Navigator.of(context)
-                  .pushReplacement(MaterialPageRoute(builder: (context) {
-                return MenuScaffold(
-                  name: "Attributes & Abilities",
-                  body: ListView(
-                    children: [
-                      AttributesSectionWidget(),
-                      AbilitiesSectionWidget(),
-                    ],
-                    shrinkWrap: true,
-                    primary: true,
+              title: Text('Attributes & Abilities'),
+              trailing: Icon(Icons.accessibility_new),
+              tileColor: _item == SelectedMenuItem.Abilities
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.onPrimary,
+              onTap: () {
+                Get.offAll(
+                  () => MenuScaffold(
+                    name: "Attributes & Abilities",
+                    body: ListView(
+                      children: [
+                        AttributesSectionWidget(),
+                        AbilitiesSectionWidget(),
+                      ],
+                      shrinkWrap: true,
+                      primary: true,
+                    ),
+                    selectedItem: SelectedMenuItem.Abilities,
+                    floatingActionButton: SpeedDial(
+                      icon: Icons.add,
+                      activeIcon: Icons.close,
+                      backgroundColor:
+                          Theme.of(context).colorScheme.primaryVariant,
+                      closeManually: true,
+                      children: [
+                        SpeedDialChild(
+                          child: Icon(Icons.psychology_outlined),
+                          backgroundColor: Colors.blue,
+                          label: "Add a mental attribute",
+                          labelBackgroundColor:
+                              Theme.of(context).colorScheme.surface,
+                        ),
+                        SpeedDialChild(
+                          child: Icon(Icons.sentiment_very_satisfied_outlined),
+                          backgroundColor: Colors.green,
+                          label: "Add a social attribute",
+                          labelBackgroundColor:
+                              Theme.of(context).colorScheme.surface,
+                        ),
+                        SpeedDialChild(
+                          child: Icon(Icons.directions_run_rounded),
+                          backgroundColor: Colors.red,
+                          label: "Add a physical attribute",
+                          labelBackgroundColor:
+                              Theme.of(context).colorScheme.surface,
+                        ),
+                      ],
+                    ),
                   ),
-                  selectedItem: SelectedMenuItem.Abilities,
                 );
-                ;
-              }));
-            },
-          ),
+              }),
           // ListTile(
           //   title: Text('Disciplines'),
           //   trailing: Icon(Icons.auto_awesome),
