@@ -51,16 +51,30 @@ class VampireCharacter extends GetxController {
   }
 
   Future<String> _loadAttributeList() async {
-    var direcrory = await getApplicationDocumentsDirectory();
+    var directory = await getApplicationDocumentsDirectory();
     SharedPreferences preferences = await SharedPreferences.getInstance();
     final attributeListFile = preferences.getString('attribute_dictionary') ??
         'default_attributes_en_US.json';
-    File dictionaryFile = File(direcrory.path + '/' + attributeListFile);
+    File dictionaryFile = File(directory.path + '/' + attributeListFile);
 
     if (await dictionaryFile.exists()) {
       return dictionaryFile.readAsString();
     } else {
-      throw ("Attribute dictionary does not exist");
+      throw ("Attribute dictionary $attributeListFile does not exist");
+    }
+  }
+
+  Future<String> _loadAbilitiesList() async {
+    var directory = await getApplicationDocumentsDirectory();
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    final abilitiesListFile = preferences.getString('abilities_dictionary') ??
+        'default_abilities_en_US.json';
+    File dictionaryFile = File(directory.path + '/' + abilitiesListFile);
+
+    if (await dictionaryFile.exists()) {
+      return dictionaryFile.readAsString();
+    } else {
+      throw ("Attribute dictionary $abilitiesListFile does not exist");
     }
   }
 
@@ -77,16 +91,25 @@ class VampireCharacter extends GetxController {
 
         if (characterFile.existsSync()) {
           // Attribute dictionary
-          AttributeDictionary ad = AttributeDictionary();
-          _loadAttributeList().then((value) {
-            ad.load(jsonDecode(value));
-            print(characterFile.readAsStringSync());
-            Map<String, dynamic> json =
-                jsonDecode(characterFile.readAsStringSync());
-            _loadToControllers(json);
-            if (json["attributes"] != null)
-              attributesController.load(json["attributes"], ad);
-          });
+          AttributeDictionary atrd = AttributeDictionary();
+          var attributeList = await _loadAttributeList();
+          atrd.load(jsonDecode(attributeList));
+
+          // Abilities dictionary
+          AbilitiesDictionary abd = AbilitiesDictionary();
+          var abilitiesList = await _loadAbilitiesList();
+          abd.load(jsonDecode(abilitiesList));
+
+          Map<String, dynamic> json =
+              jsonDecode(characterFile.readAsStringSync());
+
+          _loadToControllers(json);
+
+          if (json["attributes"] != null)
+            attributesController.load(json["attributes"], atrd);
+
+          if (json["abilities"] != null)
+            abilitiesController.load(json["abilities"], abd);
         }
         // else just use the defaults
 
@@ -135,12 +158,31 @@ class VampireCharacter extends GetxController {
 
     attributeFile.writeAsStringSync(attributeString);
 
+    attributeString =
+        await rootBundle.loadString('assets/default_abilities_en_US.json');
+    attributeFile = File(directory.path +
+        '/' +
+        (preferences.getString('default_abilities') ??
+            'default_abilities_en_US.json'));
+
+    attributeFile.writeAsStringSync(attributeString);
+
+    attributeString =
+        await rootBundle.loadString('assets/default_character_en_US.json');
+    attributeFile = File(directory.path +
+        '/' +
+        (preferences.getString('default_character') ?? 'character.json'));
+
+    attributeFile.writeAsStringSync(attributeString);
+
     await preferences.setBool('installed', true);
     print("Installation Done!");
   }
 
   Future<void> init() async {
     await loadSharedPreferences();
+    // TEMP
+    installed = false;
     if (!installed) {
       await install();
     }

@@ -1,0 +1,123 @@
+{
+  "locale": "en-US",
+  "attribute_names": {
+    "talents": "Talents",
+    "skills": "Skills",
+    "knowledges": "Knowledges"
+  },
+  "level_prefixes": [
+    {
+      "level": 1,
+      "prefix": "Poor"
+    },
+    {
+      "level": 2,
+      "prefix": "Average"
+    },
+    {
+      "level": 3,
+      "prefix": "Good"
+    },
+    {
+      "level": 4,
+      "prefix": "Exceptional"
+    },
+    {
+      "level": 5,
+      "prefix": "Outstanding"
+    }
+  ],
+  "talents": [
+    {
+      "name": "Alertness"
+    },
+    {
+      "name": "Athletics"
+    },
+    {
+      "name": "Brawl"
+    },
+    {
+      "name": "Dodge"
+    },
+    {
+      "name": "Empathy"
+    },
+    {
+      "name": "Expression"
+    },
+    {
+      "name": "Intimidation"
+    },
+    {
+      "name": "Leadership"
+    },
+    {
+      "name": "Streetwise"
+    },
+    {
+      "name": "Subterfuge"
+    }
+  ],
+  "skills": [
+    {
+      "name": "Animal Ken"
+    },
+    {
+      "name": "Crafts"
+    },
+    {
+      "name": "Drive"
+    },
+    {
+      "name": "Etiquette"
+    },
+    {
+      "name": "Firearms"
+    },
+    {
+      "name": "Melee"
+    },
+    {
+      "name": "Performance"
+    },
+    {
+      "name": "Stealth"
+    },
+    {
+      "name": "Survival"
+    }
+  ],
+  "knowledges": [
+    {
+      "name": "Academics"
+    },
+    {
+      "name": "Computers"
+    },
+    {
+      "name": "Finance"
+    },
+    {
+      "name": "Investigation"
+    },
+    {
+      "name": "Law"
+    },
+    {
+      "name": "Linguistics"
+    },
+    {
+      "name": "Medicine"
+    },
+    {
+      "name": "Occult"
+    },
+    {
+      "name": "Politics"
+    },
+    {
+      "name": "Science"
+    }
+  ]
+}

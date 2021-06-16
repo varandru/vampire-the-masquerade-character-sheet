@@ -9,7 +9,7 @@ class AbilitiesController extends GetxController {
   RxList<ComplexAbility> skills = RxList<ComplexAbility>();
   RxList<ComplexAbility> knowledges = RxList<ComplexAbility>();
 
-  List<ComplexAbility> getAbilitiesByType(AbilityColumnType type) {
+  List<ComplexAbility> getColumnByType(AbilityColumnType type) {
     switch (type) {
       case AbilityColumnType.Talents:
         return talents;
@@ -20,22 +20,111 @@ class AbilitiesController extends GetxController {
     }
   }
 
-  String getHeaderByType(AbilityColumnType type) {
-    switch (type) {
-      case AbilityColumnType.Talents:
-        return "Talents";
-      case AbilityColumnType.Skills:
-        return "Skills";
-      case AbilityColumnType.Knowledges:
-        return "Knowledges";
-    }
-  }
+  final Map<AbilityColumnType, String> _headers = {
+    AbilityColumnType.Talents: 'Talents',
+    AbilityColumnType.Skills: 'Skills',
+    AbilityColumnType.Knowledges: 'Knowledges',
+  };
+
+  String getHeaderByType(AbilityColumnType type) => _headers[type]!;
 
   //CRUTCH: This is a crutch for Web debug
   void initializeFromConstants() {
     talents.value = TalentsAbilitiesColumn().attributes;
     skills.value = SkillsAbilitiesColumn().attributes;
     knowledges.value = KnowledgeAbilitiesColumn().attributes;
+  }
+
+  void load(Map<String, dynamic> json, AbilitiesDictionary dictionary) {
+    // 1. Category headers. Re-read mostly for localization, might kill later
+    if (dictionary.talentAbilitiesName.isNotEmpty) {
+      _headers[AbilityColumnType.Talents] = dictionary.talentAbilitiesName;
+    }
+    if (dictionary.skillsAbilitiesName.isNotEmpty) {
+      _headers[AbilityColumnType.Skills] = dictionary.skillsAbilitiesName;
+    }
+    if (dictionary.knowledgeAbilitiesName.isNotEmpty) {
+      _headers[AbilityColumnType.Knowledges] =
+          dictionary.knowledgeAbilitiesName;
+    }
+
+    _fillAttributeListByType(
+        AbilityColumnType.Talents, json["talents"], dictionary);
+    _fillAttributeListByType(
+        AbilityColumnType.Skills, json["skills"], dictionary);
+    _fillAttributeListByType(
+        AbilityColumnType.Knowledges, json["knowledges"], dictionary);
+  }
+
+  void _fillAttributeListByType(AbilityColumnType type,
+      List<dynamic> attributes, AbilitiesDictionary dictionary) {
+    for (var attribute in attributes) {
+      if (attribute["name"] != null && attribute is Map<String, dynamic>) {
+        String name = attribute["name"];
+
+        ComplexAbilityEntry? entry;
+
+        switch (type) {
+          case AbilityColumnType.Talents:
+            entry = dictionary.talents[name];
+            break;
+          case AbilityColumnType.Skills:
+            entry = dictionary.skills[name];
+            break;
+          case AbilityColumnType.Knowledges:
+            entry = dictionary.knowledges[name];
+            break;
+        }
+
+        if (entry == null) {
+          // If a stat is not found, add an empty one
+          entry = ComplexAbilityEntry();
+          switch (type) {
+            case AbilityColumnType.Talents:
+              dictionary.talents[name] = entry;
+              break;
+            case AbilityColumnType.Skills:
+              dictionary.skills[name] = entry;
+              break;
+            case AbilityColumnType.Knowledges:
+              dictionary.knowledges[name] = entry;
+              break;
+          }
+        }
+
+        // CRUTCH This doesn't allow attributes to go above 5
+        ComplexAbility ca = ComplexAbility(
+          name: name,
+          current: attribute["current"] ?? 1,
+          min: 0,
+          max: 5,
+          specialization: attribute["specialization"] ?? "",
+          description: entry.description ?? "",
+          isIncremental: true, // Attributes are incremental, AFAIK
+        );
+
+        print(
+            "Adding ability $type: '${ca.name}', ${ca.current}, '${ca.specialization}', '${ca.description}'");
+
+        switch (type) {
+          case AbilityColumnType.Talents:
+            if (!talents.contains(ca)) {
+              talents.add(ca);
+            }
+            break;
+          case AbilityColumnType.Skills:
+            if (!skills.contains(ca)) {
+              skills.add(ca);
+            }
+            break;
+          case AbilityColumnType.Knowledges:
+            if (!knowledges.contains(ca)) {
+              knowledges.add(ca);
+            }
+            break;
+        }
+      }
+    }
   }
 }
 
@@ -89,4 +178,85 @@ class KnowledgeAbilitiesColumn {
     ComplexAbility(name: "Politics", current: 0),
     ComplexAbility(name: "Science", current: 0),
   ];
+}
+
+class AbilitiesDictionary {
+  Map<String, ComplexAbilityEntry> talents = Map();
+  Map<String, ComplexAbilityEntry> skills = Map();
+  Map<String, ComplexAbilityEntry> knowledges = Map();
+
+  String talentAbilitiesName = "Talents";
+  String skillsAbilitiesName = "Skills";
+  String knowledgeAbilitiesName = "Knowledges";
+
+  // Attributes will work in the same way, with the same schema
+  Map<int, String> levelPrefixes = Map();
+
+  void load(Map<String, dynamic> json) {
+    // 1. Get locale, not done at all
+
+    // 2. Get level prefixes
+    if (json["level_prefixes"] != null && json["level_prefixes"] is List) {
+      for (var prefix in json["level_prefixes"]) {
+        levelPrefixes[prefix["level"]] = prefix["prefix"];
+      }
+    }
+    // 3. Get attribute categories
+    if (json["attribute_names"] != null) {
+      talentAbilitiesName = json["attribute_names"]["talents"];
+      skillsAbilitiesName = json["attribute_names"]["skills"];
+      knowledgeAbilitiesName = json["attribute_names"]["knowledges"];
+    }
+
+    // 4. Get physical attributes
+    if (json["talents"] != null && json["talents"] is List) {
+      for (var attribute in json["talents"]) {
+        if (attribute["name"] == null) continue;
+        talents[attribute["name"]] = _getAttributeFromJson(attribute);
+      }
+    }
+    // 5. Get social attributes
+    if (json["skills"] != null && json["skills"] is List) {
+      for (var attribute in json["skills"]) {
+        if (attribute["name"] == null) continue;
+        skills[attribute["name"]] = _getAttributeFromJson(attribute);
+      }
+    }
+    // 6. Get mental attributes
+    if (json["knowledges"] != null && json["knowledges"] is List) {
+      for (var attribute in json["knowledges"]) {
+        if (attribute["name"] == null) continue;
+        knowledges[attribute["name"]] = _getAttributeFromJson(attribute);
+      }
+    }
+  }
+
+  ComplexAbilityEntry _getAttributeFromJson(Map<String, dynamic> attribute) {
+    ComplexAbilityEntry entry = ComplexAbilityEntry();
+    if (attribute["specialization"] != null) {
+      if (attribute["specialization"] is List) {
+        for (var specialization in attribute["specialization"]) {
+          entry.specializations.add(specialization);
+        }
+      } else {
+        print("${attribute["name"]}'s specializations are not a list");
+      }
+    } else {
+      print("${attribute["name"]} does not have specializations");
+    }
+    if (attribute["levels"] != null) {
+      if (attribute["levels"] is List) {
+        for (var level in attribute["levels"]) {
+          entry.level.add(level);
+        }
+      } else {
+        print("${attribute["name"]}'s levels are not a list");
+      }
+    } else {
+      print("${attribute["name"]} does not have levels");
+    }
+    entry.description = attribute["description"];
+
+    return entry;
+  }
 }

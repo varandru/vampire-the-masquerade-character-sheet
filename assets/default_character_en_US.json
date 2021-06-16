@@ -1,0 +1,202 @@
+{
+  "most_varied_variables": {
+    "blood": 20,
+    "bloodMax": 20,
+    "will": 10,
+    "xp": 0
+  },
+  "virtues": {
+    "consience": 2,
+    "self_control": 3,
+    "courage": 5,
+    "additional_humanity": 0,
+    "additional_willpower": 5
+  },
+  "main_info": {
+    "character_name": "Noah Brendel",
+    "nature": "Perfectionist",
+    "clan": "Tremere",
+    "player_name": "Vladimir Aranovskiy",
+    "demeanor": "Perfectionist",
+    "generation": 10,
+    "chronicle": "Academia",
+    "concept": "Intellectual",
+    "sire": "Lawrence"
+  },
+  "attributes": {
+    "physical": [
+      {
+        "name": "Strength",
+        "current": 1
+      },
+      {
+        "name": "Dexterity",
+        "current": 5,
+        "specialization": "Lightning Reflexes"
+      },
+      {
+        "name": "Stamina",
+        "current": 2
+      }
+    ],
+    "mental": [
+      {
+        "name": "Perception",
+        "current": 1
+      },
+      {
+        "name": "Intelligence",
+        "current": 5,
+        "specialization": "Analytical Thinking"
+      },
+      {
+        "name": "Wits",
+        "current": 4,
+        "specialization": "Adapt to others"
+      }
+    ],
+    "social": [
+      {
+        "name": "Charisma",
+        "current": 1
+      },
+      {
+        "name": "Manipulation",
+        "current": 1
+      },
+      {
+        "name": "Appearance",
+        "current": 4
+      }
+    ]
+  },
+  "abilities": {
+    "talents": [
+      {
+        "name": "Alertness",
+        "current": 2
+      },
+      {
+        "name": "Athletics",
+        "current": 0
+      },
+      {
+        "name": "Brawl",
+        "current": 0
+      },
+      {
+        "name": "Dodge",
+        "current": 3
+      },
+      {
+        "name": "Empathy",
+        "current": 0
+      },
+      {
+        "name": "Expression",
+        "current": 0
+      },
+      {
+        "name": "Intimidation",
+        "current": 0
+      },
+      {
+        "name": "Leadership",
+        "current": 0
+      },
+      {
+        "name": "Streetwise",
+        "current": 0
+      },
+      {
+        "name": "Subterfuge",
+        "current": 0
+      }
+    ],
+    "skills": [
+      {
+        "name": "Animal Ken",
+        "current": 0
+      },
+      {
+        "name": "Crafts",
+        "current": 0
+      },
+      {
+        "name": "Drive",
+        "current": 0
+      },
+      {
+        "name": "Etiquette",
+        "current": 0
+      },
+      {
+        "name": "Firearms",
+        "current": 3
+      },
+      {
+        "name": "Melee",
+        "current": 0
+      },
+      {
+        "name": "Performance",
+        "current": 0
+      },
+      {
+        "name": "Security",
+        "current": 3
+      },
+      {
+        "name": "Stealth",
+        "current": 3
+      },
+      {
+        "name": "Survival",
+        "current": 0
+      }
+    ],
+    "knowledges": [
+      {
+        "name": "Academics",
+        "current": 0
+      },
+      {
+        "name": "Computers",
+        "current": 4,
+        "specialization": "Password Hacking"
+      },
+      {
+        "name": "Finance",
+        "current": 0
+      },
+      {
+        "name": "Investigation",
+        "current": 3
+      },
+      {
+        "name": "Law",
+        "current": 0
+      },
+      {
+        "name": "Linguistics",
+        "current": 2
+      },
+      {
+        "name": "Medicine",
+        "current": 2
+      },
+      {
+        "name": "Occult",
+        "current": 3
+      },
+      {
+        "name": "Politics",
+        "current": 0
+      },
+      {
+        "name": "Science",
+        "current": 0
+      }
+    ]
+  }
+}

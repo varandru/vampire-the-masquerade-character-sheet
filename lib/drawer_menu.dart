@@ -42,18 +42,7 @@ class DrawerMenu extends Drawer {
                 : Theme.of(context).colorScheme.onPrimary,
             onTap: () {
               Get.offAll(
-                () => MenuScaffold(
-                  name: "Primary Information",
-                  body: ListView(
-                    children: [
-                      CommonCharacterInfoWidget(),
-                      AdvantagesWidget(),
-                    ],
-                    shrinkWrap: true,
-                    primary: true,
-                  ),
-                  selectedItem: SelectedMenuItem.PrimaryInfo,
-                ),
+                () => PrimaryInfoScaffold(),
               );
             },
           ),
@@ -65,48 +54,7 @@ class DrawerMenu extends Drawer {
                   : Theme.of(context).colorScheme.onPrimary,
               onTap: () {
                 Get.offAll(
-                  () => MenuScaffold(
-                    name: "Attributes & Abilities",
-                    body: ListView(
-                      children: [
-                        AttributesSectionWidget(),
-                        AbilitiesSectionWidget(),
-                      ],
-                      shrinkWrap: true,
-                      primary: true,
-                    ),
-                    selectedItem: SelectedMenuItem.Abilities,
-                    floatingActionButton: SpeedDial(
-                      icon: Icons.add,
-                      activeIcon: Icons.close,
-                      backgroundColor:
-                          Theme.of(context).colorScheme.primaryVariant,
-                      closeManually: true,
-                      children: [
-                        SpeedDialChild(
-                          child: Icon(Icons.psychology_outlined),
-                          backgroundColor: Colors.blue,
-                          label: "Add a mental attribute",
-                          labelBackgroundColor:
-                              Theme.of(context).colorScheme.surface,
-                        ),
-                        SpeedDialChild(
-                          child: Icon(Icons.sentiment_very_satisfied_outlined),
-                          backgroundColor: Colors.green,
-                          label: "Add a social attribute",
-                          labelBackgroundColor:
-                              Theme.of(context).colorScheme.surface,
-                        ),
-                        SpeedDialChild(
-                          child: Icon(Icons.directions_run_rounded),
-                          backgroundColor: Colors.red,
-                          label: "Add a physical attribute",
-                          labelBackgroundColor:
-                              Theme.of(context).colorScheme.surface,
-                        ),
-                      ],
-                    ),
-                  ),
+                  () => AttributesAndAbilitiesScaffold(context),
                 );
               }),
           // ListTile(
@@ -143,11 +91,7 @@ class DrawerMenu extends Drawer {
                 : Theme.of(context).colorScheme.onPrimary,
             onTap: () {
               Get.offAll(
-                () => MenuScaffold(
-                  name: "Weapons & Armor",
-                  body: WeaponsAndArmorSectionWidget(),
-                  selectedItem: SelectedMenuItem.WeaponsArmor,
-                ),
+                () => WeaponsAndArmorScaffold(),
               );
             },
           ),
@@ -162,4 +106,72 @@ class DrawerMenu extends Drawer {
       ),
     );
   }
+}
+
+class PrimaryInfoScaffold extends MenuScaffold {
+  // Context should probably go here. But it's not used yet, so w/e
+  PrimaryInfoScaffold()
+      : super(
+          name: "Primary Information",
+          body: ListView(
+            children: [
+              CommonCharacterInfoWidget(),
+              AdvantagesWidget(),
+            ],
+            shrinkWrap: true,
+            primary: true,
+          ),
+          selectedItem: SelectedMenuItem.PrimaryInfo,
+        );
+}
+
+class AttributesAndAbilitiesScaffold extends MenuScaffold {
+  AttributesAndAbilitiesScaffold(BuildContext context)
+      : super(
+          name: "Attributes & Abilities",
+          body: ListView(
+            children: [
+              AttributesSectionWidget(),
+              AbilitiesSectionWidget(),
+            ],
+            shrinkWrap: true,
+            primary: true,
+          ),
+          selectedItem: SelectedMenuItem.Abilities,
+          floatingActionButton: SpeedDial(
+            icon: Icons.add,
+            activeIcon: Icons.close,
+            backgroundColor: Theme.of(context).colorScheme.primaryVariant,
+            closeManually: true,
+            children: [
+              SpeedDialChild(
+                child: Icon(Icons.psychology_outlined),
+                backgroundColor: Colors.blue,
+                label: "Add a mental attribute",
+                labelBackgroundColor: Theme.of(context).colorScheme.surface,
+              ),
+              SpeedDialChild(
+                child: Icon(Icons.sentiment_very_satisfied_outlined),
+                backgroundColor: Colors.green,
+                label: "Add a social attribute",
+                labelBackgroundColor: Theme.of(context).colorScheme.surface,
+              ),
+              SpeedDialChild(
+                child: Icon(Icons.directions_run_rounded),
+                backgroundColor: Colors.red,
+                label: "Add a physical attribute",
+                labelBackgroundColor: Theme.of(context).colorScheme.surface,
+              ),
+            ],
+          ),
+        );
+}
+
+class WeaponsAndArmorScaffold extends MenuScaffold {
+  WeaponsAndArmorScaffold()
+      : super(
+          name: "Weapons & Armor",
+          body: WeaponsAndArmorSectionWidget(),
+          selectedItem: SelectedMenuItem.WeaponsArmor,
+        );
 }
