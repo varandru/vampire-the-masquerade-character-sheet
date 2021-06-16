@@ -198,5 +198,11 @@
         "current": 0
       }
     ]
-  }
+  },
+  "backgrounds": [
+    {"name": "Mentor", "current": 2},
+    {"name": "Herd", "current": 1},
+    {"name": "Resources", "current": 2},
+    {"name": "Generation", "current": 3}
+  ]
 }

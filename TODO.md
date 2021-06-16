@@ -35,6 +35,7 @@
    - [x] Attributes and their descriptions/specialization
    - [x] Humanity and willpower levels
    - [x] Abilities
+   - [ ] Virtues
    - [ ] Disciplines, sublevels of disciplines
    - [ ] Rituals
    - [ ] Merits & Flaws

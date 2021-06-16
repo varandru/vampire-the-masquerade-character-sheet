@@ -95,7 +95,7 @@ class AbilitiesController extends GetxController {
         // CRUTCH This doesn't allow attributes to go above 5
         ComplexAbility ca = ComplexAbility(
           name: name,
-          current: attribute["current"] ?? 1,
+          current: attribute["current"] ?? 0,
           min: 0,
           max: 5,
           specialization: attribute["specialization"] ?? "",
@@ -125,6 +125,14 @@ class AbilitiesController extends GetxController {
         }
       }
     }
+  }
+
+  Map<String, dynamic> save() {
+    Map<String, dynamic> json = Map();
+    json["talents"] = getColumnByType(AbilityColumnType.Talents);
+    json["skills"] = getColumnByType(AbilityColumnType.Skills);
+    json["knowledges"] = getColumnByType(AbilityColumnType.Knowledges);
+    return json;
   }
 }
 
