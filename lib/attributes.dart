@@ -33,9 +33,6 @@ class AttributesController extends GetxController {
     }
   }
 
-  // Also, not here. App should move the assets with defaults, including dictionaries,
-  // to it's working folder. I guess, it's done on installation.
-  // Assets are pregens, not real files to work with
   void load(Map<String, dynamic> json, AttributeDictionary dictionary) {
     // 1. Category headers. Re-read mostly for localization, might kill later
     if (dictionary.physicalAttributesName.isNotEmpty) {
@@ -63,7 +60,7 @@ class AttributesController extends GetxController {
       if (attribute["name"] != null && attribute is Map<String, dynamic>) {
         String name = attribute["name"];
 
-        AttributeDictionaryEntry? entry;
+        ComplexAbilityEntry? entry;
 
         switch (type) {
           case AttributeColumnType.Physical:
@@ -79,7 +76,7 @@ class AttributesController extends GetxController {
 
         if (entry == null) {
           // If a stat is not found, add an empty one
-          entry = AttributeDictionaryEntry();
+          entry = ComplexAbilityEntry();
           switch (type) {
             case AttributeColumnType.Physical:
               dictionary.physical[name] = entry;
@@ -99,7 +96,7 @@ class AttributesController extends GetxController {
           current: attribute["current"] ?? 1,
           min: 0,
           max: 5,
-          specialization: attribute["specialization"],
+          specialization: attribute["specialization"] ?? "",
           description: entry.description ?? "",
           isIncremental: true, // Attributes are incremental, AFAIK
         );
@@ -109,13 +106,19 @@ class AttributesController extends GetxController {
 
         switch (type) {
           case AttributeColumnType.Physical:
-            physicalAttributes.add(ca);
+            if (!physicalAttributes.contains(ca)) {
+              physicalAttributes.add(ca);
+            }
             break;
           case AttributeColumnType.Mental:
-            mentalAttributes.add(ca);
+            if (!mentalAttributes.contains(ca)) {
+              mentalAttributes.add(ca);
+            }
             break;
           case AttributeColumnType.Social:
-            socialAttributes.add(ca);
+            if (!socialAttributes.contains(ca)) {
+              socialAttributes.add(ca);
+            }
             break;
         }
       }
@@ -179,18 +182,10 @@ class MentalAttributesColumn {
   ];
 }
 
-// String name is not in the entry, it's a map key
-class AttributeDictionaryEntry {
-  // String name = "";
-  List<String> specializations = [];
-  List<String> level = [];
-  String? description;
-}
-
 class AttributeDictionary {
-  Map<String, AttributeDictionaryEntry> physical = Map();
-  Map<String, AttributeDictionaryEntry> social = Map();
-  Map<String, AttributeDictionaryEntry> mental = Map();
+  Map<String, ComplexAbilityEntry> physical = Map();
+  Map<String, ComplexAbilityEntry> social = Map();
+  Map<String, ComplexAbilityEntry> mental = Map();
 
   String physicalAttributesName = "Physical";
   String socialAttributesName = "Social";
@@ -238,9 +233,8 @@ class AttributeDictionary {
     }
   }
 
-  AttributeDictionaryEntry _getAttributeFromJson(
-      Map<String, dynamic> attribute) {
-    AttributeDictionaryEntry entry = AttributeDictionaryEntry();
+  ComplexAbilityEntry _getAttributeFromJson(Map<String, dynamic> attribute) {
+    ComplexAbilityEntry entry = ComplexAbilityEntry();
     if (attribute["specialization"] != null) {
       if (attribute["specialization"] is List) {
         for (var specialization in attribute["specialization"]) {

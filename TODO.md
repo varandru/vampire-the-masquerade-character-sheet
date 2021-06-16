@@ -32,9 +32,10 @@
    - [x] Clicking on a field square button should zero it. Makes, say, a blood pool of 0 possible
  - [ ] Serialization
    - [x] Main character information: name, sire, etc.
-   - [ ] Attributes and their descriptions/specialization
+   - [x] Attributes and their descriptions/specialization
    - [x] Humanity and willpower levels
-   - [ ] Abilities
+   - [x] Abilities
+   - [ ] Virtues
    - [ ] Disciplines, sublevels of disciplines
    - [ ] Rituals
    - [ ] Merits & Flaws

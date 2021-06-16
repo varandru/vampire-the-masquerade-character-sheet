@@ -179,6 +179,7 @@ class MostVariedController extends GetxController {
   }
 }
 
+// TODO: move to its own file? To advantages.dart?
 class VirtuesController extends GetxController {
   var consience = 2.obs;
   var selfControl = 3.obs;

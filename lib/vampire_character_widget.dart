@@ -3,8 +3,6 @@ import 'package:get/get.dart';
 
 import 'vampite_character.dart';
 import 'advanatages_widget.dart';
-import 'merits_and_flaws.dart';
-import 'disciplines.dart';
 import 'drawer_menu.dart';
 import 'main_info_widget.dart';
 
@@ -26,18 +24,7 @@ class VampireWidget extends StatelessWidget {
             case ConnectionState.done:
               print("Done");
               return GetMaterialApp(
-                home: MenuScaffold(
-                  name: "Primary Information",
-                  body: ListView(
-                    children: [
-                      CommonCharacterInfoWidget(),
-                      AdvantagesWidget(),
-                    ],
-                    shrinkWrap: true,
-                    primary: true,
-                  ),
-                  selectedItem: SelectedMenuItem.PrimaryInfo,
-                ),
+                home: PrimaryInfoScaffold(),
               );
           }
         });

@@ -70,9 +70,11 @@ class ComplexAbilityWidget extends StatelessWidget {
                 style: Theme.of(context).textTheme.headline4));
             children.add(Text(attribute.specialization));
           }
-          children.add(Text("Description:",
-              style: Theme.of(context).textTheme.headline6));
-          children.add(Text(attribute.description));
+          if (attribute.description.isNotEmpty) {
+            children.add(Text("Description:",
+                style: Theme.of(context).textTheme.headline6));
+            children.add(Text(attribute.description));
+          }
           Get.dialog(
             SimpleDialog(
               title: Text(attribute.name),

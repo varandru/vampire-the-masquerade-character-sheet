@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vampire_the_masquerade_character_sheet/advantages.dart';
 
 import 'abilities.dart';
 import 'attributes.dart';
@@ -15,8 +16,9 @@ class VampireCharacter extends GetxController {
   late MostVariedController mostVariedController; // ++
   late VirtuesController virtuesController; // ++
   late MainInfo mainInfo; // ++
-  late AttributesController attributesController; // -+
-  late AbilitiesController abilitiesController; // --
+  late AttributesController attributesController; // ++
+  late AbilitiesController abilitiesController; // ++
+  late BackgroundsController backgroundsController;
 
   late String _characterFileName;
   late bool installed;
@@ -33,6 +35,7 @@ class VampireCharacter extends GetxController {
     mainInfo = Get.put(MainInfo());
     attributesController = Get.put(AttributesController());
     abilitiesController = Get.put(AbilitiesController());
+    backgroundsController = Get.put(BackgroundsController());
   }
 
   void _loadToControllers(Map<String, dynamic> json) {
@@ -47,20 +50,50 @@ class VampireCharacter extends GetxController {
     json["virtues"] = virtuesController.save();
     json["main_info"] = mainInfo.save();
     json["attributes"] = attributesController.save();
+    json["abilities"] = abilitiesController.save();
     return json;
   }
 
   Future<String> _loadAttributeList() async {
-    var direcrory = await getApplicationDocumentsDirectory();
+    var directory = await getApplicationDocumentsDirectory();
     SharedPreferences preferences = await SharedPreferences.getInstance();
     final attributeListFile = preferences.getString('attribute_dictionary') ??
         'default_attributes_en_US.json';
-    File dictionaryFile = File(direcrory.path + '/' + attributeListFile);
+    File dictionaryFile = File(directory.path + '/' + attributeListFile);
 
     if (await dictionaryFile.exists()) {
       return dictionaryFile.readAsString();
     } else {
-      throw ("Attribute dictionary does not exist");
+      throw ("Attribute dictionary $attributeListFile does not exist");
+    }
+  }
+
+  Future<String> _loadAbilitiesList() async {
+    var directory = await getApplicationDocumentsDirectory();
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    final abilitiesListFile = preferences.getString('abilities_dictionary') ??
+        'default_abilities_en_US.json';
+    File dictionaryFile = File(directory.path + '/' + abilitiesListFile);
+
+    if (await dictionaryFile.exists()) {
+      return dictionaryFile.readAsString();
+    } else {
+      throw ("Attribute dictionary $abilitiesListFile does not exist");
+    }
+  }
+
+  Future<String> _loadBackgroundList() async {
+    var directory = await getApplicationDocumentsDirectory();
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    final backgroundsListFile =
+        preferences.getString('backgrounds_dictionary') ??
+            'default_backgrounds_en_US.json';
+    File dictionaryFile = File(directory.path + '/' + backgroundsListFile);
+
+    if (await dictionaryFile.exists()) {
+      return dictionaryFile.readAsString();
+    } else {
+      throw ("Attribute dictionary $backgroundsListFile does not exist");
     }
   }
 
@@ -71,22 +104,39 @@ class VampireCharacter extends GetxController {
       if (GetPlatform.isAndroid) {
         var direcrory = await getApplicationDocumentsDirectory();
         SharedPreferences preferences = await SharedPreferences.getInstance();
-        String characterFileName =
+        _characterFileName =
             preferences.getString('character_file') ?? "character.json";
-        File characterFile = File(direcrory.path + '/' + characterFileName);
+        File characterFile = File(direcrory.path + '/' + _characterFileName);
 
         if (characterFile.existsSync()) {
           // Attribute dictionary
-          AttributeDictionary ad = AttributeDictionary();
-          _loadAttributeList().then((value) {
-            ad.load(jsonDecode(value));
-            print(characterFile.readAsStringSync());
-            Map<String, dynamic> json =
-                jsonDecode(characterFile.readAsStringSync());
-            _loadToControllers(json);
-            if (json["attributes"] != null)
-              attributesController.load(json["attributes"], ad);
-          });
+          AttributeDictionary atrd = AttributeDictionary();
+          var attributeList = await _loadAttributeList();
+          atrd.load(jsonDecode(attributeList));
+
+          // Abilities dictionary
+          AbilitiesDictionary abd = AbilitiesDictionary();
+          var abilitiesList = await _loadAbilitiesList();
+          abd.load(jsonDecode(abilitiesList));
+
+          // Backgrounds dictionary
+          BackgroundDictionary backd = BackgroundDictionary();
+          var backgroundList = await _loadBackgroundList();
+          backd.load(jsonDecode(backgroundList));
+
+          Map<String, dynamic> json =
+              jsonDecode(characterFile.readAsStringSync());
+
+          _loadToControllers(json);
+
+          if (json["attributes"] != null)
+            attributesController.load(json["attributes"], atrd);
+
+          if (json["abilities"] != null)
+            abilitiesController.load(json["abilities"], abd);
+
+          if (json["backgrounds"] != null)
+            backgroundsController.load(json["backgrounds"], backd);
         }
         // else just use the defaults
 
@@ -135,12 +185,40 @@ class VampireCharacter extends GetxController {
 
     attributeFile.writeAsStringSync(attributeString);
 
+    attributeString =
+        await rootBundle.loadString('assets/default_abilities_en_US.json');
+    attributeFile = File(directory.path +
+        '/' +
+        (preferences.getString('default_abilities') ??
+            'default_abilities_en_US.json'));
+
+    attributeFile.writeAsStringSync(attributeString);
+
+    attributeString =
+        await rootBundle.loadString('assets/default_backgrounds_en_US.json');
+    attributeFile = File(directory.path +
+        '/' +
+        (preferences.getString('default_backgrounds') ??
+            'default_backgrounds_en_US.json'));
+
+    attributeFile.writeAsStringSync(attributeString);
+
+    attributeString =
+        await rootBundle.loadString('assets/default_character_en_US.json');
+    attributeFile = File(directory.path +
+        '/' +
+        (preferences.getString('default_character') ?? 'character.json'));
+
+    attributeFile.writeAsStringSync(attributeString);
+
     await preferences.setBool('installed', true);
     print("Installation Done!");
   }
 
   Future<void> init() async {
     await loadSharedPreferences();
+    // TEMP
+    installed = false;
     if (!installed) {
       await install();
     }
