@@ -42,7 +42,7 @@ class DrawerMenu extends Drawer {
                 : Theme.of(context).colorScheme.onPrimary,
             onTap: () {
               Get.offAll(
-                () => PrimaryInfoScaffold(),
+                () => PrimaryInfoScaffold(context),
               );
             },
           ),
@@ -110,7 +110,7 @@ class DrawerMenu extends Drawer {
 
 class PrimaryInfoScaffold extends MenuScaffold {
   // Context should probably go here. But it's not used yet, so w/e
-  PrimaryInfoScaffold()
+  PrimaryInfoScaffold(BuildContext context)
       : super(
           name: "Primary Information",
           body: ListView(
@@ -122,6 +122,15 @@ class PrimaryInfoScaffold extends MenuScaffold {
             primary: true,
           ),
           selectedItem: SelectedMenuItem.PrimaryInfo,
+          floatingActionButton: SpeedDial(
+            icon: Icons.add,
+            activeIcon: Icons.close,
+            backgroundColor: Theme.of(context).colorScheme.primaryVariant,
+            closeManually: true,
+            children: [
+              AddBackgroundButton(context),
+            ],
+          ),
         );
 }
 
@@ -146,19 +155,19 @@ class AttributesAndAbilitiesScaffold extends MenuScaffold {
             children: [
               SpeedDialChild(
                 child: Icon(Icons.psychology_outlined),
-                backgroundColor: Colors.blue,
+                backgroundColor: Colors.blue.shade300,
                 label: "Add a mental attribute",
                 labelBackgroundColor: Theme.of(context).colorScheme.surface,
               ),
               SpeedDialChild(
                 child: Icon(Icons.sentiment_very_satisfied_outlined),
-                backgroundColor: Colors.green,
+                backgroundColor: Colors.green.shade300,
                 label: "Add a social attribute",
                 labelBackgroundColor: Theme.of(context).colorScheme.surface,
               ),
               SpeedDialChild(
                 child: Icon(Icons.directions_run_rounded),
-                backgroundColor: Colors.red,
+                backgroundColor: Colors.red.shade300,
                 label: "Add a physical attribute",
                 labelBackgroundColor: Theme.of(context).colorScheme.surface,
               ),

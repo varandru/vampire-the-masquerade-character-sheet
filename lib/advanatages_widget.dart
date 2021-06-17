@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:get/get.dart';
+import 'package:vampire_the_masquerade_character_sheet/advantages.dart';
 
 import 'common_widget.dart';
 import 'common_logic.dart';
@@ -14,13 +16,8 @@ const maxWillpowerCount = 10;
 class BackgroundColumnWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    BackgroundsController bc = Get.find();
     String header = "Backgrounds";
-    List<ComplexAbility> attributes = [
-      ComplexAbility(name: "Mentor", current: 2),
-      ComplexAbility(name: "Herd", current: 1),
-      ComplexAbility(name: "Resources", current: 2),
-      ComplexAbility(name: "Generation", current: 3),
-    ];
 
     List<Widget> column = [
       Text(
@@ -29,8 +26,10 @@ class BackgroundColumnWidget extends StatelessWidget {
         style: Theme.of(context).textTheme.headline6,
       ),
     ];
-    for (var attr in attributes) {
-      column.add(ComplexAbilityWidget(attribute: attr));
+    for (var attr in bc.backgrounds) {
+      column.add(ComplexAbilityWidget(
+        attribute: attr,
+      ));
     }
 
     return Column(
@@ -43,12 +42,8 @@ class BackgroundColumnWidget extends StatelessWidget {
 class VirtuesColumnWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final VirtuesController vc = Get.find();
     String header = "Virtues";
-    List<ComplexAbility> attributes = [
-      ComplexAbility(name: "Conscience", current: 2),
-      ComplexAbility(name: "Self-Control", current: 3),
-      ComplexAbility(name: "Courage", current: 5),
-    ];
 
     List<Widget> column = [
       Text(
@@ -57,9 +52,15 @@ class VirtuesColumnWidget extends StatelessWidget {
         style: Theme.of(context).textTheme.headline6,
       ),
     ];
-    for (var attr in attributes) {
-      column.add(ComplexAbilityWidget(attribute: attr));
-    }
+    column.add(Obx(() => ComplexAbilityWidget(
+        attribute:
+            ComplexAbility(name: "Conscience", current: vc.consience.value))));
+    column.add(Obx(() => ComplexAbilityWidget(
+        attribute: ComplexAbility(
+            name: "Self-Control", current: vc.selfControl.value))));
+    column.add(Obx(() => ComplexAbilityWidget(
+        attribute:
+            ComplexAbility(name: "Courage", current: vc.courage.value))));
 
     return Column(children: column);
   }
@@ -189,4 +190,22 @@ class SummarizedInfoWidget extends StatelessWidget {
 
     return row;
   }
+}
+
+class AddBackgroundButton extends SpeedDialChild {
+  AddBackgroundButton(BuildContext context)
+      : super(
+          child: Icon(Icons.groups),
+          backgroundColor: Colors.yellow.shade300,
+          label: "Add custom background",
+          labelBackgroundColor: Theme.of(context).colorScheme.surface,
+          onTap: () async {
+            final ca =
+                await Get.dialog<ComplexAbility>(AddComplexAbilityDialog());
+            if (ca != null) {
+              BackgroundsController bc = Get.find();
+              bc.addBackground(ca);
+            }
+          },
+        );
 }

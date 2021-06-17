@@ -24,6 +24,12 @@ class BackgroundsController extends GetxController {
     _fillBackgroundList(json, dictionary);
   }
 
+  void addBackground(ComplexAbility ca) {
+    if (!backgrounds.contains(ca)) {
+      backgrounds.add(ca);
+    }
+  }
+
   void _fillBackgroundList(
       List<dynamic> attributes, BackgroundDictionary dictionary) {
     for (var attribute in attributes) {
@@ -51,10 +57,7 @@ class BackgroundsController extends GetxController {
 
         print(
             "Adding backgrounds: '${ca.name}', ${ca.current}, '${ca.description}'");
-
-        if (!backgrounds.contains(ca)) {
-          backgrounds.add(ca);
-        }
+        addBackground(ca);
       }
     }
   }

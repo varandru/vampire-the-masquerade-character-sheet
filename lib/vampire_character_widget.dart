@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'vampite_character.dart';
-import 'advanatages_widget.dart';
 import 'drawer_menu.dart';
-import 'main_info_widget.dart';
 
 // Основной виджет, пока что. На самом деле их несколько, но этот организует все
 // Рисует главный виджет, включает в себя файлы с разделами
@@ -24,7 +22,7 @@ class VampireWidget extends StatelessWidget {
             case ConnectionState.done:
               print("Done");
               return GetMaterialApp(
-                home: PrimaryInfoScaffold(),
+                home: PrimaryInfoScaffold(context),
               );
           }
         });
