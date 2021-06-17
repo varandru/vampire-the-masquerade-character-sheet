@@ -4,8 +4,6 @@ import 'common_logic.dart';
 enum AttributeColumnType { Physical, Mental, Social }
 
 class AttributesController extends GetxController {
-  final attributeListFile = 'default_attributes_en_US.json';
-
   RxList<ComplexAbility> physicalAttributes = RxList<ComplexAbility>();
   RxList<ComplexAbility> socialAttributes = RxList<ComplexAbility>();
   RxList<ComplexAbility> mentalAttributes = RxList<ComplexAbility>();
@@ -35,11 +33,97 @@ class AttributesController extends GetxController {
     }
   }
 
-  // TODO: loading from dictionary, filling attributes with info.
-  // Also, not here. App should move the assets with defaults, including dictionaries,
-  // to it's working folder. I guess, it's done on installation.
-  // Assets are pregens, not real files to work with
-  void load(Map<String, dynamic> json, AttributeDictionary dictionary) {}
+  void load(Map<String, dynamic> json, AttributeDictionary dictionary) {
+    // 1. Category headers. Re-read mostly for localization, might kill later
+    if (dictionary.physicalAttributesName.isNotEmpty) {
+      _headers[AttributeColumnType.Physical] =
+          dictionary.physicalAttributesName;
+    }
+    if (dictionary.socialAttributesName.isNotEmpty) {
+      _headers[AttributeColumnType.Social] = dictionary.socialAttributesName;
+    }
+    if (dictionary.mentalAttributesName.isNotEmpty) {
+      _headers[AttributeColumnType.Mental] = dictionary.mentalAttributesName;
+    }
+
+    _fillAttributeListByType(
+        AttributeColumnType.Physical, json["physical"], dictionary);
+    _fillAttributeListByType(
+        AttributeColumnType.Mental, json["mental"], dictionary);
+    _fillAttributeListByType(
+        AttributeColumnType.Social, json["social"], dictionary);
+  }
+
+  void _fillAttributeListByType(AttributeColumnType type,
+      List<dynamic> attributes, AttributeDictionary dictionary) {
+    for (var attribute in attributes) {
+      if (attribute["name"] != null && attribute is Map<String, dynamic>) {
+        String name = attribute["name"];
+
+        ComplexAbilityEntry? entry;
+
+        switch (type) {
+          case AttributeColumnType.Physical:
+            entry = dictionary.physical[name];
+            break;
+          case AttributeColumnType.Mental:
+            entry = dictionary.mental[name];
+            break;
+          case AttributeColumnType.Social:
+            entry = dictionary.social[name];
+            break;
+        }
+
+        if (entry == null) {
+          // If a stat is not found, add an empty one
+          entry = ComplexAbilityEntry();
+          switch (type) {
+            case AttributeColumnType.Physical:
+              dictionary.physical[name] = entry;
+              break;
+            case AttributeColumnType.Mental:
+              dictionary.mental[name] = entry;
+              break;
+            case AttributeColumnType.Social:
+              dictionary.social[name] = entry;
+              break;
+          }
+        }
+
+        // CRUTCH This doesn't allow attributes to go above 5
+        ComplexAbility ca = ComplexAbility(
+          name: name,
+          current: attribute["current"] ?? 1,
+          min: 0,
+          max: 5,
+          specialization: attribute["specialization"] ?? "",
+          description: entry.description ?? "",
+          isIncremental: true, // Attributes are incremental, AFAIK
+        );
+
+        print(
+            "Adding ability $type: '${ca.name}', ${ca.current}, '${ca.specialization}', '${ca.description}'");
+
+        switch (type) {
+          case AttributeColumnType.Physical:
+            if (!physicalAttributes.contains(ca)) {
+              physicalAttributes.add(ca);
+            }
+            break;
+          case AttributeColumnType.Mental:
+            if (!mentalAttributes.contains(ca)) {
+              mentalAttributes.add(ca);
+            }
+            break;
+          case AttributeColumnType.Social:
+            if (!socialAttributes.contains(ca)) {
+              socialAttributes.add(ca);
+            }
+            break;
+        }
+      }
+    }
+  }
 
   Map<String, dynamic> save() {
     Map<String, dynamic> json = Map();
@@ -98,34 +182,10 @@ class MentalAttributesColumn {
   ];
 }
 
-class AttributeDictionaryEntry {
-  String name = "";
-  List<String> specializations = [];
-  List<String> level = [];
-  String? description;
-
-  bool loadFromJson(Map<String, dynamic> json) {
-    if (json["name"] == null) return false;
-    name = json["name"];
-    if (json["specialization"] != null) {
-      for (String specialization in json["specialization"]) {
-        specializations.add(specialization);
-      }
-    }
-    if (json["levels"] != null) {
-      for (String levelDesc in json["levels"]) {
-        level.add(levelDesc);
-      }
-    }
-    description = json["description"];
-    return true;
-  }
-}
-
 class AttributeDictionary {
-  List<AttributeDictionaryEntry> physical = [];
-  List<AttributeDictionaryEntry> social = [];
-  List<AttributeDictionaryEntry> mental = [];
+  Map<String, ComplexAbilityEntry> physical = Map();
+  Map<String, ComplexAbilityEntry> social = Map();
+  Map<String, ComplexAbilityEntry> mental = Map();
 
   String physicalAttributesName = "Physical";
   String socialAttributesName = "Social";
@@ -145,39 +205,58 @@ class AttributeDictionary {
     }
     // 3. Get attribute categories
     if (json["attribute_names"] != null) {
-      physicalAttributesName = json["physical"];
-      socialAttributesName = json["social"];
-      mentalAttributesName = json["mental"];
+      physicalAttributesName = json["attribute_names"]["physical"];
+      socialAttributesName = json["attribute_names"]["social"];
+      mentalAttributesName = json["attribute_names"]["mental"];
     }
 
     // 4. Get physical attributes
     if (json["physical"] != null && json["physical"] is List) {
       for (var attribute in json["physical"]) {
-        physical.add(_getAttributeFromJson(attribute));
+        if (attribute["name"] == null) continue;
+        physical[attribute["name"]] = _getAttributeFromJson(attribute);
       }
     }
     // 5. Get social attributes
     if (json["social"] != null && json["social"] is List) {
       for (var attribute in json["social"]) {
-        social.add(_getAttributeFromJson(attribute));
+        if (attribute["name"] == null) continue;
+        social[attribute["name"]] = _getAttributeFromJson(attribute);
       }
     }
     // 6. Get mental attributes
     if (json["mental"] != null && json["mental"] is List) {
       for (var attribute in json["mental"]) {
-        mental.add(_getAttributeFromJson(attribute));
+        if (attribute["name"] == null) continue;
+        mental[attribute["name"]] = _getAttributeFromJson(attribute);
       }
     }
   }
 
-  AttributeDictionaryEntry _getAttributeFromJson(
-      Map<String, dynamic> attribute) {
-    // TODO: schema checking. On entry as well
-    AttributeDictionaryEntry entry = AttributeDictionaryEntry();
-    entry.name = attribute["name"];
-    // Does this actually work?
-    entry.specializations = attribute["specialization"] as List<String>;
-    entry.level = attribute["levels"] as List<String>;
+  ComplexAbilityEntry _getAttributeFromJson(Map<String, dynamic> attribute) {
+    ComplexAbilityEntry entry = ComplexAbilityEntry();
+    if (attribute["specialization"] != null) {
+      if (attribute["specialization"] is List) {
+        for (var specialization in attribute["specialization"]) {
+          entry.specializations.add(specialization);
+        }
+      } else {
+        print("${attribute["name"]}'s specializations are not a list");
+      }
+    } else {
+      print("${attribute["name"]} does not have specializations");
+    }
+    if (attribute["levels"] != null) {
+      if (attribute["levels"] is List) {
+        for (var level in attribute["levels"]) {
+          entry.level.add(level);
+        }
+      } else {
+        print("${attribute["name"]}'s levels are not a list");
+      }
+    } else {
+      print("${attribute["name"]} does not have levels");
+    }
     entry.description = attribute["description"];
 
     return entry;

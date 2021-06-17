@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'attributes.dart';
-import 'common_logic.dart';
 import 'common_widget.dart';
 
 // Как выглядит этот виджет: Общий заголовок, под ним три колонки

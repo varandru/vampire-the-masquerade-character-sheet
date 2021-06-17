@@ -9,15 +9,16 @@
    - [ ] There are alternatives to Humanity. Make them pickable.
    - [x] Disciplines, rituals and attributes should display their name, not placeholder on top of expanded information
      - [x] Disciplines
-     - [x] Rituals
+     - [ ] Rituals
      - [x] Attributes
-     - [x] Merits and Flaws
+     - [ ] Abilities
+     - [ ] Merits and Flaws
    - [ ] A theme should exist
      - [ ] Color theme
      - [ ] Android icon and app name
    - [ ] A level-up chart should be found in the app. At least a basic one, preferably an interactive one.
  - [ ] Make fiels editable
-   - [ ] Basic character information
+   - [x] Basic character information
    - [ ] Attributes (and skills)
    - [ ] Disciplines (and their levels)
    - [ ] Maximum bloodpool (from generation)
@@ -28,13 +29,16 @@
    - [ ] *All* serialized information must load on startup
    - [ ] Bloodpool maximum must depend on vampire's generation
    - [ ] Some stats depend on vampire's generation as well
-   - [ ] Clicking on a field square button should zero it. Makes, say, a blood pool of 0 possible
+   - [x] Clicking on a field square button should zero it. Makes, say, a blood pool of 0 possible
  - [ ] Serialization
-   - [ ] Main character information: name, sire, etc.
-   - [ ] Attributes and their descriptions/specialization
-   - [ ] Humanity and willpower levels
-   - [ ] Abilities
+   - [x] Main character information: name, sire, etc.
+   - [x] Attributes and their descriptions/specialization
+   - [x] Humanity and willpower levels
+   - [x] Abilities
+   - [ ] Virtues
    - [ ] Disciplines, sublevels of disciplines
    - [ ] Rituals
    - [ ] Merits & Flaws
    - [ ] Alternatives to Humanity: Paths, Instincts, etc. 
+   - [ ] Alternatives to Virtues: Instints and Conviction
+ - [ ] Localization

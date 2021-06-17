@@ -40,7 +40,7 @@ class AbilitiesColumnWidget extends StatelessWidget {
         style: Theme.of(context).textTheme.headline6,
       ),
     ];
-    for (var attr in ac.getAbilitiesByType(type)) {
+    for (var attr in ac.getColumnByType(type)) {
       column.add(ComplexAbilityWidget(attribute: attr));
     }
 
