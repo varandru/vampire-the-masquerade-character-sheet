@@ -17,25 +17,7 @@ class BackgroundColumnWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     BackgroundsController bc = Get.find();
-    String header = "Backgrounds";
-
-    List<Widget> column = [
-      Text(
-        header,
-        textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.headline6,
-      ),
-    ];
-    for (var attr in bc.backgrounds) {
-      column.add(ComplexAbilityWidget(
-        attribute: attr,
-      ));
-    }
-
-    return Column(
-      children: column,
-      // padding: EdgeInsets.zero,
-    );
+    return ComplexAbilityColumnWidget(bc.backgrounds);
   }
 }
 
@@ -53,14 +35,19 @@ class VirtuesColumnWidget extends StatelessWidget {
       ),
     ];
     column.add(Obx(() => ComplexAbilityWidget(
-        attribute:
-            ComplexAbility(name: "Conscience", current: vc.consience.value))));
+          attribute:
+              ComplexAbility(name: "Conscience", current: vc.consience.value),
+          callback: (ability, index) => null,
+        )));
     column.add(Obx(() => ComplexAbilityWidget(
-        attribute: ComplexAbility(
-            name: "Self-Control", current: vc.selfControl.value))));
+          attribute: ComplexAbility(
+              name: "Self-Control", current: vc.selfControl.value),
+          callback: (ability, index) => null,
+        )));
     column.add(Obx(() => ComplexAbilityWidget(
-        attribute:
-            ComplexAbility(name: "Courage", current: vc.courage.value))));
+          attribute: ComplexAbility(name: "Courage", current: vc.courage.value),
+          callback: (ability, index) => null,
+        )));
 
     return Column(children: column);
   }

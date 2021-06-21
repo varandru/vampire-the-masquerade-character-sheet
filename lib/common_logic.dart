@@ -1,3 +1,5 @@
+import 'package:get/get.dart';
+
 class ComplexAbility {
   ComplexAbility(
       {required this.name,
@@ -87,5 +89,25 @@ class ComplexAbilityEntry {
     if (description != null) json['description'] = description;
     if (specializations.isNotEmpty) json['specializations'] = specializations;
     return json;
+  }
+}
+
+class ComplexAbilityColumn {
+  ComplexAbilityColumn(String name) {
+    this.name.value = name;
+  }
+
+  RxList<ComplexAbility> values = RxList();
+
+  var name = "Name".obs;
+
+  void editValue(ComplexAbility value, int index) {
+    values[index] = value;
+  }
+
+  void add(ComplexAbility ca) {
+    if (!values.contains(ca)) {
+      values.add(ca);
+    }
   }
 }

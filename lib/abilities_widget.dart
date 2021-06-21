@@ -33,20 +33,6 @@ class AbilitiesColumnWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final AbilitiesController ac = Get.find();
 
-    List<Widget> column = [
-      Text(
-        ac.getHeaderByType(type),
-        textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.headline6,
-      ),
-    ];
-    for (var attr in ac.getColumnByType(type)) {
-      column.add(ComplexAbilityWidget(attribute: attr));
-    }
-
-    return Column(
-      children: column,
-      mainAxisSize: MainAxisSize.min,
-    );
+    return ComplexAbilityColumnWidget(ac.getColumnByType(type));
   }
 }

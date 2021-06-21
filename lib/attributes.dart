@@ -4,25 +4,17 @@ import 'common_logic.dart';
 enum AttributeColumnType { Physical, Mental, Social }
 
 class AttributesController extends GetxController {
-  RxList<ComplexAbility> physicalAttributes = RxList<ComplexAbility>();
-  RxList<ComplexAbility> socialAttributes = RxList<ComplexAbility>();
-  RxList<ComplexAbility> mentalAttributes = RxList<ComplexAbility>();
-
-  final Map<AttributeColumnType, String> _headers = {
-    AttributeColumnType.Physical: 'Physical',
-    AttributeColumnType.Mental: 'Mental',
-    AttributeColumnType.Social: 'Social',
-  };
+  ComplexAbilityColumn physicalAttributes = ComplexAbilityColumn('Physical');
+  ComplexAbilityColumn socialAttributes = ComplexAbilityColumn('Mental');
+  ComplexAbilityColumn mentalAttributes = ComplexAbilityColumn('Social');
 
   void initializeFromConstants() {
-    physicalAttributes.value = PhysicalAttributesColumn().attributes;
-    socialAttributes.value = SocialAttributesColumn().attributes;
-    mentalAttributes.value = MentalAttributesColumn().attributes;
+    physicalAttributes.values.value = PhysicalAttributesColumn().attributes;
+    socialAttributes.values.value = SocialAttributesColumn().attributes;
+    mentalAttributes.values.value = MentalAttributesColumn().attributes;
   }
 
-  String getHeaderByType(AttributeColumnType type) => _headers[type]!;
-
-  List<ComplexAbility> getColumnByType(AttributeColumnType type) {
+  ComplexAbilityColumn getColumnByType(AttributeColumnType type) {
     switch (type) {
       case AttributeColumnType.Physical:
         return physicalAttributes;
@@ -36,14 +28,13 @@ class AttributesController extends GetxController {
   void load(Map<String, dynamic> json, AttributeDictionary dictionary) {
     // 1. Category headers. Re-read mostly for localization, might kill later
     if (dictionary.physicalAttributesName.isNotEmpty) {
-      _headers[AttributeColumnType.Physical] =
-          dictionary.physicalAttributesName;
+      physicalAttributes.name.value = dictionary.physicalAttributesName;
     }
     if (dictionary.socialAttributesName.isNotEmpty) {
-      _headers[AttributeColumnType.Social] = dictionary.socialAttributesName;
+      socialAttributes.name.value = dictionary.socialAttributesName;
     }
     if (dictionary.mentalAttributesName.isNotEmpty) {
-      _headers[AttributeColumnType.Mental] = dictionary.mentalAttributesName;
+      mentalAttributes.name.value = dictionary.mentalAttributesName;
     }
 
     _fillAttributeListByType(
@@ -106,19 +97,15 @@ class AttributesController extends GetxController {
 
         switch (type) {
           case AttributeColumnType.Physical:
-            if (!physicalAttributes.contains(ca)) {
-              physicalAttributes.add(ca);
-            }
+            physicalAttributes.add(ca);
             break;
           case AttributeColumnType.Mental:
-            if (!mentalAttributes.contains(ca)) {
-              mentalAttributes.add(ca);
-            }
+            mentalAttributes.add(ca);
+
             break;
           case AttributeColumnType.Social:
-            if (!socialAttributes.contains(ca)) {
-              socialAttributes.add(ca);
-            }
+            socialAttributes.add(ca);
+
             break;
         }
       }
@@ -136,7 +123,7 @@ class AttributesController extends GetxController {
   List<Map<String, dynamic>> _getAttributeListByType(AttributeColumnType type) {
     var column = getColumnByType(type);
     List<Map<String, dynamic>> shortAttributes = [];
-    for (var attribute in column) {
+    for (var attribute in column.values) {
       Map<String, dynamic> attr = Map();
       attr["name"] = attribute.name;
       attr["current"] = attribute.current;

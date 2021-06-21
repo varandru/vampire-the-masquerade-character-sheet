@@ -5,11 +5,11 @@ import 'common_logic.dart';
 enum AbilityColumnType { Talents, Skills, Knowledges }
 
 class AbilitiesController extends GetxController {
-  RxList<ComplexAbility> talents = RxList<ComplexAbility>();
-  RxList<ComplexAbility> skills = RxList<ComplexAbility>();
-  RxList<ComplexAbility> knowledges = RxList<ComplexAbility>();
+  ComplexAbilityColumn talents = ComplexAbilityColumn('Talents');
+  ComplexAbilityColumn skills = ComplexAbilityColumn('Skills');
+  ComplexAbilityColumn knowledges = ComplexAbilityColumn('Knowledges');
 
-  List<ComplexAbility> getColumnByType(AbilityColumnType type) {
+  ComplexAbilityColumn getColumnByType(AbilityColumnType type) {
     switch (type) {
       case AbilityColumnType.Talents:
         return talents;
@@ -20,32 +20,23 @@ class AbilitiesController extends GetxController {
     }
   }
 
-  final Map<AbilityColumnType, String> _headers = {
-    AbilityColumnType.Talents: 'Talents',
-    AbilityColumnType.Skills: 'Skills',
-    AbilityColumnType.Knowledges: 'Knowledges',
-  };
-
-  String getHeaderByType(AbilityColumnType type) => _headers[type]!;
-
   //CRUTCH: This is a crutch for Web debug
   void initializeFromConstants() {
-    talents.value = TalentsAbilitiesColumn().attributes;
-    skills.value = SkillsAbilitiesColumn().attributes;
-    knowledges.value = KnowledgeAbilitiesColumn().attributes;
+    talents.values.value = TalentsAbilitiesColumn().attributes;
+    skills.values.value = SkillsAbilitiesColumn().attributes;
+    knowledges.values.value = KnowledgeAbilitiesColumn().attributes;
   }
 
   void load(Map<String, dynamic> json, AbilitiesDictionary dictionary) {
     // 1. Category headers. Re-read mostly for localization, might kill later
     if (dictionary.talentAbilitiesName.isNotEmpty) {
-      _headers[AbilityColumnType.Talents] = dictionary.talentAbilitiesName;
+      talents.name.value = dictionary.talentAbilitiesName;
     }
     if (dictionary.skillsAbilitiesName.isNotEmpty) {
-      _headers[AbilityColumnType.Skills] = dictionary.skillsAbilitiesName;
+      skills.name.value = dictionary.skillsAbilitiesName;
     }
     if (dictionary.knowledgeAbilitiesName.isNotEmpty) {
-      _headers[AbilityColumnType.Knowledges] =
-          dictionary.knowledgeAbilitiesName;
+      knowledges.name.value = dictionary.knowledgeAbilitiesName;
     }
 
     _fillAttributeListByType(
@@ -108,19 +99,13 @@ class AbilitiesController extends GetxController {
 
         switch (type) {
           case AbilityColumnType.Talents:
-            if (!talents.contains(ca)) {
-              talents.add(ca);
-            }
+            talents.add(ca);
             break;
           case AbilityColumnType.Skills:
-            if (!skills.contains(ca)) {
-              skills.add(ca);
-            }
+            skills.add(ca);
             break;
           case AbilityColumnType.Knowledges:
-            if (!knowledges.contains(ca)) {
-              knowledges.add(ca);
-            }
+            knowledges.add(ca);
             break;
         }
       }
@@ -188,6 +173,7 @@ class KnowledgeAbilitiesColumn {
   ];
 }
 
+// TODO: at some point dictionary should be refactored
 class AbilitiesDictionary {
   Map<String, ComplexAbilityEntry> talents = Map();
   Map<String, ComplexAbilityEntry> skills = Map();

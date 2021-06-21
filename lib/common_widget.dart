@@ -37,11 +37,17 @@ class NoTitleCounterWidget extends StatelessWidget {
 /// Displays attributes, abilities and virtues.
 /// Anything that conforms to ComplexAbility structure, basically
 class ComplexAbilityWidget extends StatelessWidget {
-  ComplexAbilityWidget({Key? key, required ComplexAbility attribute})
-      : this.attribute = attribute,
+  ComplexAbilityWidget({
+    Key? key,
+    required ComplexAbility attribute,
+    required this.callback,
+    this.index = 0,
+  })  : this.attribute = attribute,
         super(key: key);
 
   final ComplexAbility attribute;
+  final int index;
+  final Function(ComplexAbility ability, int index) callback;
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +91,30 @@ class ComplexAbilityWidget extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+}
+
+class ComplexAbilityColumnWidget extends StatelessWidget {
+  ComplexAbilityColumnWidget(this.controller);
+
+  final ComplexAbilityColumn controller;
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> column = [];
+
+    column.add(Text(controller.name.value,
+        style: Theme.of(context).textTheme.headline4));
+
+    for (int i = 0; i < controller.values.length; i++) {
+      column.add(ComplexAbilityWidget(
+          attribute: controller.values[i],
+          index: i,
+          callback: controller.editValue));
+    }
+    return Column(
+      children: column,
     );
   }
 }
