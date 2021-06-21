@@ -13,11 +13,10 @@ const maxWillpowerCount = 10;
 // Are separated on the character sheet. Go into primary info in the app.
 // This is hardcoded for the sake of the fast hardcoded version.
 // TODO: serialize, allow arbitrary backgrounds
-class BackgroundColumnWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
+class BackgroundColumnWidget extends ComplexAbilityColumnWidget {
+  BackgroundColumnWidget() {
     BackgroundsController bc = Get.find();
-    return ComplexAbilityColumnWidget(bc.backgrounds);
+    super.controller = bc.backgrounds.value;
   }
 }
 
@@ -37,16 +36,19 @@ class VirtuesColumnWidget extends StatelessWidget {
     column.add(Obx(() => ComplexAbilityWidget(
           attribute:
               ComplexAbility(name: "Conscience", current: vc.consience.value),
-          callback: (ability, index) => null,
+          updateCallback: (ability, index) => null,
+          deleteCallback: (index) => null,
         )));
     column.add(Obx(() => ComplexAbilityWidget(
           attribute: ComplexAbility(
               name: "Self-Control", current: vc.selfControl.value),
-          callback: (ability, index) => null,
+          updateCallback: (ability, index) => null,
+          deleteCallback: (index) => null,
         )));
     column.add(Obx(() => ComplexAbilityWidget(
           attribute: ComplexAbility(name: "Courage", current: vc.courage.value),
-          callback: (ability, index) => null,
+          updateCallback: (ability, index) => null,
+          deleteCallback: (index) => null,
         )));
 
     return Column(children: column);
@@ -187,12 +189,12 @@ class AddBackgroundButton extends SpeedDialChild {
           label: "Add custom background",
           labelBackgroundColor: Theme.of(context).colorScheme.surface,
           onTap: () async {
-            // final ca =
-            //     await Get.dialog<ComplexAbility>(AddComplexAbilityDialog());
-            // if (ca != null) {
-            //   BackgroundsController bc = Get.find();
-            //   bc.addBackground(ca);
-            // }
+            final ca = await Get.dialog<ComplexAbility>(
+                ComplexAbilityDialog(name: 'New Background'));
+            if (ca != null) {
+              BackgroundsController bc = Get.find();
+              bc.backgrounds.value.add(ca);
+            }
           },
         );
 }

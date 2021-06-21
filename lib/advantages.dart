@@ -2,10 +2,10 @@ import 'package:get/get.dart';
 import 'common_logic.dart';
 
 class BackgroundsController extends GetxController {
-  ComplexAbilityColumn backgrounds = ComplexAbilityColumn('Backgrounds');
+  var backgrounds = ComplexAbilityColumn('Backgrounds').obs;
 
   void initializeFromConstants() {
-    backgrounds.values.value = [
+    backgrounds.value.values.value = [
       ComplexAbility(name: "Mentor", current: 2),
       ComplexAbility(name: "Herd", current: 1),
       ComplexAbility(name: "Resources", current: 2),
@@ -16,7 +16,7 @@ class BackgroundsController extends GetxController {
   void load(List<dynamic> json, BackgroundDictionary dictionary) {
     // 1. Category headers. Re-read mostly for localization, might kill later
     if (dictionary.name.isNotEmpty) {
-      backgrounds.name.value = dictionary.name;
+      backgrounds.value.name.value = dictionary.name;
     }
 
     _fillBackgroundList(json, dictionary);
@@ -49,14 +49,14 @@ class BackgroundsController extends GetxController {
 
         print(
             "Adding backgrounds: '${ca.name}', ${ca.current}, '${ca.description}'");
-        backgrounds.add(ca);
+        backgrounds.value.add(ca);
       }
     }
   }
 
   List<Map<String, dynamic>> save() {
     List<Map<String, dynamic>> shortAttributes = [];
-    for (var attribute in backgrounds.values) {
+    for (var attribute in backgrounds.value.values) {
       Map<String, dynamic> attr = Map();
       attr["name"] = attribute.name;
       attr["current"] = attribute.current;

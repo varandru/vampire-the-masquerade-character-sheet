@@ -105,6 +105,10 @@ class ComplexAbilityColumn {
     values[index] = value;
   }
 
+  void deleteValue(int index) {
+    values.removeAt(index);
+  }
+
   void add(ComplexAbility ca) {
     if (!values.contains(ca)) {
       values.add(ca);

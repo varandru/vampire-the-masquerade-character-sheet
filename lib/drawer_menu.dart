@@ -140,8 +140,8 @@ class AttributesAndAbilitiesScaffold extends MenuScaffold {
           name: "Attributes & Abilities",
           body: ListView(
             children: [
-              AttributesSectionWidget(),
-              AbilitiesSectionWidget(),
+              // AttributesSectionWidget(),
+              // AbilitiesSectionWidget(),
             ],
             shrinkWrap: true,
             primary: true,

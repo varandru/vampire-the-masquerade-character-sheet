@@ -16,8 +16,8 @@ class VampireCharacter extends GetxController {
   late MostVariedController mostVariedController; // ++
   late VirtuesController virtuesController; // ++
   late MainInfo mainInfo; // ++
-  late AttributesController attributesController; // ++
-  late AbilitiesController abilitiesController; // ++
+  // late AttributesController attributesController; // ++
+  // late AbilitiesController abilitiesController; // ++
   late BackgroundsController backgroundsController;
 
   late String _characterFileName;
@@ -33,8 +33,8 @@ class VampireCharacter extends GetxController {
     mostVariedController = Get.put(MostVariedController());
     virtuesController = Get.put(VirtuesController());
     mainInfo = Get.put(MainInfo());
-    attributesController = Get.put(AttributesController());
-    abilitiesController = Get.put(AbilitiesController());
+    // attributesController = Get.put(AttributesController());s
+    // abilitiesController = Get.put(AbilitiesController());
     backgroundsController = Get.put(BackgroundsController());
   }
 
@@ -49,8 +49,8 @@ class VampireCharacter extends GetxController {
     json["most_varied_variables"] = mostVariedController.save();
     json["virtues"] = virtuesController.save();
     json["main_info"] = mainInfo.save();
-    json["attributes"] = attributesController.save();
-    json["abilities"] = abilitiesController.save();
+    // json["attributes"] = attributesController.save();
+    // json["abilities"] = abilitiesController.save();
     return json;
   }
 
@@ -109,15 +109,15 @@ class VampireCharacter extends GetxController {
         File characterFile = File(direcrory.path + '/' + _characterFileName);
 
         if (characterFile.existsSync()) {
-          // Attribute dictionary
-          AttributeDictionary atrd = AttributeDictionary();
-          var attributeList = await _loadAttributeList();
-          atrd.load(jsonDecode(attributeList));
+          // // Attribute dictionary
+          // AttributeDictionary atrd = AttributeDictionary();
+          // var attributeList = await _loadAttributeList();
+          // atrd.load(jsonDecode(attributeList));
 
-          // Abilities dictionary
-          AbilitiesDictionary abd = AbilitiesDictionary();
-          var abilitiesList = await _loadAbilitiesList();
-          abd.load(jsonDecode(abilitiesList));
+          // // Abilities dictionary
+          // AbilitiesDictionary abd = AbilitiesDictionary();
+          // var abilitiesList = await _loadAbilitiesList();
+          // abd.load(jsonDecode(abilitiesList));
 
           // Backgrounds dictionary
           BackgroundDictionary backd = BackgroundDictionary();
@@ -129,11 +129,11 @@ class VampireCharacter extends GetxController {
 
           _loadToControllers(json);
 
-          if (json["attributes"] != null)
-            attributesController.load(json["attributes"], atrd);
+          // if (json["attributes"] != null)
+          //   attributesController.load(json["attributes"], atrd);
 
-          if (json["abilities"] != null)
-            abilitiesController.load(json["abilities"], abd);
+          // if (json["abilities"] != null)
+          //   abilitiesController.load(json["abilities"], abd);
 
           if (json["backgrounds"] != null)
             backgroundsController.load(json["backgrounds"], backd);
@@ -144,8 +144,8 @@ class VampireCharacter extends GetxController {
         // Web can't really store local files. Being in the, y'know, Web
         // But I use Chrome for debugging, so I kinda need it to not throw
         print("You are launching in Web. File operations are not available");
-        attributesController.initializeFromConstants();
-        abilitiesController.initializeFromConstants();
+        // attributesController.initializeFromConstants();
+        // abilitiesController.initializeFromConstants();
       }
     } else {
       Get.back();
