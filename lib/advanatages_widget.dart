@@ -200,12 +200,12 @@ class AddBackgroundButton extends SpeedDialChild {
           label: "Add custom background",
           labelBackgroundColor: Theme.of(context).colorScheme.surface,
           onTap: () async {
-            final ca =
-                await Get.dialog<ComplexAbility>(AddComplexAbilityDialog());
-            if (ca != null) {
-              BackgroundsController bc = Get.find();
-              bc.addBackground(ca);
-            }
+            // final ca =
+            //     await Get.dialog<ComplexAbility>(AddComplexAbilityDialog());
+            // if (ca != null) {
+            //   BackgroundsController bc = Get.find();
+            //   bc.addBackground(ca);
+            // }
           },
         );
 }

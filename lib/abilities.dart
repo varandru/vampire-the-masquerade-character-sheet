@@ -255,7 +255,7 @@ class AbilitiesDictionary {
     if (attribute["levels"] != null) {
       if (attribute["levels"] is List) {
         for (var level in attribute["levels"]) {
-          entry.level.add(level);
+          entry.levels.add(level);
         }
       } else {
         print("${attribute["name"]}'s levels are not a list");

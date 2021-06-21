@@ -38,7 +38,7 @@ class ComplexAbility {
         isIncremental = true;
 
   void fillFromDictionary(ComplexAbilityEntry entry) {
-    levelDescriptions = entry.level;
+    levelDescriptions = entry.levels;
     if (entry.description != null) description = entry.description!;
   }
 
@@ -55,6 +55,37 @@ class ComplexAbility {
 class ComplexAbilityEntry {
   // String name = "";
   List<String> specializations = [];
-  List<String> level = [];
+  List<String> levels = [];
   String? description;
+
+  ComplexAbilityEntry.fromJson(Map<String, dynamic> json) {
+    if (json["specialization"] != null) {
+      if (json["specialization"] is List) {
+        for (var specialization in json["specialization"]) {
+          specializations.add(specialization);
+        }
+      }
+    }
+    if (json["levels"] != null) {
+      if (json["levels"] is List) {
+        for (var level in json["levels"]) {
+          levels.add(level);
+        }
+      }
+    }
+    description = json["description"];
+  }
+
+  ComplexAbilityEntry(
+      {this.specializations = const [],
+      this.levels = const [],
+      this.description});
+
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> json = Map();
+    // json['name'] = name;
+    if (description != null) json['description'] = description;
+    if (specializations.isNotEmpty) json['specializations'] = specializations;
+    return json;
+  }
 }

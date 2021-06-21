@@ -214,51 +214,22 @@ class AttributeDictionary {
     if (json["physical"] != null && json["physical"] is List) {
       for (var attribute in json["physical"]) {
         if (attribute["name"] == null) continue;
-        physical[attribute["name"]] = _getAttributeFromJson(attribute);
+        physical[attribute["name"]] = ComplexAbilityEntry.fromJson(attribute);
       }
     }
     // 5. Get social attributes
     if (json["social"] != null && json["social"] is List) {
       for (var attribute in json["social"]) {
         if (attribute["name"] == null) continue;
-        social[attribute["name"]] = _getAttributeFromJson(attribute);
+        social[attribute["name"]] = ComplexAbilityEntry.fromJson(attribute);
       }
     }
     // 6. Get mental attributes
     if (json["mental"] != null && json["mental"] is List) {
       for (var attribute in json["mental"]) {
         if (attribute["name"] == null) continue;
-        mental[attribute["name"]] = _getAttributeFromJson(attribute);
+        mental[attribute["name"]] = ComplexAbilityEntry.fromJson(attribute);
       }
     }
-  }
-
-  ComplexAbilityEntry _getAttributeFromJson(Map<String, dynamic> attribute) {
-    ComplexAbilityEntry entry = ComplexAbilityEntry();
-    if (attribute["specialization"] != null) {
-      if (attribute["specialization"] is List) {
-        for (var specialization in attribute["specialization"]) {
-          entry.specializations.add(specialization);
-        }
-      } else {
-        print("${attribute["name"]}'s specializations are not a list");
-      }
-    } else {
-      print("${attribute["name"]} does not have specializations");
-    }
-    if (attribute["levels"] != null) {
-      if (attribute["levels"] is List) {
-        for (var level in attribute["levels"]) {
-          entry.level.add(level);
-        }
-      } else {
-        print("${attribute["name"]}'s levels are not a list");
-      }
-    } else {
-      print("${attribute["name"]} does not have levels");
-    }
-    entry.description = attribute["description"];
-
-    return entry;
   }
 }
