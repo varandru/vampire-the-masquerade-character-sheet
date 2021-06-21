@@ -64,11 +64,9 @@ class ComplexAbilityWidget extends StatelessWidget {
         ),
         onTap: () {
           List<Widget> children = [];
-          // FIXME: this looks just awful. Do something
           if (attribute.specialization.isNotEmpty) {
-            children.add(Text("Specialization",
-                style: Theme.of(context).textTheme.headline4));
-            children.add(Text(attribute.specialization));
+            children.add(Text(attribute.specialization,
+                style: Theme.of(context).textTheme.headline5));
           }
           if (attribute.description.isNotEmpty) {
             children.add(Text("Description:",
@@ -77,7 +75,11 @@ class ComplexAbilityWidget extends StatelessWidget {
           }
           Get.dialog(
             SimpleDialog(
-              title: Text(attribute.name),
+              title: Text(
+                attribute.name,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headline4,
+              ),
               children: children,
             ),
           );
