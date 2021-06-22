@@ -44,7 +44,7 @@ class BackgroundsController extends GetxController {
           max: 5,
           specialization: "",
           description: entry.description ?? "",
-          isIncremental: true, // Attributes are incremental, AFAIK
+          isIncremental: true, // Backgrounds are incremental
         );
 
         print(

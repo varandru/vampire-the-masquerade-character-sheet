@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:get/get.dart';
-import 'package:vampire_the_masquerade_character_sheet/advantages.dart';
 
+import 'advantages.dart';
 import 'common_widget.dart';
 import 'common_logic.dart';
 import 'main_info.dart';
@@ -35,24 +35,41 @@ class VirtuesColumnWidget extends StatelessWidget {
       ),
     ];
     column.add(Obx(() => ComplexAbilityWidget(
-          attribute:
-              ComplexAbility(name: "Conscience", current: vc.consience.value),
+          attribute: ComplexAbility(
+            name: "Conscience",
+            current: vc.consience.value,
+            isDeletable: false,
+          ),
           updateCallback: (ability, index) => null,
           deleteCallback: (index) => null,
         )));
     column.add(Obx(() => ComplexAbilityWidget(
           attribute: ComplexAbility(
-              name: "Self-Control", current: vc.selfControl.value),
+            name: "Self-Control",
+            current: vc.selfControl.value,
+            isDeletable: false,
+          ),
           updateCallback: (ability, index) => null,
           deleteCallback: (index) => null,
         )));
     column.add(Obx(() => ComplexAbilityWidget(
-          attribute: ComplexAbility(name: "Courage", current: vc.courage.value),
+          attribute: ComplexAbility(
+            name: "Courage",
+            current: vc.courage.value,
+            isDeletable: false,
+          ),
           updateCallback: (ability, index) => null,
           deleteCallback: (index) => null,
         )));
 
-    return Column(children: column);
+    return Container(
+      child: ListView(
+        children: column,
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+      ),
+      constraints: BoxConstraints(maxWidth: 500),
+    );
   }
 }
 

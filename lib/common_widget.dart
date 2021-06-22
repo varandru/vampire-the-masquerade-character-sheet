@@ -39,12 +39,11 @@ class NoTitleCounterWidget extends StatelessWidget {
 class ComplexAbilityWidget extends StatelessWidget {
   ComplexAbilityWidget({
     Key? key,
-    required ComplexAbility attribute,
+    required this.attribute,
     required this.updateCallback,
     required this.deleteCallback,
     this.index = 0,
-  })  : this.attribute = attribute,
-        super(key: key);
+  }) : super(key: key);
 
   final ComplexAbility attribute;
   final int index;
@@ -61,26 +60,25 @@ class ComplexAbilityWidget extends StatelessWidget {
       softWrap: false,
     );
 
-    return Container(
-      constraints: BoxConstraints(maxWidth: 500),
-      child: ListTile(
-        title: header,
-        subtitle: Text(attribute.specialization),
-        trailing: Row(
-          children: row,
-          mainAxisSize: MainAxisSize.min,
-        ),
-        onTap: () {
-          List<Widget> children = [];
-          if (attribute.specialization.isNotEmpty) {
-            children.add(Text(attribute.specialization,
-                style: Theme.of(context).textTheme.headline5));
-          }
-          if (attribute.description.isNotEmpty) {
-            children.add(Text("Description:",
-                style: Theme.of(context).textTheme.headline6));
-            children.add(Text(attribute.description));
-          }
+    return ListTile(
+      title: header,
+      subtitle: Text(attribute.specialization),
+      trailing: Row(
+        children: row,
+        mainAxisSize: MainAxisSize.min,
+      ),
+      onTap: () {
+        List<Widget> children = [];
+        if (attribute.specialization.isNotEmpty) {
+          children.add(Text(attribute.specialization,
+              style: Theme.of(context).textTheme.headline5));
+        }
+        if (attribute.description.isNotEmpty) {
+          children.add(Text("Description:",
+              style: Theme.of(context).textTheme.headline6));
+          children.add(Text(attribute.description));
+        }
+        if (attribute.isDeletable) {
           children.add(Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -95,8 +93,8 @@ class ComplexAbilityWidget extends StatelessWidget {
                   icon: Icon(Icons.edit)),
               IconButton(
                   onPressed: () async {
-                    bool? delete =
-                        await Get.dialog(DeleteDialog(name: attribute.name));
+                    bool? delete = await Get.dialog<bool>(
+                        DeleteDialog(name: attribute.name));
                     if (delete != null && delete == true) {
                       deleteCallback(index);
                       Get.back();
@@ -105,18 +103,32 @@ class ComplexAbilityWidget extends StatelessWidget {
                   icon: Icon(Icons.delete)),
             ],
           ));
-          Get.dialog(
-            SimpleDialog(
-              title: Text(
-                attribute.name,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headline4,
-              ),
-              children: children,
+        } else {
+          children.add(
+            Center(
+              child: IconButton(
+                  onPressed: () async {
+                    final ca = await Get.dialog<ComplexAbility>(
+                        ComplexAbilityDialog(name: 'Edit ${attribute.name}'));
+                    if (ca != null) {
+                      updateCallback(ca, index);
+                    }
+                  },
+                  icon: Icon(Icons.edit)),
             ),
           );
-        },
-      ),
+        }
+        Get.dialog<void>(
+          SimpleDialog(
+            title: Text(
+              attribute.name,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headline4,
+            ),
+            children: children,
+          ),
+        );
+      },
     );
   }
 }
@@ -131,27 +143,31 @@ class ComplexAbilityColumnWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("Building $name. It has ${values.length} elements");
-
-    return Obx(() => ListView.builder(
-          itemBuilder: (context, i) {
-            if (i == 0)
-              return Text(
-                name.value,
-                style: Theme.of(context).textTheme.headline4,
-                textAlign: TextAlign.center,
-              );
-            else
-              return Obx(() => ComplexAbilityWidget(
-                  attribute: values[i - 1],
-                  index: i - 1,
-                  updateCallback: editValue,
-                  deleteCallback: deleteValue));
-          },
-          itemCount: values.length + 1,
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-        ));
+    return Container(
+      constraints: BoxConstraints(maxWidth: 500),
+      child:
+          // Obx(() =>
+          ListView.builder(
+        itemBuilder: (context, i) {
+          if (i == 0)
+            return Text(
+              name.value,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headline6,
+            );
+          else
+            return Obx(() => ComplexAbilityWidget(
+                attribute: values[i - 1],
+                index: i - 1,
+                updateCallback: editValue,
+                deleteCallback: deleteValue));
+        },
+        itemCount: values.length + 1,
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+      ),
+      // ),
+    );
   }
 }
 
