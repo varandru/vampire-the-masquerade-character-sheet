@@ -24,29 +24,14 @@ class AbilitiesSectionWidget extends StatelessWidget {
   }
 }
 
-class AbilitiesColumnWidget extends StatelessWidget {
-  AbilitiesColumnWidget(AbilityColumnType this.type);
+class AbilitiesColumnWidget extends ComplexAbilityColumnWidget {
+  AbilitiesColumnWidget(AbilityColumnType this.type) {
+    AbilitiesController ac = Get.find();
+    super.name = ac.getColumnByType(type).name;
+    super.values = ac.getColumnByType(type).values;
+    super.editValue = ac.getColumnByType(type).editValue;
+    super.deleteValue = ac.getColumnByType(type).deleteValue;
+  }
 
   final type;
-
-  @override
-  Widget build(BuildContext context) {
-    final AbilitiesController ac = Get.find();
-
-    List<Widget> column = [
-      Text(
-        ac.getHeaderByType(type),
-        textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.headline6,
-      ),
-    ];
-    for (var attr in ac.getColumnByType(type)) {
-      column.add(ComplexAbilityWidget(attribute: attr));
-    }
-
-    return Column(
-      children: column,
-      mainAxisSize: MainAxisSize.min,
-    );
-  }
 }

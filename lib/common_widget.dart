@@ -37,11 +37,18 @@ class NoTitleCounterWidget extends StatelessWidget {
 /// Displays attributes, abilities and virtues.
 /// Anything that conforms to ComplexAbility structure, basically
 class ComplexAbilityWidget extends StatelessWidget {
-  ComplexAbilityWidget({Key? key, required ComplexAbility attribute})
-      : this.attribute = attribute,
-        super(key: key);
+  ComplexAbilityWidget({
+    Key? key,
+    required this.attribute,
+    required this.updateCallback,
+    required this.deleteCallback,
+    this.index = 0,
+  }) : super(key: key);
 
   final ComplexAbility attribute;
+  final int index;
+  final Function(ComplexAbility ability, int index) updateCallback;
+  final Function(int index) deleteCallback;
 
   @override
   Widget build(BuildContext context) {
@@ -53,38 +60,218 @@ class ComplexAbilityWidget extends StatelessWidget {
       softWrap: false,
     );
 
-    return Container(
-      constraints: BoxConstraints(maxWidth: 500),
-      child: ListTile(
-        title: header,
-        subtitle: Text(attribute.specialization),
-        trailing: Row(
-          children: row,
-          mainAxisSize: MainAxisSize.min,
-        ),
-        onTap: () {
-          List<Widget> children = [];
-          if (attribute.specialization.isNotEmpty) {
-            children.add(Text(attribute.specialization,
-                style: Theme.of(context).textTheme.headline5));
-          }
-          if (attribute.description.isNotEmpty) {
-            children.add(Text("Description:",
-                style: Theme.of(context).textTheme.headline6));
-            children.add(Text(attribute.description));
-          }
-          Get.dialog(
-            SimpleDialog(
-              title: Text(
-                attribute.name,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headline4,
-              ),
-              children: children,
+    return ListTile(
+      title: header,
+      subtitle: Text(attribute.specialization),
+      trailing: Row(
+        children: row,
+        mainAxisSize: MainAxisSize.min,
+      ),
+      onTap: () {
+        List<Widget> children = [];
+        if (attribute.specialization.isNotEmpty) {
+          children.add(Text(attribute.specialization,
+              style: Theme.of(context).textTheme.headline5));
+        }
+        if (attribute.description.isNotEmpty) {
+          children.add(Text("Description:",
+              style: Theme.of(context).textTheme.headline6));
+          children.add(Text(attribute.description));
+        }
+        if (attribute.isDeletable) {
+          children.add(Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                  onPressed: () async {
+                    final ca = await Get.dialog<ComplexAbility>(
+                        ComplexAbilityDialog(name: 'Edit ${attribute.name}'));
+                    if (ca != null) {
+                      updateCallback(ca, index);
+                    }
+                  },
+                  icon: Icon(Icons.edit)),
+              IconButton(
+                  onPressed: () async {
+                    bool? delete = await Get.dialog<bool>(
+                        DeleteDialog(name: attribute.name));
+                    if (delete != null && delete == true) {
+                      deleteCallback(index);
+                      Get.back();
+                    }
+                  },
+                  icon: Icon(Icons.delete)),
+            ],
+          ));
+        } else {
+          children.add(
+            Center(
+              child: IconButton(
+                  onPressed: () async {
+                    final ca = await Get.dialog<ComplexAbility>(
+                        ComplexAbilityDialog(name: 'Edit ${attribute.name}'));
+                    if (ca != null) {
+                      updateCallback(ca, index);
+                    }
+                  },
+                  icon: Icon(Icons.edit)),
             ),
           );
+        }
+        Get.dialog<void>(
+          SimpleDialog(
+            title: Text(
+              attribute.name,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headline4,
+            ),
+            children: children,
+          ),
+        );
+      },
+    );
+  }
+}
+
+class ComplexAbilityColumnWidget extends StatelessWidget {
+  ComplexAbilityColumnWidget();
+
+  late final RxString name;
+  late final RxList<ComplexAbility> values;
+  late final Function(ComplexAbility ability, int index) editValue;
+  late final Function(int index) deleteValue;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: BoxConstraints(maxWidth: 500),
+      child:
+          // Obx(() =>
+          ListView.builder(
+        itemBuilder: (context, i) {
+          if (i == 0)
+            return Text(
+              name.value,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headline6,
+            );
+          else
+            return Obx(() => ComplexAbilityWidget(
+                attribute: values[i - 1],
+                index: i - 1,
+                updateCallback: editValue,
+                deleteCallback: deleteValue));
         },
+        itemCount: values.length + 1,
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
       ),
+      // ),
+    );
+  }
+}
+
+class ComplexAbilityDialog extends Dialog {
+  ComplexAbilityDialog({
+    this.ability,
+    this.name = 'New Ability',
+  });
+
+  final String name;
+  final ComplexAbility? ability;
+
+  @override
+  Widget build(BuildContext context) {
+    var ca = (ability != null)
+        ? ability!.obs
+        : ComplexAbility(name: 'New Ability').obs;
+
+    return SimpleDialog(
+      title: Text(name),
+      children: [
+        Row(
+          children: [
+            Text('Name: '),
+            Expanded(
+              child: TextField(
+                  onChanged: (value) => ca.update(
+                        (val) {
+                          val?.name = value;
+                        },
+                      )),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Text('Current Value: '),
+            IconButton(
+                onPressed: () => ca.update((val) {
+                      val?.current--;
+                    }),
+                icon: Icon(
+                  Icons.remove_circle_outline,
+                  color: Colors.red,
+                )),
+            Obx(() => Text("${ca.value.current}")),
+            IconButton(
+                onPressed: () => ca.update((val) {
+                      val?.current++;
+                    }),
+                icon: Icon(
+                  Icons.add_circle_outline,
+                  color: Colors.green,
+                )),
+          ],
+        ),
+        Row(
+          children: [
+            Text('Description: '),
+            Expanded(
+              child: TextField(
+                  onChanged: (value) => ca.update((val) {
+                        val?.description = value;
+                      })),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () => Get.back(result: null),
+            ),
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                if (ca.value.name.isNotEmpty)
+                  Get.back(result: ca.value);
+                else
+                  Get.back(result: null);
+              },
+            ),
+          ],
+          mainAxisAlignment: MainAxisAlignment.end,
+        ),
+      ],
+    );
+  }
+}
+
+class DeleteDialog extends Dialog {
+  DeleteDialog({required this.name});
+
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    return SimpleDialog(
+      title: Text("Delete $name?"),
+      children: [
+        TextButton(onPressed: () => Get.back(result: true), child: Text("Ok")),
+        TextButton(
+            onPressed: () => Get.back(result: false), child: Text("Cancel")),
+      ],
     );
   }
 }

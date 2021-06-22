@@ -30,29 +30,13 @@ class AttributesSectionWidget extends StatelessWidget {
   }
 }
 
-class AttributesColumnWidget extends StatelessWidget {
-  AttributesColumnWidget(AttributeColumnType this.type);
-
-  final type;
-
-  @override
-  Widget build(BuildContext context) {
-    final AttributesController ac = Get.find();
-    List<Widget> columns = [
-      Text(
-        ac.getHeaderByType(type),
-        textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.headline6,
-      ),
-    ];
-    for (var attr in ac.getColumnByType(type)) {
-      columns.add(ComplexAbilityWidget(attribute: attr));
-    }
-
-    // Attribute column
-    return Column(
-      children: columns,
-      mainAxisSize: MainAxisSize.min,
-    );
+class AttributesColumnWidget extends ComplexAbilityColumnWidget {
+  AttributesColumnWidget(AttributeColumnType this.type) {
+    AttributesController ac = Get.find();
+    super.name = ac.getColumnByType(type).name;
+    super.values = ac.getColumnByType(type).values;
+    super.editValue = ac.getColumnByType(type).editValue;
+    super.deleteValue = ac.getColumnByType(type).deleteValue;
   }
+  final type;
 }

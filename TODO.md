@@ -11,7 +11,7 @@
      - [x] Disciplines
      - [ ] Rituals
      - [x] Attributes
-     - [ ] Abilities
+     - [x] Abilities
      - [ ] Merits and Flaws
    - [ ] A theme should exist
      - [ ] Color theme
@@ -26,7 +26,7 @@
    - [ ] Merits and Flaws
    - [ ] Inventory?
  - [ ] Logic
-   - [ ] *All* serialized information must load on startup
+   - [x] *All* serialized information must load on startup
    - [ ] Bloodpool maximum must depend on vampire's generation
    - [ ] Some stats depend on vampire's generation as well
    - [x] Clicking on a field square button should zero it. Makes, say, a blood pool of 0 possible

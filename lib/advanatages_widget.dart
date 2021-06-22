@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:get/get.dart';
-import 'package:vampire_the_masquerade_character_sheet/advantages.dart';
 
+import 'advantages.dart';
 import 'common_widget.dart';
 import 'common_logic.dart';
 import 'main_info.dart';
@@ -11,31 +11,13 @@ const maxBloodCount = 20;
 const maxWillpowerCount = 10;
 
 // Are separated on the character sheet. Go into primary info in the app.
-// This is hardcoded for the sake of the fast hardcoded version.
-// TODO: serialize, allow arbitrary backgrounds
-class BackgroundColumnWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
+class BackgroundColumnWidget extends ComplexAbilityColumnWidget {
+  BackgroundColumnWidget() {
     BackgroundsController bc = Get.find();
-    String header = "Backgrounds";
-
-    List<Widget> column = [
-      Text(
-        header,
-        textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.headline6,
-      ),
-    ];
-    for (var attr in bc.backgrounds) {
-      column.add(ComplexAbilityWidget(
-        attribute: attr,
-      ));
-    }
-
-    return Column(
-      children: column,
-      // padding: EdgeInsets.zero,
-    );
+    super.name = bc.backgrounds.value.name;
+    super.values = bc.backgrounds.value.values;
+    super.editValue = bc.backgrounds.value.editValue;
+    super.deleteValue = bc.backgrounds.value.deleteValue;
   }
 }
 
@@ -53,16 +35,41 @@ class VirtuesColumnWidget extends StatelessWidget {
       ),
     ];
     column.add(Obx(() => ComplexAbilityWidget(
-        attribute:
-            ComplexAbility(name: "Conscience", current: vc.consience.value))));
+          attribute: ComplexAbility(
+            name: "Conscience",
+            current: vc.consience.value,
+            isDeletable: false,
+          ),
+          updateCallback: (ability, index) => null,
+          deleteCallback: (index) => null,
+        )));
     column.add(Obx(() => ComplexAbilityWidget(
-        attribute: ComplexAbility(
-            name: "Self-Control", current: vc.selfControl.value))));
+          attribute: ComplexAbility(
+            name: "Self-Control",
+            current: vc.selfControl.value,
+            isDeletable: false,
+          ),
+          updateCallback: (ability, index) => null,
+          deleteCallback: (index) => null,
+        )));
     column.add(Obx(() => ComplexAbilityWidget(
-        attribute:
-            ComplexAbility(name: "Courage", current: vc.courage.value))));
+          attribute: ComplexAbility(
+            name: "Courage",
+            current: vc.courage.value,
+            isDeletable: false,
+          ),
+          updateCallback: (ability, index) => null,
+          deleteCallback: (index) => null,
+        )));
 
-    return Column(children: column);
+    return Container(
+      child: ListView(
+        children: column,
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+      ),
+      constraints: BoxConstraints(maxWidth: 500),
+    );
   }
 }
 
@@ -200,12 +207,12 @@ class AddBackgroundButton extends SpeedDialChild {
           label: "Add custom background",
           labelBackgroundColor: Theme.of(context).colorScheme.surface,
           onTap: () async {
-            // final ca =
-            //     await Get.dialog<ComplexAbility>(AddComplexAbilityDialog());
-            // if (ca != null) {
-            //   BackgroundsController bc = Get.find();
-            //   bc.addBackground(ca);
-            // }
+            final ca = await Get.dialog<ComplexAbility>(
+                ComplexAbilityDialog(name: 'New Background'));
+            if (ca != null) {
+              BackgroundsController bc = Get.find();
+              bc.backgrounds.value.add(ca);
+            }
           },
         );
 }

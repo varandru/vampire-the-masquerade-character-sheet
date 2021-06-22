@@ -4,25 +4,17 @@ import 'common_logic.dart';
 enum AttributeColumnType { Physical, Mental, Social }
 
 class AttributesController extends GetxController {
-  RxList<ComplexAbility> physicalAttributes = RxList<ComplexAbility>();
-  RxList<ComplexAbility> socialAttributes = RxList<ComplexAbility>();
-  RxList<ComplexAbility> mentalAttributes = RxList<ComplexAbility>();
-
-  final Map<AttributeColumnType, String> _headers = {
-    AttributeColumnType.Physical: 'Physical',
-    AttributeColumnType.Mental: 'Mental',
-    AttributeColumnType.Social: 'Social',
-  };
+  ComplexAbilityColumn physicalAttributes = ComplexAbilityColumn('Physical');
+  ComplexAbilityColumn socialAttributes = ComplexAbilityColumn('Mental');
+  ComplexAbilityColumn mentalAttributes = ComplexAbilityColumn('Social');
 
   void initializeFromConstants() {
-    physicalAttributes.value = PhysicalAttributesColumn().attributes;
-    socialAttributes.value = SocialAttributesColumn().attributes;
-    mentalAttributes.value = MentalAttributesColumn().attributes;
+    physicalAttributes.values.value = PhysicalAttributesColumn().attributes;
+    socialAttributes.values.value = SocialAttributesColumn().attributes;
+    mentalAttributes.values.value = MentalAttributesColumn().attributes;
   }
 
-  String getHeaderByType(AttributeColumnType type) => _headers[type]!;
-
-  List<ComplexAbility> getColumnByType(AttributeColumnType type) {
+  ComplexAbilityColumn getColumnByType(AttributeColumnType type) {
     switch (type) {
       case AttributeColumnType.Physical:
         return physicalAttributes;
@@ -36,14 +28,13 @@ class AttributesController extends GetxController {
   void load(Map<String, dynamic> json, AttributeDictionary dictionary) {
     // 1. Category headers. Re-read mostly for localization, might kill later
     if (dictionary.physicalAttributesName.isNotEmpty) {
-      _headers[AttributeColumnType.Physical] =
-          dictionary.physicalAttributesName;
+      physicalAttributes.name.value = dictionary.physicalAttributesName;
     }
     if (dictionary.socialAttributesName.isNotEmpty) {
-      _headers[AttributeColumnType.Social] = dictionary.socialAttributesName;
+      socialAttributes.name.value = dictionary.socialAttributesName;
     }
     if (dictionary.mentalAttributesName.isNotEmpty) {
-      _headers[AttributeColumnType.Mental] = dictionary.mentalAttributesName;
+      mentalAttributes.name.value = dictionary.mentalAttributesName;
     }
 
     _fillAttributeListByType(
@@ -92,33 +83,29 @@ class AttributesController extends GetxController {
 
         // CRUTCH This doesn't allow attributes to go above 5
         ComplexAbility ca = ComplexAbility(
-          name: name,
-          current: attribute["current"] ?? 1,
-          min: 0,
-          max: 5,
-          specialization: attribute["specialization"] ?? "",
-          description: entry.description ?? "",
-          isIncremental: true, // Attributes are incremental, AFAIK
-        );
+            name: name,
+            current: attribute["current"] ?? 1,
+            min: 0,
+            max: 5,
+            specialization: attribute["specialization"] ?? "",
+            description: entry.description ?? "",
+            isIncremental: true, // Attributes are incremental, AFAIK
+            isDeletable: false);
 
         print(
             "Adding ability $type: '${ca.name}', ${ca.current}, '${ca.specialization}', '${ca.description}'");
 
         switch (type) {
           case AttributeColumnType.Physical:
-            if (!physicalAttributes.contains(ca)) {
-              physicalAttributes.add(ca);
-            }
+            physicalAttributes.add(ca);
             break;
           case AttributeColumnType.Mental:
-            if (!mentalAttributes.contains(ca)) {
-              mentalAttributes.add(ca);
-            }
+            mentalAttributes.add(ca);
+
             break;
           case AttributeColumnType.Social:
-            if (!socialAttributes.contains(ca)) {
-              socialAttributes.add(ca);
-            }
+            socialAttributes.add(ca);
+
             break;
         }
       }
@@ -136,7 +123,7 @@ class AttributesController extends GetxController {
   List<Map<String, dynamic>> _getAttributeListByType(AttributeColumnType type) {
     var column = getColumnByType(type);
     List<Map<String, dynamic>> shortAttributes = [];
-    for (var attribute in column) {
+    for (var attribute in column.values) {
       Map<String, dynamic> attr = Map();
       attr["name"] = attribute.name;
       attr["current"] = attribute.current;
@@ -152,10 +139,13 @@ class PhysicalAttributesColumn {
   final header = "Physical";
 
   final List<ComplexAbility> attributes = [
-    ComplexAbility(name: "Strength", current: 1),
+    ComplexAbility(name: "Strength", current: 1, isDeletable: false),
     ComplexAbility(
-        name: "Dexterity", current: 5, specialization: "Lightning Reflexes"),
-    ComplexAbility(name: "Stamina", current: 2),
+        name: "Dexterity",
+        current: 5,
+        specialization: "Lightning Reflexes",
+        isDeletable: false),
+    ComplexAbility(name: "Stamina", current: 2, isDeletable: false),
   ];
 }
 
@@ -163,9 +153,9 @@ class SocialAttributesColumn {
   final header = "Social";
 
   var attributes = [
-    ComplexAbility(name: "Charisma", current: 1),
-    ComplexAbility(name: "Manipulation", current: 1),
-    ComplexAbility(name: "Appearance", current: 4),
+    ComplexAbility(name: "Charisma", current: 1, isDeletable: false),
+    ComplexAbility(name: "Manipulation", current: 1, isDeletable: false),
+    ComplexAbility(name: "Appearance", current: 4, isDeletable: false),
   ];
 }
 
@@ -173,12 +163,17 @@ class MentalAttributesColumn {
   final header = "Mental";
 
   var attributes = [
-    ComplexAbility(name: "Perception", current: 1),
+    ComplexAbility(name: "Perception", current: 1, isDeletable: false),
     ComplexAbility(
         name: "Intelligence",
         current: 5,
-        specialization: "Analytical Thinking"),
-    ComplexAbility(name: "Wits", current: 4, specialization: "Adapt to others")
+        specialization: "Analytical Thinking",
+        isDeletable: false),
+    ComplexAbility(
+        name: "Wits",
+        current: 4,
+        specialization: "Adapt to others",
+        isDeletable: false)
   ];
 }
 

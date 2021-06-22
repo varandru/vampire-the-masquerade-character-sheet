@@ -2,12 +2,10 @@ import 'package:get/get.dart';
 import 'common_logic.dart';
 
 class BackgroundsController extends GetxController {
-  RxList<ComplexAbility> backgrounds = RxList<ComplexAbility>();
-
-  String header = 'Backgrounds';
+  var backgrounds = ComplexAbilityColumn('Backgrounds').obs;
 
   void initializeFromConstants() {
-    backgrounds.value = [
+    backgrounds.value.values.value = [
       ComplexAbility(name: "Mentor", current: 2),
       ComplexAbility(name: "Herd", current: 1),
       ComplexAbility(name: "Resources", current: 2),
@@ -18,16 +16,10 @@ class BackgroundsController extends GetxController {
   void load(List<dynamic> json, BackgroundDictionary dictionary) {
     // 1. Category headers. Re-read mostly for localization, might kill later
     if (dictionary.name.isNotEmpty) {
-      header = dictionary.name;
+      backgrounds.value.name.value = dictionary.name;
     }
 
     _fillBackgroundList(json, dictionary);
-  }
-
-  void addBackground(ComplexAbility ca) {
-    if (!backgrounds.contains(ca)) {
-      backgrounds.add(ca);
-    }
   }
 
   void _fillBackgroundList(
@@ -52,19 +44,19 @@ class BackgroundsController extends GetxController {
           max: 5,
           specialization: "",
           description: entry.description ?? "",
-          isIncremental: true, // Attributes are incremental, AFAIK
+          isIncremental: true, // Backgrounds are incremental
         );
 
         print(
             "Adding backgrounds: '${ca.name}', ${ca.current}, '${ca.description}'");
-        addBackground(ca);
+        backgrounds.value.add(ca);
       }
     }
   }
 
   List<Map<String, dynamic>> save() {
     List<Map<String, dynamic>> shortAttributes = [];
-    for (var attribute in backgrounds) {
+    for (var attribute in backgrounds.value.values) {
       Map<String, dynamic> attr = Map();
       attr["name"] = attribute.name;
       attr["current"] = attribute.current;
@@ -92,26 +84,9 @@ class BackgroundDictionary {
     if (json["backgrounds"] != null && json["backgrounds"] is List) {
       for (var attribute in json["backgrounds"]) {
         if (attribute["name"] == null) continue;
-        backgrounds[attribute["name"]] = _getAttributeFromJson(attribute);
+        backgrounds[attribute["name"]] =
+            ComplexAbilityEntry.fromJson(attribute);
       }
     }
-  }
-
-  ComplexAbilityEntry _getAttributeFromJson(Map<String, dynamic> attribute) {
-    ComplexAbilityEntry entry = ComplexAbilityEntry();
-    if (attribute["levels"] != null) {
-      if (attribute["levels"] is List) {
-        for (var level in attribute["levels"]) {
-          entry.levels.add(level);
-        }
-      } else {
-        print("${attribute["name"]}'s levels are not a list");
-      }
-    } else {
-      print("${attribute["name"]} does not have levels");
-    }
-    entry.description = attribute["description"];
-
-    return entry;
   }
 }

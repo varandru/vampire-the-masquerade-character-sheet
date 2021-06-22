@@ -1,13 +1,18 @@
+import 'package:get/get.dart';
+
 class ComplexAbility {
-  ComplexAbility(
-      {required this.name,
-      this.current = 1,
-      this.min = 0,
-      this.max = 5,
-      this.specialization = "",
-      this.description = "",
-      this.levelDescriptions,
-      this.isIncremental = true});
+  ComplexAbility({
+    required this.name,
+    this.current = 1,
+    this.min = 0,
+    this.max = 5,
+    this.specialization = "",
+    this.description = "",
+    this.levelDescriptions,
+    this.isIncremental = true,
+    this.hasSpecialization = true,
+    this.isDeletable = true,
+  });
   String name;
   int current;
   int min;
@@ -20,6 +25,14 @@ class ComplexAbility {
   /// If there is variety, this is false
   bool isIncremental;
 
+  /// Can this ability have a specialization? Generally hardcoded
+  /// Backgrounds don't have it, most other things do
+  bool hasSpecialization;
+
+  /// Can this ability be deleted?
+  /// Attributes can't. Abilities can. Backgrounds sure as hell can
+  bool isDeletable;
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -28,8 +41,11 @@ class ComplexAbility {
   @override
   int get hashCode => name.hashCode;
 
-  ComplexAbility.fromJson(Map<String, dynamic> json)
-      : name = json['name'],
+  ComplexAbility.fromJson(
+    Map<String, dynamic> json, {
+    this.hasSpecialization = true,
+    this.isDeletable = true,
+  })  : name = json['name'],
         current = json['current'],
         specialization = json['specialization'] ?? "",
         description = "",
@@ -87,5 +103,28 @@ class ComplexAbilityEntry {
     if (description != null) json['description'] = description;
     if (specializations.isNotEmpty) json['specializations'] = specializations;
     return json;
+  }
+}
+
+class ComplexAbilityColumn {
+  ComplexAbilityColumn(String name) {
+    this.name.value = name;
+  }
+
+  var name = "Name".obs;
+  RxList<ComplexAbility> values = RxList();
+
+  void editValue(ComplexAbility value, int index) {
+    values[index] = value;
+  }
+
+  void deleteValue(int index) {
+    values.removeAt(index);
+  }
+
+  void add(ComplexAbility ca) {
+    if (!values.contains(ca)) {
+      values.add(ca);
+    }
   }
 }
