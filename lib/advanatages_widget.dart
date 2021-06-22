@@ -10,7 +10,6 @@ import 'main_info.dart';
 const maxBloodCount = 20;
 const maxWillpowerCount = 10;
 
-// Are separated on the character sheet. Go into primary info in the app.
 class BackgroundColumnWidget extends ComplexAbilityColumnWidget {
   BackgroundColumnWidget() {
     BackgroundsController bc = Get.find();
