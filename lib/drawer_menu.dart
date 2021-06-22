@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'abilities_widget.dart';
 import 'advanatages_widget.dart';
-import 'attributes_widget.dart';
 import 'combat.dart';
 import 'vampire_character_widget.dart';
 import 'main_info_widget.dart';

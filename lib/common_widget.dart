@@ -95,11 +95,12 @@ class ComplexAbilityWidget extends StatelessWidget {
                   icon: Icon(Icons.edit)),
               IconButton(
                   onPressed: () async {
-                    await Get.defaultDialog(
-                        middleText: "Delete ${attribute.name}?",
-                        textConfirm: "Ok",
-                        textCancel: "Cancel",
-                        onConfirm: deleteCallback(index));
+                    bool? delete =
+                        await Get.dialog(DeleteDialog(name: attribute.name));
+                    if (delete != null && delete == true) {
+                      deleteCallback(index);
+                      Get.back();
+                    }
                   },
                   icon: Icon(Icons.delete)),
             ],
@@ -123,27 +124,34 @@ class ComplexAbilityWidget extends StatelessWidget {
 class ComplexAbilityColumnWidget extends StatelessWidget {
   ComplexAbilityColumnWidget();
 
-  late ComplexAbilityColumn controller;
+  late final RxString name;
+  late final RxList<ComplexAbility> values;
+  late final Function(ComplexAbility ability, int index) editValue;
+  late final Function(int index) deleteValue;
 
   @override
   Widget build(BuildContext context) {
-    print(
-        "Building ${controller.name}. It has ${controller.values.length} elements");
-    List<Widget> column = [];
+    print("Building $name. It has ${values.length} elements");
 
-    column.add(Text(controller.name.value,
-        style: Theme.of(context).textTheme.headline4));
-
-    for (int i = 0; i < controller.values.length; i++) {
-      column.add(Obx(() => ComplexAbilityWidget(
-          attribute: controller.values[i],
-          index: i,
-          updateCallback: controller.editValue,
-          deleteCallback: controller.deleteValue)));
-    }
-    return Column(
-      children: column,
-    );
+    return Obx(() => ListView.builder(
+          itemBuilder: (context, i) {
+            if (i == 0)
+              return Text(
+                name.value,
+                style: Theme.of(context).textTheme.headline4,
+                textAlign: TextAlign.center,
+              );
+            else
+              return Obx(() => ComplexAbilityWidget(
+                  attribute: values[i - 1],
+                  index: i - 1,
+                  updateCallback: editValue,
+                  deleteCallback: deleteValue));
+          },
+          itemCount: values.length + 1,
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+        ));
   }
 }
 
@@ -229,6 +237,24 @@ class ComplexAbilityDialog extends Dialog {
           ],
           mainAxisAlignment: MainAxisAlignment.end,
         ),
+      ],
+    );
+  }
+}
+
+class DeleteDialog extends Dialog {
+  DeleteDialog({required this.name});
+
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    return SimpleDialog(
+      title: Text("Delete $name?"),
+      children: [
+        TextButton(onPressed: () => Get.back(result: true), child: Text("Ok")),
+        TextButton(
+            onPressed: () => Get.back(result: false), child: Text("Cancel")),
       ],
     );
   }

@@ -11,12 +11,13 @@ const maxBloodCount = 20;
 const maxWillpowerCount = 10;
 
 // Are separated on the character sheet. Go into primary info in the app.
-// This is hardcoded for the sake of the fast hardcoded version.
-// TODO: serialize, allow arbitrary backgrounds
 class BackgroundColumnWidget extends ComplexAbilityColumnWidget {
   BackgroundColumnWidget() {
     BackgroundsController bc = Get.find();
-    super.controller = bc.backgrounds.value;
+    super.name = bc.backgrounds.value.name;
+    super.values = bc.backgrounds.value.values;
+    super.editValue = bc.backgrounds.value.editValue;
+    super.deleteValue = bc.backgrounds.value.deleteValue;
   }
 }
 
@@ -65,8 +66,8 @@ class AdvantagesWidget extends StatelessWidget {
           alignment: WrapAlignment.center,
           children: [
             BackgroundColumnWidget(),
-            VirtuesColumnWidget(),
-            SummarizedInfoWidget(),
+            // VirtuesColumnWidget(),
+            // SummarizedInfoWidget(),
           ],
         ),
       ],

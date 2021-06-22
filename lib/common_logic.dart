@@ -97,9 +97,8 @@ class ComplexAbilityColumn {
     this.name.value = name;
   }
 
-  RxList<ComplexAbility> values = RxList();
-
   var name = "Name".obs;
+  RxList<ComplexAbility> values = RxList();
 
   void editValue(ComplexAbility value, int index) {
     values[index] = value;
