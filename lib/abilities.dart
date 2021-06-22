@@ -94,8 +94,8 @@ class AbilitiesController extends GetxController {
           isIncremental: true, // Attributes are incremental, AFAIK
         );
 
-        print(
-            "Adding ability $type: '${ca.name}', ${ca.current}, '${ca.specialization}', '${ca.description}'");
+        // print(
+        //     "Adding ability $type: '${ca.name}', ${ca.current}, '${ca.specialization}', '${ca.description}'");
 
         switch (type) {
           case AbilityColumnType.Talents:
@@ -233,10 +233,10 @@ class AbilitiesDictionary {
           entry.specializations.add(specialization);
         }
       } else {
-        print("${attribute["name"]}'s specializations are not a list");
+        // print("${attribute["name"]}'s specializations are not a list");
       }
     } else {
-      print("${attribute["name"]} does not have specializations");
+      // print("${attribute["name"]} does not have specializations");
     }
     if (attribute["levels"] != null) {
       if (attribute["levels"] is List) {
@@ -244,10 +244,10 @@ class AbilitiesDictionary {
           entry.levels.add(level);
         }
       } else {
-        print("${attribute["name"]}'s levels are not a list");
+        // print("${attribute["name"]}'s levels are not a list");
       }
     } else {
-      print("${attribute["name"]} does not have levels");
+      // print("${attribute["name"]} does not have levels");
     }
     entry.description = attribute["description"];
 

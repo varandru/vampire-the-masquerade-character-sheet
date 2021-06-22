@@ -62,25 +62,23 @@ class MeritsAndFlawsController extends GetxController {
     for (var merit in json) {
       print(merit);
       if (merit["name"] == null) continue;
-      print("Has name");
       if (!(merit["name"] is String)) continue;
-      print("Is string");
       String name = merit["name"];
       if (dictionary.merits[name] == null) {
         continue;
       }
-      print("Is in dictionary");
       int cost = dictionary.merits[name]!.costs.length > 0
           ? merit["cost"] ?? dictionary.merits[name]!.costs[0]
           : 1;
       Merit m = Merit(
         name: merit["name"]!,
-        type: typeFromString(merit["type"]),
+        type: dictionary.merits[name]!.type,
         cost: cost,
-        description: dictionary.merits["name"]?.description ?? "",
+        description: dictionary.merits[name]?.description ?? "",
       );
 
-      print(m);
+      print("'${m.name}', '${m.cost}', ${m.type}, '${m.description}'");
+      print("${merits.contains(m)}, ${merits.length}");
 
       if (!merits.contains(m)) {
         merits.add(m);
@@ -92,20 +90,24 @@ class MeritsAndFlawsController extends GetxController {
     print("Loading flaws");
     for (var flaw in json) {
       print(flaw);
-      if (flaw["name"] == null || !(flaw["name"] is String)) continue;
+      if (flaw["name"] == null) continue;
+      if (!(flaw["name"] is String)) continue;
       String name = flaw["name"];
-      if (dictionary.flaws[name] == null) continue;
+      if (dictionary.flaws[name] == null) {
+        continue;
+      }
       int cost = dictionary.flaws[name]!.costs.length > 0
           ? flaw["cost"] ?? dictionary.flaws[name]!.costs[0]
           : 1;
       Merit m = Merit(
         name: flaw["name"]!,
-        type: typeFromString(flaw["type"]),
+        type: dictionary.flaws[name]!.type,
         cost: cost,
-        description: dictionary.flaws["name"]?.description ?? "",
+        description: dictionary.flaws[name]?.description ?? "",
       );
 
-      print(m);
+      print("'${m.name}', '${m.cost}', ${m.type}, '${m.description}'");
+      print("${flaws.contains(m)}, ${flaws.length}");
 
       if (!flaws.contains(m)) {
         flaws.add(m);
@@ -140,13 +142,23 @@ class MeritEntry {
   // Map key
   // final String name;
   final MeritType type;
-  final List<int> costs;
+  late final List<int> costs;
   final String? description;
 
   MeritEntry.fromJson(Map<String, dynamic> json)
       : type = typeFromString(json["type"]!),
-        costs = json["costs"] ?? const [], // this will probs need fixing
-        description = json["description"];
+        description = json["description"] {
+    print(json);
+    if (json["cost"] != null) {
+      List<int> c = [];
+      for (var cost in json["cost"]) {
+        c.add(cost);
+      }
+      costs = c;
+    } else {
+      costs = [];
+    }
+  }
 }
 
 class MeritsAndFlawsDictionary {
@@ -155,22 +167,28 @@ class MeritsAndFlawsDictionary {
 
   MeritsAndFlawsDictionary.fromJson(Map<String, dynamic> json) {
     // 1. Get locale, not done at all
-
+    print("Adding merits");
     // 2. Get merits
     if (json["merits"] != null && json["merits"] is List) {
       for (var m in json["merits"]) {
-        if (json["name"] != null && json["name"] is String) {
+        if (m["name"] != null) {
           var merit = MeritEntry.fromJson(m);
-          merits[json["name"]] = merit;
+          merits[m["name"]] = merit;
+
+          print("Adding merit: '${m["name"]}', ${merit.costs}, ${merit.type}");
         }
       }
     }
+
+    print("Adding flaws");
     // 3. Get flaws
     if (json["flaws"] != null && json["flaws"] is List) {
       for (var f in json["flaws"]) {
-        if (json["name"] != null && json["name"] is String) {
+        if (f["name"] != null) {
           var flaw = MeritEntry.fromJson(f);
-          flaws[json["name"]] = flaw;
+          flaws[f["name"]] = flaw;
+
+          print("Adding merit: '${f["name"]}', ${flaw.costs}, ${flaw.type}");
         }
       }
     }

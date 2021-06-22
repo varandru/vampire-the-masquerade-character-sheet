@@ -92,8 +92,8 @@ class AttributesController extends GetxController {
             isIncremental: true, // Attributes are incremental, AFAIK
             isDeletable: false);
 
-        print(
-            "Adding ability $type: '${ca.name}', ${ca.current}, '${ca.specialization}', '${ca.description}'");
+        // print(
+        //     "Adding ability $type: '${ca.name}', ${ca.current}, '${ca.specialization}', '${ca.description}'");
 
         switch (type) {
           case AttributeColumnType.Physical:

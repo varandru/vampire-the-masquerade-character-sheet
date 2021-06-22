@@ -166,7 +166,7 @@ class VampireCharacter extends GetxController {
             meritsAndFlawsController.loadMerits(json["merits"], mfd);
 
           if (json["flaws"] != null)
-            meritsAndFlawsController.loadMerits(json["flaws"], mfd);
+            meritsAndFlawsController.loadFlaws(json["flaws"], mfd);
         }
         // else just use the defaults
 
