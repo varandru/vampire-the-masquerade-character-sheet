@@ -84,8 +84,11 @@ class ComplexAbilityWidget extends StatelessWidget {
             children: [
               IconButton(
                   onPressed: () async {
-                    final ca = await Get.dialog<ComplexAbility>(
-                        ComplexAbilityDialog(name: 'Edit ${attribute.name}'));
+                    final ca =
+                        await Get.dialog<ComplexAbility>(ComplexAbilityDialog(
+                      name: 'Edit ${attribute.name}',
+                      ability: attribute,
+                    ));
                     if (ca != null) {
                       updateCallback(ca, index);
                     }
@@ -193,6 +196,7 @@ class ComplexAbilityDialog extends Dialog {
             Text('Name: '),
             Expanded(
               child: TextField(
+                  controller: TextEditingController()..text = ca.value.name,
                   onChanged: (value) => ca.update(
                         (val) {
                           val?.name = value;
@@ -228,9 +232,14 @@ class ComplexAbilityDialog extends Dialog {
             Text('Description: '),
             Expanded(
               child: TextField(
-                  onChanged: (value) => ca.update((val) {
-                        val?.description = value;
-                      })),
+                controller: TextEditingController()
+                  ..text = ca.value.description,
+                onChanged: (value) => ca.update((val) {
+                  val?.description = value;
+                }),
+                keyboardType: TextInputType.multiline,
+                maxLines: null,
+              ),
             ),
           ],
         ),

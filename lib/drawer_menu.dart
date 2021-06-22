@@ -41,23 +41,17 @@ class DrawerMenu extends Drawer {
             tileColor: _item == SelectedMenuItem.PrimaryInfo
                 ? Theme.of(context).colorScheme.primary
                 : Theme.of(context).colorScheme.onPrimary,
-            onTap: () {
-              Get.offAll(
-                () => PrimaryInfoScaffold(context),
-              );
-            },
+            onTap: () => Get.offAll(() => PrimaryInfoScaffold(context)),
           ),
           ListTile(
-              title: Text('Attributes & Abilities'),
-              trailing: Icon(Icons.accessibility_new),
-              tileColor: _item == SelectedMenuItem.Abilities
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.onPrimary,
-              onTap: () {
-                Get.offAll(
-                  () => AttributesAndAbilitiesScaffold(context),
-                );
-              }),
+            title: Text('Attributes & Abilities'),
+            trailing: Icon(Icons.accessibility_new),
+            tileColor: _item == SelectedMenuItem.Abilities
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.onPrimary,
+            onTap: () =>
+                Get.offAll(() => AttributesAndAbilitiesScaffold(context)),
+          ),
           // ListTile(
           //   title: Text('Disciplines'),
           //   trailing: Icon(Icons.auto_awesome),
@@ -77,12 +71,7 @@ class DrawerMenu extends Drawer {
             tileColor: _item == SelectedMenuItem.MeritsFlaws
                 ? Theme.of(context).colorScheme.primary
                 : Theme.of(context).colorScheme.onPrimary,
-            onTap: () {
-              Navigator.of(context)
-                  .pushReplacement(MaterialPageRoute(builder: (context) {
-                return MeritsFlawsScaffold();
-              }));
-            },
+            onTap: () => Get.offAll(() => MeritsFlawsScaffold(context)),
           ),
           ListTile(
             title: Text('Weapons and Armor'),
@@ -90,11 +79,7 @@ class DrawerMenu extends Drawer {
             tileColor: _item == SelectedMenuItem.WeaponsArmor
                 ? Theme.of(context).colorScheme.primary
                 : Theme.of(context).colorScheme.onPrimary,
-            onTap: () {
-              Get.offAll(
-                () => WeaponsAndArmorScaffold(),
-              );
-            },
+            onTap: () => Get.offAll(() => WeaponsAndArmorScaffold()),
           ),
           ListTile(
             title: Text('Close'),
@@ -173,10 +158,20 @@ class WeaponsAndArmorScaffold extends MenuScaffold {
 
 // Merits & Flaws Menu
 class MeritsFlawsScaffold extends MenuScaffold {
-  MeritsFlawsScaffold()
+  MeritsFlawsScaffold(BuildContext context)
       : super(
           name: "Merits & Flaws",
           body: MeritsAndFlawsSectionWidget(),
-          selectedItem: SelectedMenuItem.Disciplines,
+          selectedItem: SelectedMenuItem.MeritsFlaws,
+          floatingActionButton: SpeedDial(
+            icon: Icons.add,
+            activeIcon: Icons.close,
+            backgroundColor: Theme.of(context).colorScheme.primaryVariant,
+            closeManually: true,
+            children: [
+              AddFlawButton(context),
+              AddMeritButton(context),
+            ],
+          ),
         );
 }

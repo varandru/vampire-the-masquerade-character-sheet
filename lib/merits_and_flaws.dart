@@ -30,13 +30,13 @@ class Merit {
   Merit(
       {required this.name,
       this.type = MeritType.Undefined,
-      this.cost = 0,
+      this.cost = 1,
       this.description = ""});
 
-  final String name;
-  final MeritType type;
-  final int cost;
-  final String description;
+  String name;
+  MeritType type;
+  int cost;
+  String description;
 
   @override
   bool operator ==(Object other) =>

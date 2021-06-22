@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:get/get.dart';
 
-import 'common_logic.dart';
+import 'common_widget.dart';
 import 'merits_and_flaws.dart';
 
 class MeritWidget extends StatelessWidget {
-  MeritWidget(this._merit);
+  MeritWidget(this._merit, {required this.index, this.isMerit = true});
 
   final Merit _merit;
+  final int index;
+  final bool isMerit;
 
   @override
   Widget build(BuildContext context) {
@@ -17,20 +19,11 @@ class MeritWidget extends StatelessWidget {
       subtitle: Text(meritName(_merit.type)),
       trailing: Text(_merit.cost.toString()),
       onTap: () {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return SimpleDialog(
-                title: Text(_merit.name),
-                children: [
-                  Text(
-                    "Description",
-                    style: Theme.of(context).textTheme.headline6,
-                  ),
-                  Text(_merit.description),
-                ],
-              );
-            }).then((value) => null);
+        Get.dialog(MeritPopUp(
+          _merit,
+          index: index,
+          isMerit: isMerit,
+        ));
       },
     );
   }
@@ -41,34 +34,10 @@ class MeritsAndFlawsSectionWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final MeritsAndFlawsController mafc = Get.find();
 
-    // final merits = [
-    //   MeritWidget(
-    //     Merit(
-    //       name: "Computer Aptitude",
-    //       type: MeritType.Mental,
-    //       cost: 2,
-    //       description:
-    //           "You are familiar with and talented in the uses of computer equipment. Other Kindred may not understand computers, but to you they are intuitive. All rolls involving computers are at -2 difficulty for you.",
-    //     ),
-    //   ),
-    // ];
-
     int meritSum = 0;
     for (var merit in mafc.merits) {
       meritSum += merit.cost;
     }
-
-    // final flaws = [
-    //   MeritWidget(
-    //     Merit(
-    //       name: "Bad Sight (1 pt.)",
-    //       type: MeritType.Physical,
-    //       cost: 1,
-    //       description:
-    //           "Your sight is defective. The difficulties of any die rolls involving the use of your eyesight are increased by two. As a one-point Flaw, this condition can be corrected with glasses or contacts.",
-    //     ),
-    //   ),
-    // ];
 
     int flawSum = 0;
     for (var flaw in mafc.flaws) {
@@ -82,22 +51,30 @@ class MeritsAndFlawsSectionWidget extends StatelessWidget {
           style: Theme.of(context).textTheme.headline4,
         ),
         Flexible(
-          child: ListView.builder(
-            itemBuilder: (context, i) => Obx(() => MeritWidget(mafc.merits[i])),
-            itemCount: mafc.merits.length,
-            shrinkWrap: true,
-          ),
+          child: Obx(() => ListView.builder(
+                itemBuilder: (context, i) => Obx(() => MeritWidget(
+                      mafc.merits[i],
+                      index: i,
+                      isMerit: true,
+                    )),
+                itemCount: mafc.merits.length,
+                shrinkWrap: true,
+              )),
         ),
         Text(
           "Flaws ($flawSum)",
           style: Theme.of(context).textTheme.headline4,
         ),
         Flexible(
-          child: ListView.builder(
-            itemBuilder: (context, i) => Obx(() => MeritWidget(mafc.flaws[i])),
-            itemCount: mafc.flaws.length,
-            shrinkWrap: true,
-          ),
+          child: Obx(() => ListView.builder(
+                itemBuilder: (context, i) => Obx(() => MeritWidget(
+                      mafc.flaws[i],
+                      index: i,
+                      isMerit: false,
+                    )),
+                itemCount: mafc.flaws.length,
+                shrinkWrap: true,
+              )),
         ),
       ],
       mainAxisSize: MainAxisSize.min,
@@ -105,6 +82,71 @@ class MeritsAndFlawsSectionWidget extends StatelessWidget {
   }
 }
 
+/// For info
+class MeritPopUp extends Dialog {
+  MeritPopUp(this.merit, {required this.index, this.isMerit = true});
+
+  final Merit merit;
+  final int index;
+
+  /// or is flaw
+  final bool isMerit;
+
+  @override
+  Widget build(BuildContext context) {
+    return SimpleDialog(
+      title: Text(
+        merit.name,
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.headline5,
+      ),
+      children: [
+        Text(
+          "${meritName(merit.type)}, ${merit.cost} points",
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.headline6,
+        ),
+        Text(merit.description),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconButton(
+                onPressed: () async {
+                  final ca = await Get.dialog<Merit>(MeritDialog(
+                    name: 'Edit ${merit.name}',
+                    merit: merit,
+                  ));
+                  if (ca != null) {
+                    final MeritsAndFlawsController cmaf = Get.find();
+                    if (isMerit)
+                      cmaf.merits[index] = ca;
+                    else
+                      cmaf.flaws[index] = ca;
+                  }
+                },
+                icon: Icon(Icons.edit)),
+            IconButton(
+                onPressed: () async {
+                  bool? delete =
+                      await Get.dialog<bool>(DeleteDialog(name: merit.name));
+                  if (delete != null && delete == true) {
+                    final MeritsAndFlawsController cmaf = Get.find();
+                    if (isMerit)
+                      cmaf.merits.removeAt(index);
+                    else
+                      cmaf.flaws.removeAt(index);
+                    Get.back();
+                  }
+                },
+                icon: Icon(Icons.delete)),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+/// For adding a new one or modifying an existing one
 class MeritDialog extends Dialog {
   MeritDialog({required this.name, this.merit});
 
@@ -113,28 +155,119 @@ class MeritDialog extends Dialog {
 
   @override
   Widget build(BuildContext context) {
-    var m = (merit != null) ? merit!.obs : Merit(name: name).obs;
+    var m = (merit != null)
+        ? merit!.obs
+        : Merit(name: name, type: MeritType.Physical).obs;
 
     return SimpleDialog(
       title: Text(name),
+      children: [
+        Row(children: [
+          Text("Name: "),
+          Expanded(
+              child: TextField(
+            controller: TextEditingController()..text = m.value.name,
+          ))
+        ]),
+        Row(children: [
+          Text("Type: "),
+          Obx(
+            () => DropdownButton(
+                items: [
+                  DropdownMenuItem<MeritType>(
+                      child: Text("Physical"), value: MeritType.Physical),
+                  DropdownMenuItem<MeritType>(
+                      child: Text("Mental"), value: MeritType.Mental),
+                  DropdownMenuItem<MeritType>(
+                      child: Text("Social"), value: MeritType.Social),
+                  DropdownMenuItem<MeritType>(
+                      child: Text("Supernatural"),
+                      value: MeritType.Supernatural),
+                ],
+                value: m.value.type,
+                onChanged: (MeritType? value) =>
+                    m.update((val) => val!.type = value ?? val.type)),
+          )
+        ]),
+        Row(children: [
+          Text("Cost: "),
+          Expanded(
+              child: Obx(() => Slider(
+                    value: m.value.cost.toDouble(),
+                    min: 1.0,
+                    max: 7.0,
+                    divisions: 7,
+                    label: m.value.cost.toString(),
+                    onChanged: (double value) =>
+                        m.update((val) => val?.cost = value.round()),
+                  ))),
+        ]),
+        Row(children: [
+          Text("Description: "),
+          Expanded(
+            child: TextField(
+              controller: TextEditingController()..text = m.value.description,
+              onChanged: (value) => m.update((val) {
+                val?.description = value;
+              }),
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+            ),
+          ),
+        ]),
+        Row(
+          children: [
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () => Get.back(result: null),
+            ),
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                if (m.value.name.isNotEmpty)
+                  Get.back(result: m.value);
+                else
+                  Get.back(result: null);
+              },
+            ),
+          ],
+          mainAxisAlignment: MainAxisAlignment.end,
+        ),
+      ],
     );
   }
 }
 
-// class AddKnowledgeButton extends SpeedDialChild {
-//   AddKnowledgeButton(BuildContext context)
-//       : super(
-//           child: Icon(Icons.menu_book),
-//           backgroundColor: Colors.blue.shade300,
-//           label: "Add custom knowledge",
-//           labelBackgroundColor: Theme.of(context).colorScheme.surface,
-//           onTap: () async {
-//             final ca = await Get.dialog<ComplexAbility>(
-//                 ComplexAbilityDialog(name: 'New Knowledge'));
-//             if (ca != null) {
-//               AbilitiesController ac = Get.find();
-//               ac.knowledges.add(ca);
-//             }
-//           },
-//         );
-// }
+class AddMeritButton extends SpeedDialChild {
+  AddMeritButton(BuildContext context)
+      : super(
+          child: Icon(Icons.sentiment_very_satisfied_outlined),
+          backgroundColor: Colors.lightGreen.shade300,
+          label: "Add custom merit",
+          labelBackgroundColor: Theme.of(context).colorScheme.surface,
+          onTap: () async {
+            final ca = await Get.dialog<Merit>(MeritDialog(name: 'New Merit'));
+            if (ca != null) {
+              MeritsAndFlawsController ac = Get.find();
+              ac.merits.add(ca);
+            }
+          },
+        );
+}
+
+class AddFlawButton extends SpeedDialChild {
+  AddFlawButton(BuildContext context)
+      : super(
+          child: Icon(Icons.sentiment_very_dissatisfied_outlined),
+          backgroundColor: Colors.pink.shade300,
+          label: "Add custom flaw",
+          labelBackgroundColor: Theme.of(context).colorScheme.surface,
+          onTap: () async {
+            final ca = await Get.dialog<Merit>(MeritDialog(name: 'New Flaw'));
+            if (ca != null) {
+              MeritsAndFlawsController ac = Get.find();
+              ac.flaws.add(ca);
+            }
+          },
+        );
+}
