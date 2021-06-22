@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:get/get_rx/get_rx.dart';
+import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 
 enum MeritType { Physical, Mental, Social, Supernatural, Undefined }
 
@@ -17,111 +18,179 @@ String meritName(MeritType type) {
   }
 }
 
+MeritType typeFromString(String? name) {
+  if (name == "physical") return MeritType.Physical;
+  if (name == "mental") return MeritType.Mental;
+  if (name == "social") return MeritType.Social;
+  if (name == "supernatural") return MeritType.Supernatural;
+  return MeritType.Undefined;
+}
+
 class Merit {
   Merit(
       {required this.name,
       this.type = MeritType.Undefined,
-      this.cost = 0,
+      this.cost = 1,
       this.description = ""});
 
-  final String name;
-  final MeritType type;
-  final int cost;
-  final String description;
-}
-
-class MeritWidget extends StatelessWidget {
-  MeritWidget(this._merit);
-
-  final Merit _merit;
+  String name;
+  MeritType type;
+  int cost;
+  String description;
 
   @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(_merit.name),
-      subtitle: Text(meritName(_merit.type)),
-      trailing: Text(_merit.cost.toString()),
-      onTap: () {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return SimpleDialog(
-                title: Text(_merit.name),
-                children: [
-                  Text(
-                    "Description",
-                    style: Theme.of(context).textTheme.headline6,
-                  ),
-                  Text(_merit.description),
-                ],
-              );
-            }).then((value) => null);
-      },
-    );
+  bool operator ==(Object other) =>
+      identical(this, other) || (other is Merit && other.name == this.name);
+
+  @override
+  int get hashCode => name.hashCode;
+
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> json = Map();
+    json["name"] = name;
+    json["cost"] = cost;
+    return json;
   }
 }
 
-class MeritsAndFlawsSectionWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final merits = [
-      MeritWidget(
-        Merit(
-          name: "Computer Aptitude",
-          type: MeritType.Mental,
-          cost: 2,
-          description:
-              "You are familiar with and talented in the uses of computer equipment. Other Kindred may not understand computers, but to you they are intuitive. All rolls involving computers are at -2 difficulty for you.",
-        ),
-      ),
-    ];
+class MeritsAndFlawsController extends GetxController {
+  RxList<Merit> merits = RxList();
+  RxList<Merit> flaws = RxList();
 
-    int meritSum = 0;
-    for (var merit in merits) {
-      meritSum += merit._merit.cost;
+  void loadMerits(List<dynamic> json, MeritsAndFlawsDictionary dictionary) {
+    print("Loading merits");
+    for (var merit in json) {
+      print(merit);
+      if (merit["name"] == null) continue;
+      if (!(merit["name"] is String)) continue;
+      String name = merit["name"];
+      if (dictionary.merits[name] == null) {
+        continue;
+      }
+      int cost = dictionary.merits[name]!.costs.length > 0
+          ? merit["cost"] ?? dictionary.merits[name]!.costs[0]
+          : 1;
+      Merit m = Merit(
+        name: merit["name"]!,
+        type: dictionary.merits[name]!.type,
+        cost: cost,
+        description: dictionary.merits[name]?.description ?? "",
+      );
+
+      print("'${m.name}', '${m.cost}', ${m.type}, '${m.description}'");
+      print("${merits.contains(m)}, ${merits.length}");
+
+      if (!merits.contains(m)) {
+        merits.add(m);
+      }
+    }
+  }
+
+  void loadFlaws(List<dynamic> json, MeritsAndFlawsDictionary dictionary) {
+    print("Loading flaws");
+    for (var flaw in json) {
+      print(flaw);
+      if (flaw["name"] == null) continue;
+      if (!(flaw["name"] is String)) continue;
+      String name = flaw["name"];
+      if (dictionary.flaws[name] == null) {
+        continue;
+      }
+      int cost = dictionary.flaws[name]!.costs.length > 0
+          ? flaw["cost"] ?? dictionary.flaws[name]!.costs[0]
+          : 1;
+      Merit m = Merit(
+        name: flaw["name"]!,
+        type: dictionary.flaws[name]!.type,
+        cost: cost,
+        description: dictionary.flaws[name]?.description ?? "",
+      );
+
+      print("'${m.name}', '${m.cost}', ${m.type}, '${m.description}'");
+      print("${flaws.contains(m)}, ${flaws.length}");
+
+      if (!flaws.contains(m)) {
+        flaws.add(m);
+      }
+    }
+  }
+
+  List<dynamic> saveMerits() {
+    List<dynamic> merits = [];
+    for (var m in this.merits) {
+      merits.add(m.toJson());
+    }
+    return merits;
+  }
+
+  List<dynamic> saveFlaws() {
+    List<dynamic> flaws = [];
+    for (var f in this.flaws) {
+      flaws.add(f.toJson());
+    }
+    return flaws;
+  }
+}
+
+class MeritEntry {
+  MeritEntry({
+    required this.type,
+    this.costs = const [],
+    this.description,
+  });
+
+  // Map key
+  // final String name;
+  final MeritType type;
+  late final List<int> costs;
+  final String? description;
+
+  MeritEntry.fromJson(Map<String, dynamic> json)
+      : type = typeFromString(json["type"]!),
+        description = json["description"] {
+    print(json);
+    if (json["cost"] != null) {
+      List<int> c = [];
+      for (var cost in json["cost"]) {
+        c.add(cost);
+      }
+      costs = c;
+    } else {
+      costs = [];
+    }
+  }
+}
+
+class MeritsAndFlawsDictionary {
+  Map<String, MeritEntry> merits = Map();
+  Map<String, MeritEntry> flaws = Map();
+
+  MeritsAndFlawsDictionary.fromJson(Map<String, dynamic> json) {
+    // 1. Get locale, not done at all
+    print("Adding merits");
+    // 2. Get merits
+    if (json["merits"] != null && json["merits"] is List) {
+      for (var m in json["merits"]) {
+        if (m["name"] != null) {
+          var merit = MeritEntry.fromJson(m);
+          merits[m["name"]] = merit;
+
+          print("Adding merit: '${m["name"]}', ${merit.costs}, ${merit.type}");
+        }
+      }
     }
 
-    final flaws = [
-      MeritWidget(
-        Merit(
-          name: "Bad Sight (1 pt.)",
-          type: MeritType.Physical,
-          cost: 1,
-          description:
-              "Your sight is defective. The difficulties of any die rolls involving the use of your eyesight are increased by two. As a one-point Flaw, this condition can be corrected with glasses or contacts.",
-        ),
-      ),
-    ];
+    print("Adding flaws");
+    // 3. Get flaws
+    if (json["flaws"] != null && json["flaws"] is List) {
+      for (var f in json["flaws"]) {
+        if (f["name"] != null) {
+          var flaw = MeritEntry.fromJson(f);
+          flaws[f["name"]] = flaw;
 
-    int flawSum = 0;
-    for (var flaw in flaws) {
-      flawSum += flaw._merit.cost;
+          print("Adding merit: '${f["name"]}', ${flaw.costs}, ${flaw.type}");
+        }
+      }
     }
-
-    return Column(
-      children: [
-        Text(
-          "Merits ($meritSum)",
-          style: Theme.of(context).textTheme.headline4,
-        ),
-        Flexible(
-          child: ListView(
-            children: merits,
-            shrinkWrap: true,
-          ),
-        ),
-        Spacer(),
-        Text(
-          "Flaws ($flawSum)",
-          style: Theme.of(context).textTheme.headline4,
-        ),
-        Flexible(
-            child: ListView(
-          children: flaws,
-          shrinkWrap: true,
-        )),
-      ],
-      mainAxisSize: MainAxisSize.min,
-    );
   }
 }

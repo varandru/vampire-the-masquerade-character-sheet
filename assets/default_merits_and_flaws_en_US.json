@@ -1,0 +1,24 @@
+{
+  "locale": "en-US",
+  "merits": [
+    {
+      "name": "Computer Aptitude",
+      "type": "mental",
+      "cost": [
+        2
+      ],
+      "description": "You are familiar with and talented in the uses of computer equipment. Other Kindred may not understand computers, but to you they are intuitive. All rolls involving computers are at -2 difficulty for you."
+    }
+  ],
+  "flaws": [
+    {
+      "name": "Bad Sight",
+      "type": "physical",
+      "cost": [
+        1,
+        3
+      ],
+      "description": "Your sight is defective. The difficulties of any die rolls involving the use of your eyesight are increased by two. As a one-point Flaw, this condition can be corrected with glasses or contacts."
+    }
+  ]
+}

@@ -204,5 +204,16 @@
     {"name": "Herd", "current": 1},
     {"name": "Resources", "current": 2},
     {"name": "Generation", "current": 3}
+  ],
+  "merits": [
+    {
+      "name": "Computer Aptitude"
+    }
+  ],
+  "flaws": [
+    {
+      "name": "Bad Sight",
+      "cost": 1
+    }
   ]
 }

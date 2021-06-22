@@ -12,18 +12,18 @@
      - [ ] Rituals
      - [x] Attributes
      - [x] Abilities
-     - [ ] Merits and Flaws
+     - [x] Merits and Flaws
    - [ ] A theme should exist
      - [ ] Color theme
      - [ ] Android icon and app name
    - [ ] A level-up chart should be found in the app. At least a basic one, preferably an interactive one.
  - [ ] Make fiels editable
    - [x] Basic character information
-   - [ ] Attributes (and skills)
+   - [x] Attributes (and skills)
    - [ ] Disciplines (and their levels)
    - [ ] Maximum bloodpool (from generation)
    - [ ] Maximum willpower and humanity
-   - [ ] Merits and Flaws
+   - [x] Merits and Flaws
    - [ ] Inventory?
  - [ ] Logic
    - [x] *All* serialized information must load on startup
@@ -38,7 +38,7 @@
    - [ ] Virtues
    - [ ] Disciplines, sublevels of disciplines
    - [ ] Rituals
-   - [ ] Merits & Flaws
+   - [x] Merits & Flaws
    - [ ] Alternatives to Humanity: Paths, Instincts, etc. 
    - [ ] Alternatives to Virtues: Instints and Conviction
  - [ ] Localization
