@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vampire_the_masquerade_character_sheet/advantages.dart';
+import 'package:vampire_the_masquerade_character_sheet/merits_and_flaws.dart';
 
 import 'abilities.dart';
 import 'attributes.dart';
@@ -12,13 +13,13 @@ import 'main_info.dart';
 
 /// Controller for the whole character. Handles saving and loading data from files, and, possibly, any other character-wide operations
 class VampireCharacter extends GetxController {
-  // Comments mean: can save/can load. Not ++ means I'm not done
-  late MostVariedController mostVariedController; // ++
-  late VirtuesController virtuesController; // ++
-  late MainInfo mainInfo; // ++
-  late AttributesController attributesController; // ++
-  late AbilitiesController abilitiesController; // ++
+  late MostVariedController mostVariedController;
+  late VirtuesController virtuesController;
+  late MainInfo mainInfo;
+  late AttributesController attributesController;
+  late AbilitiesController abilitiesController;
   late BackgroundsController backgroundsController;
+  late MeritsAndFlawsController meritsAndFlawsController;
 
   late String _characterFileName;
   late bool installed;
@@ -36,6 +37,7 @@ class VampireCharacter extends GetxController {
     attributesController = Get.put(AttributesController());
     abilitiesController = Get.put(AbilitiesController());
     backgroundsController = Get.put(BackgroundsController());
+    meritsAndFlawsController = Get.put(MeritsAndFlawsController());
   }
 
   void _loadToControllers(Map<String, dynamic> json) {
@@ -51,6 +53,8 @@ class VampireCharacter extends GetxController {
     json["main_info"] = mainInfo.save();
     json["attributes"] = attributesController.save();
     json["abilities"] = abilitiesController.save();
+    json["merits"] = meritsAndFlawsController.saveMerits();
+    json["flaws"] = meritsAndFlawsController.saveFlaws();
     return json;
   }
 
@@ -97,6 +101,21 @@ class VampireCharacter extends GetxController {
     }
   }
 
+  Future<String> _loadMeritsAndFlawsList() async {
+    var directory = await getApplicationDocumentsDirectory();
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    final meritsFlawsListFile =
+        preferences.getString('merits_and_flaws_dictionary') ??
+            'default_merits_and_flaws_en_US.json';
+    File dictionaryFile = File(directory.path + '/' + meritsFlawsListFile);
+
+    if (await dictionaryFile.exists()) {
+      return dictionaryFile.readAsString();
+    } else {
+      throw ("Attribute dictionary $meritsFlawsListFile does not exist");
+    }
+  }
+
   /// Loads a local JSON character file
   Future<void> load() async {
     Get.snackbar("Loading", "Loading character information");
@@ -124,6 +143,11 @@ class VampireCharacter extends GetxController {
           var backgroundList = await _loadBackgroundList();
           backd.load(jsonDecode(backgroundList));
 
+          // Merits and Flaws dictionary
+          var meritsList = await _loadMeritsAndFlawsList();
+          MeritsAndFlawsDictionary mfd =
+              MeritsAndFlawsDictionary.fromJson(jsonDecode(meritsList));
+
           Map<String, dynamic> json =
               jsonDecode(characterFile.readAsStringSync());
 
@@ -137,6 +161,12 @@ class VampireCharacter extends GetxController {
 
           if (json["backgrounds"] != null)
             backgroundsController.load(json["backgrounds"], backd);
+
+          if (json["merits"] != null)
+            meritsAndFlawsController.loadMerits(json["merits"], mfd);
+
+          if (json["flaws"] != null)
+            meritsAndFlawsController.loadMerits(json["flaws"], mfd);
         }
         // else just use the defaults
 
@@ -200,6 +230,15 @@ class VampireCharacter extends GetxController {
         '/' +
         (preferences.getString('default_backgrounds') ??
             'default_backgrounds_en_US.json'));
+
+    attributeFile.writeAsStringSync(attributeString);
+
+    attributeString = await rootBundle
+        .loadString('assets/default_merits_and_flaws_en_US.json');
+    attributeFile = File(directory.path +
+        '/' +
+        (preferences.getString('default_merits_and_flaws') ??
+            'default_merits_and_flaws_en_US.json'));
 
     attributeFile.writeAsStringSync(attributeString);
 

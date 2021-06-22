@@ -5,7 +5,7 @@ import 'abilities_widget.dart';
 import 'advanatages_widget.dart';
 import 'attributes_widget.dart';
 import 'combat.dart';
-import 'merits_and_flaws.dart';
+import 'merits_and_flaws_widget.dart';
 import 'vampire_character_widget.dart';
 import 'main_info_widget.dart';
 
