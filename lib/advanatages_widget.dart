@@ -66,8 +66,8 @@ class AdvantagesWidget extends StatelessWidget {
           alignment: WrapAlignment.center,
           children: [
             BackgroundColumnWidget(),
-            // VirtuesColumnWidget(),
-            // SummarizedInfoWidget(),
+            VirtuesColumnWidget(),
+            SummarizedInfoWidget(),
           ],
         ),
       ],
