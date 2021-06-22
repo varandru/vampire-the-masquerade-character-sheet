@@ -145,28 +145,27 @@ class ComplexAbilityColumnWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       constraints: BoxConstraints(maxWidth: 500),
-      child:
-          // Obx(() =>
-          ListView.builder(
-        itemBuilder: (context, i) {
-          if (i == 0)
-            return Text(
-              name.value,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headline6,
-            );
-          else
-            return Obx(() => ComplexAbilityWidget(
-                attribute: values[i - 1],
-                index: i - 1,
-                updateCallback: editValue,
-                deleteCallback: deleteValue));
-        },
-        itemCount: values.length + 1,
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
+      child: Obx(
+        () => ListView.builder(
+          itemBuilder: (context, i) {
+            if (i == 0)
+              return Text(
+                name.value,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headline6,
+              );
+            else
+              return Obx(() => ComplexAbilityWidget(
+                  attribute: values[i - 1],
+                  index: i - 1,
+                  updateCallback: editValue,
+                  deleteCallback: deleteValue));
+          },
+          itemCount: values.length + 1,
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+        ),
       ),
-      // ),
     );
   }
 }

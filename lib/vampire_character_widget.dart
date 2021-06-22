@@ -40,13 +40,6 @@ class VampireWidget extends StatelessWidget {
 //   item: SelectedMenuItem.Disciplines,
 // );
 
-// // Merits & Flaws Menu
-// final meritsFlawsScaffold = MenuScaffold(
-//   name: "Merits & Flaws",
-//   body: MeritsAndFlawsSectionWidget(),
-//   item: SelectedMenuItem.Disciplines,
-// );
-
 class MenuScaffold extends StatelessWidget {
   MenuScaffold(
       {required String name,

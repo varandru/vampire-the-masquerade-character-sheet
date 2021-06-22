@@ -5,6 +5,7 @@ import 'abilities_widget.dart';
 import 'advanatages_widget.dart';
 import 'attributes_widget.dart';
 import 'combat.dart';
+import 'merits_and_flaws.dart';
 import 'vampire_character_widget.dart';
 import 'main_info_widget.dart';
 
@@ -70,19 +71,19 @@ class DrawerMenu extends Drawer {
           //     }));
           //   },
           // ),
-          // ListTile(
-          //   title: Text('Merits & Flaws'),
-          //   trailing: Icon(Icons.exposure),
-          //   tileColor: _item == SelectedMenuItem.MeritsFlaws
-          //       ? Theme.of(context).colorScheme.primary
-          //       : Theme.of(context).colorScheme.onPrimary,
-          //   onTap: () {
-          //     Navigator.of(context)
-          //         .pushReplacement(MaterialPageRoute(builder: (context) {
-          //       return meritsFlawsScaffold;
-          //     }));
-          //   },
-          // ),
+          ListTile(
+            title: Text('Merits & Flaws'),
+            trailing: Icon(Icons.exposure),
+            tileColor: _item == SelectedMenuItem.MeritsFlaws
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.onPrimary,
+            onTap: () {
+              Navigator.of(context)
+                  .pushReplacement(MaterialPageRoute(builder: (context) {
+                return MeritsFlawsScaffold();
+              }));
+            },
+          ),
           ListTile(
             title: Text('Weapons and Armor'),
             trailing: Icon(Icons.devices),
@@ -153,24 +154,9 @@ class AttributesAndAbilitiesScaffold extends MenuScaffold {
             backgroundColor: Theme.of(context).colorScheme.primaryVariant,
             closeManually: true,
             children: [
-              SpeedDialChild(
-                child: Icon(Icons.psychology_outlined),
-                backgroundColor: Colors.blue.shade300,
-                label: "Add a mental attribute",
-                labelBackgroundColor: Theme.of(context).colorScheme.surface,
-              ),
-              SpeedDialChild(
-                child: Icon(Icons.sentiment_very_satisfied_outlined),
-                backgroundColor: Colors.green.shade300,
-                label: "Add a social attribute",
-                labelBackgroundColor: Theme.of(context).colorScheme.surface,
-              ),
-              SpeedDialChild(
-                child: Icon(Icons.directions_run_rounded),
-                backgroundColor: Colors.red.shade300,
-                label: "Add a physical attribute",
-                labelBackgroundColor: Theme.of(context).colorScheme.surface,
-              ),
+              AddKnowledgeButton(context),
+              AddSkillsButton(context),
+              AddTalentButton(context),
             ],
           ),
         );
@@ -182,5 +168,15 @@ class WeaponsAndArmorScaffold extends MenuScaffold {
           name: "Weapons & Armor",
           body: WeaponsAndArmorSectionWidget(),
           selectedItem: SelectedMenuItem.WeaponsArmor,
+        );
+}
+
+// Merits & Flaws Menu
+class MeritsFlawsScaffold extends MenuScaffold {
+  MeritsFlawsScaffold()
+      : super(
+          name: "Merits & Flaws",
+          body: MeritsAndFlawsSectionWidget(),
+          selectedItem: SelectedMenuItem.Disciplines,
         );
 }
