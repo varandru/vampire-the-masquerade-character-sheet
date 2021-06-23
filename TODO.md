@@ -1,6 +1,7 @@
 # TODO
 
-## Primary
+This is a global dump of ideas, wishes and other things. If a thing is here, I thought about getting to it. 
+
 
  - [ ] Basic design
    - [x] UI, in a more or less finalized state
@@ -36,7 +37,7 @@
    - [x] Attributes and their descriptions/specialization
    - [x] Humanity and willpower levels
    - [x] Abilities
-   - [ ] Virtues
+   - [x] Virtues
    - [ ] Disciplines, sublevels of disciplines
    - [ ] Random-ass tables in Disciplines
    - [ ] Maybe move descriptions to Markdown, https://pub.dev/packages/flutter_markdown
