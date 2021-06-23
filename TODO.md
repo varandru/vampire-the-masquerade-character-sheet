@@ -21,6 +21,7 @@
    - [x] Basic character information
    - [x] Attributes (and skills)
    - [ ] Disciplines (and their levels)
+   - [ ] Demon disciplines and their weirdness
    - [ ] Maximum bloodpool (from generation)
    - [ ] Maximum willpower and humanity
    - [x] Merits and Flaws
@@ -37,6 +38,8 @@
    - [x] Abilities
    - [ ] Virtues
    - [ ] Disciplines, sublevels of disciplines
+   - [ ] Random-ass tables in Disciplines
+   - [ ] Maybe move descriptions to Markdown, https://pub.dev/packages/flutter_markdown
    - [ ] Rituals
    - [x] Merits & Flaws
    - [ ] Alternatives to Humanity: Paths, Instincts, etc. 
