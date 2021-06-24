@@ -34,10 +34,11 @@ class DisciplineWidget extends StatelessWidget {
 class DisciplinesSectionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    Discipline discipline = Discipline(
+    DisciplineLevels discipline = DisciplineLevels(
       name: "Thaumaturgy (Path of Blood)",
       level: 4,
       max: 5,
+      levels: [],
       description:
           "Created by exhaustive research and extensive experimentation, Thaumaturgy utilizes the principles of Hermetic magic used by House Tremere when it was still a cabal of mages, adapted to be fuelled by the inherent magical power of Vitae rather than Quintessence. While it is certainly powerful and versatile, it is organized very differently to the Spheres; Thaumaturgy is largely unknown to mages, and universally distrusted and reviled by those who have encountered it.",
     );
@@ -171,7 +172,7 @@ class DisciplineDotWidget extends StatelessWidget {
                       "Description",
                       style: Theme.of(context).textTheme.headline6,
                     ),
-                    Text(dot.description),
+                    Text(dot.description ?? ""),
                     Text(
                       "System",
                       style: Theme.of(context).textTheme.headline6,

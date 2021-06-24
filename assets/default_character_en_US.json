@@ -215,5 +215,15 @@
       "name": "Bad Sight",
       "cost": 1
     }
+  ],
+  "disciplines": [
+    {
+      "name": "Potence",
+      "level": 3
+    },
+    {
+      "name": "Obfuscate",
+      "level": 4
+    }
   ]
 }
