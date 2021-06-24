@@ -5,6 +5,7 @@ import 'abilities_widget.dart';
 import 'advanatages_widget.dart';
 import 'attributes_widget.dart';
 import 'combat.dart';
+import 'disciplines_widget.dart';
 import 'merits_and_flaws_widget.dart';
 import 'vampire_character_widget.dart';
 import 'main_info_widget.dart';
@@ -52,19 +53,14 @@ class DrawerMenu extends Drawer {
             onTap: () =>
                 Get.offAll(() => AttributesAndAbilitiesScaffold(context)),
           ),
-          // ListTile(
-          //   title: Text('Disciplines'),
-          //   trailing: Icon(Icons.auto_awesome),
-          //   tileColor: _item == SelectedMenuItem.Disciplines
-          //       ? Theme.of(context).colorScheme.primary
-          //       : Theme.of(context).colorScheme.onPrimary,
-          //   onTap: () {
-          //     Navigator.of(context)
-          //         .pushReplacement(MaterialPageRoute(builder: (context) {
-          //       return disciplinesScaffold;
-          //     }));
-          //   },
-          // ),
+          ListTile(
+            title: Text('Disciplines'),
+            trailing: Icon(Icons.auto_awesome),
+            tileColor: _item == SelectedMenuItem.Disciplines
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.onPrimary,
+            onTap: () => Get.offAll(() => DisciplinesScaffold(context)),
+          ),
           ListTile(
             title: Text('Merits & Flaws'),
             trailing: Icon(Icons.exposure),
@@ -108,43 +104,30 @@ class PrimaryInfoScaffold extends MenuScaffold {
             primary: true,
           ),
           selectedItem: SelectedMenuItem.PrimaryInfo,
-          floatingActionButton: SpeedDial(
-            icon: Icons.add,
-            activeIcon: Icons.close,
-            backgroundColor: Theme.of(context).colorScheme.primaryVariant,
-            closeManually: true,
-            children: [
-              AddBackgroundButton(context),
-            ],
-          ),
+          floatingActionButton: CommonFloatingButton([
+            AddBackgroundButton(context),
+          ], context),
         );
 }
 
 class AttributesAndAbilitiesScaffold extends MenuScaffold {
   AttributesAndAbilitiesScaffold(BuildContext context)
       : super(
-          name: "Attributes & Abilities",
-          body: ListView(
-            children: [
-              AttributesSectionWidget(),
-              AbilitiesSectionWidget(),
-            ],
-            shrinkWrap: true,
-            primary: true,
-          ),
-          selectedItem: SelectedMenuItem.Abilities,
-          floatingActionButton: SpeedDial(
-            icon: Icons.add,
-            activeIcon: Icons.close,
-            backgroundColor: Theme.of(context).colorScheme.primaryVariant,
-            closeManually: true,
-            children: [
+            name: "Attributes & Abilities",
+            body: ListView(
+              children: [
+                AttributesSectionWidget(),
+                AbilitiesSectionWidget(),
+              ],
+              shrinkWrap: true,
+              primary: true,
+            ),
+            selectedItem: SelectedMenuItem.Abilities,
+            floatingActionButton: CommonFloatingButton([
               AddKnowledgeButton(context),
               AddSkillsButton(context),
-              AddTalentButton(context),
-            ],
-          ),
-        );
+              AddTalentButton(context)
+            ], context));
 }
 
 class WeaponsAndArmorScaffold extends MenuScaffold {
@@ -163,15 +146,29 @@ class MeritsFlawsScaffold extends MenuScaffold {
           name: "Merits & Flaws",
           body: MeritsAndFlawsSectionWidget(),
           selectedItem: SelectedMenuItem.MeritsFlaws,
-          floatingActionButton: SpeedDial(
+          floatingActionButton: CommonFloatingButton(
+              [AddFlawButton(context), AddMeritButton(context)], context),
+        );
+}
+
+// Disciplines Menu
+class DisciplinesScaffold extends MenuScaffold {
+  DisciplinesScaffold(BuildContext context)
+      : super(
+          name: "Disciplines",
+          body: ListView(children: [DisciplinesSectionWidget()]),
+          selectedItem: SelectedMenuItem.Disciplines,
+          floatingActionButton: CommonFloatingButton([], context),
+        );
+}
+
+// ignore: must_be_immutable
+class CommonFloatingButton extends SpeedDial {
+  CommonFloatingButton(List<SpeedDialChild> children, BuildContext context)
+      : super(
             icon: Icons.add,
             activeIcon: Icons.close,
             backgroundColor: Theme.of(context).colorScheme.primaryVariant,
             closeManually: true,
-            children: [
-              AddFlawButton(context),
-              AddMeritButton(context),
-            ],
-          ),
-        );
+            children: children);
 }

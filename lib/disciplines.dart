@@ -36,6 +36,14 @@ class DisciplineIncremental extends Discipline {
         super.fromDictionary(base: base, entry: entry);
 
   String system;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Discipline && other.name == this.name);
+
+  @override
+  int get hashCode => name.hashCode;
 }
 
 class DisciplineLevels extends Discipline {
@@ -55,6 +63,14 @@ class DisciplineLevels extends Discipline {
   }
 
   List<DisciplineDot> levels;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Discipline && other.name == this.name);
+
+  @override
+  int get hashCode => name.hashCode;
 }
 
 // TODO: display the table
@@ -112,19 +128,23 @@ class DisciplineController extends GetxController {
           name: discipline["name"],
           level: discipline["level"],
         );
-        disciplines.add(DisciplineIncremental.fromDictionary(
-          base: base,
-          entry: entry,
-        ));
+        if (!disciplines.contains(base)) {
+          disciplines.add(DisciplineIncremental.fromDictionary(
+            base: base,
+            entry: entry,
+          ));
+        }
       } else if (entry is DisciplineEntryLevels) {
         Discipline base = Discipline(
           name: discipline["name"],
           level: discipline["level"],
         );
-        disciplines.add(DisciplineLevels.fromDictionary(
-          base: base,
-          entry: entry,
-        ));
+        if (!disciplines.contains(base)) {
+          disciplines.add(DisciplineLevels.fromDictionary(
+            base: base,
+            entry: entry,
+          ));
+        }
       } else {
         throw ("Discipline ${discipline["name"]} has unrecognized type");
       }
@@ -134,6 +154,14 @@ class DisciplineController extends GetxController {
   List<dynamic> save() {
     // If this actually works, bless JSON
     return disciplines;
+  }
+
+  void edit(Discipline value, int index) {
+    disciplines[index] = value;
+  }
+
+  void deleteAt(int index) {
+    disciplines.removeAt(index);
   }
 }
 

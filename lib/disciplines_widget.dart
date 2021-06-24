@@ -1,13 +1,22 @@
 // A widget for a single discipline, ExpansionTile
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import 'common_widget.dart';
 import 'disciplines.dart';
 
-class DisciplineWidget extends StatelessWidget {
-  DisciplineWidget(Discipline discipline) : _discipline = discipline;
+class DisciplineLevelsWidget extends StatelessWidget {
+  DisciplineLevelsWidget(DisciplineLevels discipline,
+      {required this.updateCallback,
+      required this.deleteCallback,
+      required this.index})
+      : _discipline = discipline;
 
-  final _discipline;
+  final DisciplineLevels _discipline;
+  final int index;
+
+  final Function(DisciplineLevels discipline, int index) updateCallback;
+  final Function(int index) deleteCallback;
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +24,35 @@ class DisciplineWidget extends StatelessWidget {
     for (int i = 0; i < _discipline.level; i++) {
       disciplineDots.add(DisciplineDotWidget(dot: _discipline.levels[i]));
     }
+
+    disciplineDots.add(Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+            onPressed: () async {
+              Get.defaultDialog();
+              // final ca =
+              //     await Get.dialog<ComplexAbility>(ComplexAbilityDialog(
+              //   name: 'Edit ${attribute.name}',
+              //   ability: attribute,
+              // ));
+              // if (ca != null) {
+              //   updateCallback(ca, index);
+              // }
+            },
+            icon: Icon(Icons.edit)),
+        IconButton(
+            onPressed: () async {
+              bool? delete =
+                  await Get.dialog<bool>(DeleteDialog(name: _discipline.name));
+              if (delete != null && delete == true) {
+                deleteCallback(index);
+                Get.back();
+              }
+            },
+            icon: Icon(Icons.delete)),
+      ],
+    ));
 
     return ExpansionTile(
       title: Text(_discipline.name),
@@ -27,6 +65,81 @@ class DisciplineWidget extends StatelessWidget {
         ),
       ),
       children: disciplineDots,
+    );
+  }
+}
+
+class DisciplineIncrementalWidget extends StatelessWidget {
+  DisciplineIncrementalWidget(DisciplineIncremental discipline,
+      {required this.updateCallback,
+      required this.deleteCallback,
+      required this.index})
+      : _discipline = discipline;
+
+  final DisciplineIncremental _discipline;
+  final int index;
+
+  final Function(DisciplineIncremental discipline, int index) updateCallback;
+  final Function(int index) deleteCallback;
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> children = [];
+    if (_discipline.description != null)
+      children.add(Text(_discipline.description!));
+
+    children.add(RichText(
+        text: TextSpan(
+            // text: "System: ",
+            style: DefaultTextStyle.of(context).style,
+            children: [
+          TextSpan(
+            text: "System: ",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          TextSpan(text: _discipline.system),
+        ])));
+
+    children.add(Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+            onPressed: () async {
+              Get.defaultDialog();
+              // final ca =
+              //     await Get.dialog<ComplexAbility>(ComplexAbilityDialog(
+              //   name: 'Edit ${attribute.name}',
+              //   ability: attribute,
+              // ));
+              // if (ca != null) {
+              //   updateCallback(ca, index);
+              // }
+            },
+            icon: Icon(Icons.edit)),
+        IconButton(
+            onPressed: () async {
+              bool? delete =
+                  await Get.dialog<bool>(DeleteDialog(name: _discipline.name));
+              if (delete != null && delete == true) {
+                deleteCallback(index);
+                Get.back();
+              }
+            },
+            icon: Icon(Icons.delete)),
+      ],
+    ));
+
+    return ExpansionTile(
+      title: Text(_discipline.name),
+      trailing: Container(
+        constraints:
+            BoxConstraints(maxWidth: _discipline.max.toDouble() * 20.0),
+        child: NoTitleCounterWidget(
+          current: _discipline.level,
+          max: _discipline.max,
+        ),
+      ),
+      children: children,
     );
   }
 }
@@ -119,26 +232,32 @@ class DisciplinesSectionWidget extends StatelessWidget {
     //     system:
     //         "This ritual may be simultaneously cast on a number of subjects equal to the casters Occult rating; each individual past the first adds 5 min to the base casting time. Individuals under the mask of shadows can only be detected if the observer succeeds in a perception+Awareness roll (difficulty = casters wits + Occult) or if the observer possesses a power (i.e. Auspex) to penetrate level 3 Obfuscate (ACTIVE). The mask of shadows lasts a number of hours equal to the number of successes rolled when it is cast or until the caster lowers it.");
 
-    return Column(
-      children: [
-        Text("Disciplines", style: Theme.of(context).textTheme.headline4),
-        Wrap(
-          alignment: WrapAlignment.center,
-          children: [
-            DisciplineWidget(discipline),
-          ],
-        ),
-        //   Text("Rituals", style: Theme.of(context).textTheme.headline4),
-        //   Wrap(
-        //     alignment: WrapAlignment.center,
-        //     children: [
-        //       RitualWidget(ritualLupine),
-        //       RitualWidget(ritualEncrypt),
-        //       RitualWidget(ritualDonTheMaskOfShadows),
-        //     ],
-        //   ),
-      ],
-      mainAxisSize: MainAxisSize.min,
+    final DisciplineController dc = Get.find();
+
+    return ListView.builder(
+      itemBuilder: (context, i) {
+        if (i == 0)
+          return Text("Disciplines",
+              style: Theme.of(context).textTheme.headline4);
+        else if (dc.disciplines[i - 1] is DisciplineIncremental)
+          return DisciplineIncrementalWidget(
+            dc.disciplines[i - 1] as DisciplineIncremental,
+            updateCallback: (discipline, index) => null,
+            deleteCallback: (index) => null,
+            index: i - 1,
+          );
+        else if (dc.disciplines[i - 1] is DisciplineLevels)
+          return DisciplineLevelsWidget(
+            dc.disciplines[i - 1] as DisciplineLevels,
+            updateCallback: (discipline, index) => null,
+            deleteCallback: (index) => null,
+            index: i - 1,
+          );
+        else
+          return Placeholder();
+      },
+      itemCount: dc.disciplines.length + 1,
+      shrinkWrap: true,
     );
   }
 }
