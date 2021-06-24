@@ -156,7 +156,10 @@ class DisciplinesScaffold extends MenuScaffold {
   DisciplinesScaffold(BuildContext context)
       : super(
           name: "Disciplines",
-          body: ListView(children: [DisciplinesSectionWidget()]),
+          body: ListView.builder(
+            itemBuilder: (context, i) => DisciplinesSectionWidget(),
+            itemCount: 1,
+          ),
           selectedItem: SelectedMenuItem.Disciplines,
           floatingActionButton: CommonFloatingButton([], context),
         );
