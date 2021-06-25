@@ -19,6 +19,13 @@ class Discipline {
 
   int level;
   int max;
+
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> json = Map();
+    json['name'] = name;
+    json['level'] = level;
+    return json;
+  }
 }
 
 class DisciplineIncremental extends Discipline {

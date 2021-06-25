@@ -59,7 +59,7 @@ class AddTalentButton extends SpeedDialChild {
 class AddSkillsButton extends SpeedDialChild {
   AddSkillsButton(BuildContext context)
       : super(
-          child: Icon(Icons.psychology_outlined),
+          child: Icon(Icons.handyman),
           backgroundColor: Colors.green.shade300,
           label: "Add custom skill",
           labelBackgroundColor: Theme.of(context).colorScheme.surface,

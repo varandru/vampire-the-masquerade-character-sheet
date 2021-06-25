@@ -161,7 +161,10 @@ class DisciplinesScaffold extends MenuScaffold {
             itemCount: 1,
           ),
           selectedItem: SelectedMenuItem.Disciplines,
-          floatingActionButton: CommonFloatingButton([], context),
+          floatingActionButton: CommonFloatingButton([
+            AddLevelsDisciplineButton(context),
+            AddIncrementalDisciplineButton(context)
+          ], context),
         );
 }
 

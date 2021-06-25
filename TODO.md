@@ -38,7 +38,7 @@ This is a global dump of ideas, wishes and other things. If a thing is here, I t
    - [x] Humanity and willpower levels
    - [x] Abilities
    - [x] Virtues
-   - [ ] Disciplines, sublevels of disciplines
+   - [x] Disciplines, sublevels of disciplines
    - [ ] Random-ass tables in Disciplines
    - [ ] Maybe move descriptions to Markdown, https://pub.dev/packages/flutter_markdown
    - [ ] Rituals
