@@ -5,6 +5,8 @@ class Discipline {
       {required this.name,
       required this.level,
       this.description,
+      this.levels,
+      this.system,
       this.max = 5});
 
   Discipline.fromDictionary(
@@ -12,7 +14,22 @@ class Discipline {
       : name = base.name,
         level = base.level,
         description = base.description ?? entry.description,
-        max = entry.max;
+        max = entry.max {
+    if (entry.system != null) {
+      system = entry.system;
+      isIncremental = true;
+    }
+    if (entry.levels != null) {
+      levels = [];
+      entry.levels!.forEach((key, value) => levels!.add(value));
+      isIncremental = false;
+    }
+    if (isIncremental == null) {
+      // TODO: catch exceptions. It should not add, not break everything
+      throw ("Either general or specific system must be present in discipline $name");
+    }
+    print("Added discipline $name");
+  }
 
   String name;
   String? description;
@@ -20,56 +37,17 @@ class Discipline {
   int level;
   int max;
 
+  bool? isIncremental;
+
+  String? system;
+  List<DisciplineDot>? levels;
+
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = Map();
     json['name'] = name;
     json['level'] = level;
     return json;
   }
-}
-
-class DisciplineIncremental extends Discipline {
-  DisciplineIncremental(
-      {required String name,
-      required int level,
-      required this.system,
-      String? description,
-      int max = 5})
-      : super(name: name, level: level, description: description, max: max);
-
-  DisciplineIncremental.fromDictionary(
-      {required Discipline base, required DisciplineEntryIncremental entry})
-      : system = entry.system,
-        super.fromDictionary(base: base, entry: entry);
-
-  String system;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is Discipline && other.name == this.name);
-
-  @override
-  int get hashCode => name.hashCode;
-}
-
-class DisciplineLevels extends Discipline {
-  DisciplineLevels(
-      {required String name,
-      required int level,
-      required this.levels,
-      String? description,
-      int max = 5})
-      : super(name: name, level: level, description: description, max: max);
-
-  DisciplineLevels.fromDictionary(
-      {required Discipline base, required DisciplineEntryLevels entry})
-      : levels = [],
-        super.fromDictionary(base: base, entry: entry) {
-    entry.levels.forEach((key, value) => levels.add(value));
-  }
-
-  List<DisciplineDot> levels;
 
   @override
   bool operator ==(Object other) =>
@@ -130,38 +108,22 @@ class DisciplineController extends GetxController {
 
       if (entry == null) {
         throw ("Discipline ${discipline["name"]} not found, add it to dictionary");
-      } else if (entry is DisciplineEntryIncremental) {
-        Discipline base = Discipline(
-          name: discipline["name"],
-          level: discipline["level"],
-        );
-        if (!disciplines.contains(base)) {
-          disciplines.add(DisciplineIncremental.fromDictionary(
-            base: base,
-            entry: entry,
-          ));
-        }
-      } else if (entry is DisciplineEntryLevels) {
-        Discipline base = Discipline(
-          name: discipline["name"],
-          level: discipline["level"],
-        );
-        if (!disciplines.contains(base)) {
-          disciplines.add(DisciplineLevels.fromDictionary(
-            base: base,
-            entry: entry,
-          ));
-        }
       } else {
-        throw ("Discipline ${discipline["name"]} has unrecognized type");
+        Discipline base = Discipline(
+          name: discipline["name"],
+          level: discipline["level"],
+        );
+        if (!disciplines.contains(base)) {
+          disciplines.add(Discipline.fromDictionary(
+            base: base,
+            entry: entry,
+          ));
+        }
       }
     }
   }
 
-  List<dynamic> save() {
-    // If this actually works, bless JSON
-    return disciplines;
-  }
+  List<dynamic> save() => disciplines;
 
   void edit(Discipline value, int index) {
     disciplines[index] = value;
@@ -177,52 +139,28 @@ class DisciplineEntry {
   String? description;
   int max = 5;
 
+  String? system;
+  Map<int, DisciplineDot>? levels;
+
   DisciplineEntry.fromJson(Map<String, dynamic> json) {
     if (json["description"] != null) description = json["description"];
     if (json["max"] != null) max = json["max"];
+    if (json["system"] != null) system = json["system"];
+
+    if (json["levels"] != null) {
+      levels = Map();
+      for (var level in json["levels"]) {
+        if (level["level"] == null) throw ("$level does not have a level");
+        levels![level["level"]] = DisciplineDot.fromJson(level);
+      }
+    }
   }
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = Map();
     json["description"] = description;
-    return json;
-  }
-}
-
-class DisciplineEntryIncremental extends DisciplineEntry {
-  late String system;
-
-  DisciplineEntryIncremental.fromJson(Map<String, dynamic> json)
-      : super.fromJson(json) {
-    if (json["system"] == null)
-      throw ("${json["name"]} is missing mandatory field: system");
-    else
-      system = json["system"];
-  }
-
-  Map<String, dynamic> toJson() {
-    Map<String, dynamic> json = super.toJson();
-    json["is_incremental"] = true;
-    json["system"] = system;
-    return json;
-  }
-}
-
-class DisciplineEntryLevels extends DisciplineEntry {
-  Map<int, DisciplineDot> levels = Map();
-
-  DisciplineEntryLevels.fromJson(Map<String, dynamic> json)
-      : super.fromJson(json) {
-    for (var level in json["levels"]) {
-      if (level["level"] == null) throw ("$level does not have a level");
-      levels[level["level"]] = DisciplineDot.fromJson(level);
-    }
-  }
-
-  Map<String, dynamic> toJson() {
-    Map<String, dynamic> json = super.toJson();
-    json["is_incremental"] = true;
-    json["levels"] = levels;
+    if (system != null) json["system"] = system;
+    if (levels != null) json["levels"] = levels;
     return json;
   }
 }
@@ -235,14 +173,9 @@ class DisciplineDictionary {
       for (var discipline in json["disciplines"]) {
         String? name = discipline["name"];
         if (name == null) {
-          throw ("Discipline $discipline is missing a required field");
+          throw ("Discipline $discipline is missing a name");
         }
-        if (discipline["is_incremental"])
-          entries[name] = DisciplineEntryIncremental.fromJson(discipline);
-        else
-          entries[name] = DisciplineEntryLevels.fromJson(discipline);
-        print(
-            "Discipline entry: '$name', ${entries[name] is DisciplineEntryIncremental}");
+        entries[name] = DisciplineEntry.fromJson(discipline);
       }
     }
   }
