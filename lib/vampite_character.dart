@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vampire_the_masquerade_character_sheet/advantages.dart';
+import 'package:vampire_the_masquerade_character_sheet/disciplines.dart';
 import 'package:vampire_the_masquerade_character_sheet/merits_and_flaws.dart';
 
 import 'abilities.dart';
@@ -20,6 +21,7 @@ class VampireCharacter extends GetxController {
   late AbilitiesController abilitiesController;
   late BackgroundsController backgroundsController;
   late MeritsAndFlawsController meritsAndFlawsController;
+  late DisciplineController disciplineController;
 
   late String _characterFileName;
   late bool installed;
@@ -38,6 +40,7 @@ class VampireCharacter extends GetxController {
     abilitiesController = Get.put(AbilitiesController());
     backgroundsController = Get.put(BackgroundsController());
     meritsAndFlawsController = Get.put(MeritsAndFlawsController());
+    disciplineController = Get.put(DisciplineController());
   }
 
   void _loadToControllers(Map<String, dynamic> json) {
@@ -55,6 +58,7 @@ class VampireCharacter extends GetxController {
     json["abilities"] = abilitiesController.save();
     json["merits"] = meritsAndFlawsController.saveMerits();
     json["flaws"] = meritsAndFlawsController.saveFlaws();
+    json["disciplines"] = disciplineController.save();
     return json;
   }
 
@@ -116,6 +120,21 @@ class VampireCharacter extends GetxController {
     }
   }
 
+  Future<String> _loadDisciplineList() async {
+    var directory = await getApplicationDocumentsDirectory();
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    final disciplinesListFile =
+        preferences.getString('disciplines_dictionary') ??
+            'default_disciplines_en_US.json';
+    File dictionaryFile = File(directory.path + '/' + disciplinesListFile);
+
+    if (await dictionaryFile.exists()) {
+      return dictionaryFile.readAsString();
+    } else {
+      throw ("Attribute dictionary $disciplinesListFile does not exist");
+    }
+  }
+
   /// Loads a local JSON character file
   Future<void> load() async {
     Get.snackbar("Loading", "Loading character information");
@@ -148,6 +167,10 @@ class VampireCharacter extends GetxController {
           MeritsAndFlawsDictionary mfd =
               MeritsAndFlawsDictionary.fromJson(jsonDecode(meritsList));
 
+          var disciplineList = await _loadDisciplineList();
+          DisciplineDictionary dd =
+              DisciplineDictionary.fromJson(jsonDecode(disciplineList));
+
           Map<String, dynamic> json =
               jsonDecode(characterFile.readAsStringSync());
 
@@ -167,6 +190,9 @@ class VampireCharacter extends GetxController {
 
           if (json["flaws"] != null)
             meritsAndFlawsController.loadFlaws(json["flaws"], mfd);
+
+          if (json["disciplines"] != null)
+            disciplineController.load(json["disciplines"], dd);
         }
         // else just use the defaults
 
@@ -239,6 +265,15 @@ class VampireCharacter extends GetxController {
         '/' +
         (preferences.getString('default_merits_and_flaws') ??
             'default_merits_and_flaws_en_US.json'));
+
+    attributeFile.writeAsStringSync(attributeString);
+
+    attributeString =
+        await rootBundle.loadString('assets/default_disciplines_en_US.json');
+    attributeFile = File(directory.path +
+        '/' +
+        (preferences.getString('default_disciplines') ??
+            'default_disciplines_en_US.json'));
 
     attributeFile.writeAsStringSync(attributeString);
 

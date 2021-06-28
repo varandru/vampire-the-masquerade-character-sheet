@@ -29,17 +29,6 @@ class VampireWidget extends StatelessWidget {
   }
 }
 
-// // Disciplines Menu
-// final disciplinesScaffold = MenuScaffold(
-//   name: "Disciplines",
-//   body: ListView(
-//     children: [
-//       DisciplinesSectionWidget(),
-//     ],
-//   ),
-//   item: SelectedMenuItem.Disciplines,
-// );
-
 class MenuScaffold extends StatelessWidget {
   MenuScaffold(
       {required String name,

@@ -59,6 +59,7 @@ class MeritsAndFlawsSectionWidget extends StatelessWidget {
                     )),
                 itemCount: mafc.merits.length,
                 shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
               )),
         ),
         Text(
@@ -74,6 +75,7 @@ class MeritsAndFlawsSectionWidget extends StatelessWidget {
                     )),
                 itemCount: mafc.flaws.length,
                 shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
               )),
         ),
       ],

@@ -1,0 +1,73 @@
+{
+  "locale": "en-US",
+  "disciplines": [
+    {
+      "name": "Potence",
+      "description": "Vampires endowed with this Discipline possess preternatural strength. Potence enables vampires to leap tremendous distances, lift massive weights and strike opponents with terrifying force. Even the lowest ranks of this power gift the Kindred with physical might beyond mortal bounds. More powerful immortals have been known to leap so far they seem to be flying, toss cars aside like tin cans, and punch through concrete as if it were cardboard. While the mental Disciplines are awe-inspiring, Potence’s brute effectiveness is formidable in its own right.\nClans Brujah, Giovanni, Lasombra and Nosferatu are the primary possessors of this Discipline. Still, members of other clans often make a point to search out someone who can enlighten them in the ways of Potence.",
+      "is_incremental": true,
+      "system": "The player rolls all Strength-related tests normally, but then adds an automatic success for each point he has in Potence. Thus, the character succeeds at most Strength feats without needing to make a roll at all. In melee and brawling combat, the automatic successes are applied to the damage roll results."
+    },
+    {
+      "name": "Obfuscate",
+      "description": "This uncanny power enables Kindred to conceal themselves from others’ sight. By simply wishing to remain unseen, a vampire can disappear, even if he stands in full view of a crowd.\nThe immortal doesn’t actually become invisible; he simply deludes any observers into thinking he has vanished. Additional uses of Obfuscate include changing the Kindred’s features and concealing other people or objects.\nUnless the vampire purposefully makes himself seen, he can remain obscured indefinitely. At higher levels of power, the vampire may fade from view so subtly that those nearby never register the point at which he “left.”\nUnder most circumstances, few mortals or supernaturals can penetrate Obfuscate’s cloaking fog. Animals, operating on a more instinctual level, often perceive (and fear) the vampire’s presence even if they can’t detect him with their normal senses. Children and other innocents to whom deception is foreign might also be able to pierce the deception, at the Storyteller’s discretion.\nThe Auspex Discipline enables Kindred to see through Obfuscate. Even that is not guaranteed, however; refer to “Seeing the Unseen,” p. 152, for more details.\nSince Obfuscate affects the viewer‘s mind, Kindred cannot use this Discipline to cloak their presence from mechanical devices.\nVideo recordings and photographs capture the vampire’s image faithfully. Even so, such is Obfuscate’s ability to bend the mind that someone using a recording device will not see the immortal’s image until she views the footage at a later date, if even then.\nSeveral clans - Assamites, Followers of Set, Malkavians, Nosferatu -use this power, but it stands as the hallmark of the Nosferatu. A number of elder Kindred believe Caine, or perhaps Lilith, bestowed the clan with this Discipline to compensate for the hideous physical deformities its members suffer.\nMost Obfuscate powers last for a scene or so, or until the vampire ceases maintaining them. Once evoked, they require very little mental effort to keep in place.",
+      "is_incremental": false,
+      "levels": [
+        {
+          "level": 1,
+          "name": "Cloak of Shadows",
+          "description": "At this level, the vampire must rely on nearby shadows and cover toassist inhidinghispresence. Hesteps intoanout-of-theway, shadowed place and eases himself from normal sight. The vampire remains unnoticed as long as he stays silent, still, under some degree of cover (curtain, bush, door frame, lamppost, alley) and out of direct lighting. The immortal’s concealment vanishes if he moves, attacks or falls under direct light. Furthermore, the vampire’s deception cannot stand concentrated observation without fading.",
+          "system": "No roll is required as long as the character fulfills the criteria described above. So long as he remains quiet and motionless, virtually no one but another Kindred with a high Auspex rating will see him. "
+        },
+        {
+          "level": 2,
+          "name": "Unseen Presence",
+          "description": "With experience, the vampire can move around without being seen. Shadows seem to shift to cover him, and others automatically avert their gaze as he passes by. People move unconsciously to avoid contact with the cloaked creature; those with weak wills may even scurry away from the area in unacknowledged fear. The vampire remains ignored indefinitely unless someone deliberately seeks him out or he inadvertently reveals himself.\nSince the vampire fully retains his physical substance, he must be careful to avoid contact with anything that may disclose his presence (knocking over a vase, bumping into someone). Even a whispered word or the scuffing of a shoe against the floor can be enough to disrupt the power.",
+          "system": "No roll is necessary to use this power unless the character speaks, attacks or otherwise draws attention to himself. The Storyteller should call for a Wits + Stealth roll under any circumstances that might cause the character to reveal himself. The difficulty of the roll depends on the situation; stepping on a squeaky floorboard might be a 5, while walking through a pool of water may require a 9. Other acts may require a certain number of successes; speaking quietly without giving away one’s position, for instance, demands at least three successes. \nSome things are beyond the power of Unseen Presence to conceal. Although the character is cloaked from view while he smashes through a window, yells out or throws someone across the room, the vampire becomes visible to all in the aftermath. Bystanders snap out of the subtle fugue in which Obfuscate put them. Worse still, each viewer can make a Wits + Alertness roll (difficulty 7); if successful, the mental haze clears completely, so those individuals recall every move the character made up until then as if he were visible the entire time. "
+        },
+        {
+          "level": 3,
+          "name": "Mask of a Thousand Faces",
+          "description": "The vampire can influence the perception of others, causing them to see someone different from the immortal himself. Although the Kindred’s physical form does not change, any observer who cannot sense the truth sees whomever the vampire wishes her to see.\nThe vampire must have a firm idea of the visage he wishes to project. The primary decision is whether to create an imaginary face or to superimpose the features of another person. Manufactured features are often more difficult to compose in believable proportions, but such a disguise is easier to maintain than having to impersonate someone else. Of course, things get simpler if the Kindred borrows the face but doesn’t bother with the personality",
+          "system": "The player rolls Manipulation + Performance(difficulty 7) to determine how well the disguise works. If the character tries to impersonate someone, he must get a good look at the subject before putting on the mask. The Storyteller may raise the difficulty if the character catches only a glimpse. The chart below lists the degrees of success in manufacturing another appearance. \nActually posing as someone else carries its own problems. The character should know at least basic information about the individual; especially difficult deceptions (fooling a lover or close friend) require at least some familiarity with the target in order to succeed.",
+          "table": {
+            "column_count": 2,
+            "columns": [
+              [
+                "1 success",
+                "The vampire retains the same height and build, with a few slight alterations tohisbasic features.Nosferatu can appear as normal, albeit ugly, mortals."
+              ],
+              [
+                "2 successes",
+                "He looks unlike himself; people don’t easily recognize him or agree about his appearance."
+              ],
+              [
+                "3 successes",
+                "He looks the way he wants to appear. "
+              ],
+              [
+                "4 successes",
+                "Complete transformation, including gestures, mannerisms, appearance and voice."
+              ],
+              [
+                "5 successes",
+                "Profound alteration (appear as the opposite sex, avastly different age, extreme change ofsize)."
+              ]
+            ]
+          }
+        },
+        {
+          "level": 4,
+          "name": "Vanish from the Mind's Eye",
+          "description": "This potent expression of Obfuscate enables the vampire to disappear from plain view. So profound is this vanishing that the immortal can fade away even if he stands directly before someone. \nWhile the disappearance itself is quietly subtle, its impact on those who see it is anything but. Most kine panic and flee in the aftermath. Especially weak-willed individuals wipe the memory of the Kindred from their minds. Although vampires are not shaken so easily, even Kindred may be momentarily surprised by a sudden vanishing. ",
+          "system": "The player rolls Charisma + Stealth; the difficulty equals the target’s Wits + Alertness (use the highest total in the group if the character disappears in front of a crowd). With three or fewer successes, the character fades but does not vanish, becoming an indistinct, ghostlike figure. With more than three, he disappears completely. If the player scores more successes than an observer’s Willpower rating, that person forgets that the vampire was there in the first place.\nTracking the character accurately while he appears ghostlike requires a Perception + Alertness roll (difficulty 8). A successful roll means the individual can interact normally with the vampire (although the immortal looks like a profoundly disturbing ghostly shape). A failed roll results in +2 difficulties (maximum 10) when attempting to act upon, or interact with, the vampire. The Storyteller may call for new observation checks if the vampire moves to an environment in which he’s difficult to see (heads into shadows, crosses behind an obstacle, proceeds through a crowd). When fully invisible, the vampire is handled as described under Unseen Presence, above.\nA person subject to the vanishing makes a Wits + Courage roll (mortals at difficulty 9, immortals at difficulty 5). A successful roll means the individual reacts immediately (although after the vampire performs his action for that turn); failure means the person stands uncomprehending for two turns while her mind tries to make sense of what she just experienced."
+        },
+        {
+          "level": 5,
+          "name": "Cloak the Gathering",
+          "description": "At this degree of power, the vampire may extend his concealing abilities to cover an area. The immortal may use any Obfuscate power upon those nearby as well as upon himself, if he wishes. \nAny protected person who compromises the cloak exposes himself to view. Further, if the one who invokes the power gives himself away, the cloak falls from everyone. This power is particularly useful if the vampire needs to bring his retinue through a secure location without drawing the notice of others.",
+          "system": "The character may conceal one extra individual for each dot of Stealth he possesses. He may bestow any single Obfuscate power at a given time to the group. While the power applies to everyone under the character’s cloak, his player need only make a single roll. Each individual must follow the requirements described under the relevant Obfuscate power to remain under its effect; any person who fails to do so loses the cloak‘s protection, but doesn’t expose the others. Only if the vampire himself errs does the endowment drop for everyone."
+        }
+      ]
+    }
+  ]
+}

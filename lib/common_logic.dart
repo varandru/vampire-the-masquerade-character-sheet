@@ -127,4 +127,8 @@ class ComplexAbilityColumn {
       values.add(ca);
     }
   }
+
+  List<dynamic> toJson() {
+    return values;
+  }
 }
