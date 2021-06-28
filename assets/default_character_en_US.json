@@ -225,5 +225,9 @@
       "name": "Obfuscate",
       "level": 4
     }
+  ], 
+  "rituals": [
+    "encrypt_missive",
+    "donning_the_mask_of_shadows"
   ]
 }

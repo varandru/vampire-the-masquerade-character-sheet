@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:vampire_the_masquerade_character_sheet/ritual_widget.dart';
 import 'abilities_widget.dart';
 import 'advanatages_widget.dart';
 import 'attributes_widget.dart';
@@ -157,12 +158,14 @@ class DisciplinesScaffold extends MenuScaffold {
       : super(
           name: "Disciplines",
           body: ListView.builder(
-            itemBuilder: (context, i) => DisciplinesSectionWidget(),
-            itemCount: 1,
+            itemBuilder: (context, i) =>
+                (i == 0) ? DisciplinesSectionWidget() : RitualSectionWidget(),
+            itemCount: 2,
           ),
           selectedItem: SelectedMenuItem.Disciplines,
-          floatingActionButton:
-              CommonFloatingButton([AddDisciplineButton(context)], context),
+          floatingActionButton: CommonFloatingButton(
+              [AddDisciplineButton(context), AddRitualButton(context)],
+              context),
         );
 }
 

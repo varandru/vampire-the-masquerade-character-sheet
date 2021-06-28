@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:get/get.dart';
+import 'package:vampire_the_masquerade_character_sheet/common_logic.dart';
 
 import 'common_widget.dart';
 import 'rituals.dart';
@@ -23,23 +26,228 @@ class RitualWidget extends StatelessWidget {
         showDialog(
             context: context,
             builder: (BuildContext context) {
-              return SimpleDialog(
-                title: Text(_ritual.name),
-                children: [
-                  Text(
-                    "Description",
-                    style: Theme.of(context).textTheme.headline6,
-                  ),
-                  Text(_ritual.description),
-                  Text(
-                    "System",
-                    style: Theme.of(context).textTheme.headline6,
-                  ),
-                  Text(_ritual.system),
-                ],
-              );
+              return RitualPopup(ritual: _ritual);
             }).then((value) => null);
       },
     );
   }
+}
+
+class RitualPopup extends StatelessWidget {
+  const RitualPopup({
+    Key? key,
+    required Ritual ritual,
+  })  : _ritual = ritual,
+        super(key: key);
+
+  final Ritual _ritual;
+
+  @override
+  Widget build(BuildContext context) {
+    final ritual = _ritual.obs;
+
+    return SimpleDialog(
+      title: Obx(() => Text(ritual.value.name,
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.headline4)),
+      children: [
+        Row(children: [
+          Obx(() => Text("${ritual.value.schoolId} ritual",
+              style: TextStyle(fontStyle: FontStyle.italic))),
+          Obx(() => NoTitleCounterWidget(
+                current: ritual.value.level,
+                max: 5,
+              )),
+        ]),
+        ritual.value.description != null
+            ? Text("Description", style: Theme.of(context).textTheme.headline6)
+            : Container(),
+        ritual.value.description != null
+            ? Obx(() => Text(ritual.value.description!))
+            : Container(),
+        Text(
+          "System",
+          style: Theme.of(context).textTheme.headline6,
+        ),
+        Obx(() => Text(ritual.value.system)),
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          IconButton(
+              onPressed: () async {
+                var ca = await Get.dialog<Ritual>(RitualDialog(ritual.value));
+                if (ca != null) {
+                  ritual.update((val) => val?.copy(ca));
+
+                  final RitualController rc = Get.find();
+                  var index = rc.rituals.indexOf(ca);
+                  if (index < 0) {
+                    rc.rituals.add(ca);
+                    rc.rituals.remove(ritual.value);
+                    Get.back();
+                  } else {
+                    rc.rituals[index] = ca;
+                  }
+                }
+              },
+              icon: Icon(Icons.edit)),
+          IconButton(
+              onPressed: () async {
+                bool? delete = await Get.dialog<bool>(
+                    DeleteDialog(name: ritual.value.name));
+
+                if (delete != null && delete == true) {
+                  final RitualController rc = Get.find();
+                  rc.rituals.remove(ritual.value);
+
+                  Get.back();
+                }
+              },
+              icon: Icon(Icons.delete)),
+        ])
+      ],
+    );
+  }
+}
+
+class RitualDialog extends StatelessWidget {
+  RitualDialog(this.ritual);
+
+  final Ritual? ritual;
+
+  @override
+  Widget build(BuildContext context) {
+    final _ritual = (ritual ?? Ritual(id: "new_id", name: "New ritual")).obs;
+    final bool replaceId = ritual == null;
+
+    return SimpleDialog(
+      title: Obx(
+        () => Text(_ritual.value.name,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.headline4),
+      ),
+      children: [
+        TextField(
+            controller: TextEditingController()..text = _ritual.value.name,
+            onChanged: (value) => _ritual.update(
+                  (val) {
+                    val?.name = value;
+                  },
+                )),
+        Row(
+          children: [
+            Text('Level: '),
+            IconButton(
+                onPressed: () => _ritual.update((val) {
+                      val?.level--;
+                    }),
+                icon: Icon(
+                  Icons.remove_circle_outline,
+                  color: Colors.red,
+                )),
+            Obx(() => Text("${_ritual.value.level}")),
+            IconButton(
+                onPressed: () => _ritual.update((val) {
+                      val?.level++;
+                    }),
+                icon: Icon(
+                  Icons.add_circle_outline,
+                  color: Colors.green,
+                )),
+          ],
+        ),
+        TextField(
+          controller: TextEditingController()..text = _ritual.value.schoolId,
+          onChanged: (value) => _ritual.update(
+            (val) {
+              val?.schoolId = value;
+            },
+          ),
+          decoration: InputDecoration(hintText: "Ritual's school"),
+        ),
+        TextField(
+          controller: TextEditingController()
+            ..text = _ritual.value.description ?? "",
+          onChanged: (value) => _ritual.update(
+            (val) {
+              val?.description = value;
+            },
+          ),
+          keyboardType: TextInputType.multiline,
+          maxLines: null,
+          decoration: InputDecoration(hintText: "Ritual's mechanics"),
+        ),
+        TextField(
+          controller: TextEditingController()..text = _ritual.value.system,
+          onChanged: (value) => _ritual.update(
+            (val) {
+              val?.system = value;
+            },
+          ),
+          keyboardType: TextInputType.multiline,
+          maxLines: null,
+          decoration: InputDecoration(hintText: "Ritual's description"),
+        ),
+        Row(
+          children: [
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () => Get.back(result: null),
+            ),
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                if (_ritual.value.name.isNotEmpty) {
+                  if (replaceId) {
+                    Ritual result = Ritual(id: identify(_ritual.value.name));
+                    result.copy(_ritual.value);
+                    Get.back(result: result);
+                  } else
+                    Get.back(result: _ritual.value);
+                } else
+                  Get.back(result: null);
+              },
+            ),
+          ],
+          mainAxisAlignment: MainAxisAlignment.end,
+        ),
+      ],
+    );
+  }
+}
+
+class RitualSectionWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final RitualController rc = Get.find();
+    if (rc.rituals.length == 0) return Container();
+    return Obx(
+      () => ListView.builder(
+        itemBuilder: (context, i) => (i == 0)
+            ? Text("Rituals", style: Theme.of(context).textTheme.headline4)
+            : Obx(() => RitualWidget(
+                  rc.rituals[i - 1],
+                  // index: i - 1,
+                )),
+        itemCount: rc.rituals.length + 1,
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+      ),
+    );
+  }
+}
+
+class AddRitualButton extends SpeedDialChild {
+  AddRitualButton(BuildContext context)
+      : super(
+          child: Icon(Icons.gesture),
+          backgroundColor: Colors.blue.shade300,
+          label: "Add a ritual",
+          labelBackgroundColor: Theme.of(context).colorScheme.surface,
+          onTap: () async {
+            final ca = await Get.dialog<Ritual>(RitualDialog(null));
+            if (ca != null) {
+              RitualController bc = Get.find();
+              bc.rituals.add(ca);
+            }
+          },
+        );
 }
