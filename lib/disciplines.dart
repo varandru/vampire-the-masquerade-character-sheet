@@ -56,6 +56,21 @@ class Discipline {
 
   @override
   int get hashCode => name.hashCode;
+
+  void updateDot(DisciplineDot dot, int index) {
+    levels![index] = dot;
+  }
+
+  void addDot(DisciplineDot dot) {
+    if (levels == null)
+      levels = [dot];
+    else
+      levels!.add(dot);
+  }
+
+  void removeDot(int index) {
+    if (index < levels!.length) levels!.removeAt(index);
+  }
 }
 
 // TODO: display the table
@@ -91,6 +106,14 @@ class DisciplineDot {
     json["max"] = max;
 
     return json;
+  }
+
+  void copy(DisciplineDot other) {
+    name = other.name;
+    description = other.description;
+    system = other.system;
+    level = other.level;
+    max = other.max;
   }
 }
 

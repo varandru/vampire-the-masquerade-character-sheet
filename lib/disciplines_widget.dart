@@ -15,10 +15,12 @@ class DisciplineWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final discipline = _discipline.obs;
+
     List<Widget> children = [];
 
     if (_discipline.description != null)
-      children.add(Text(_discipline.description!));
+      children.add(Text(discipline.value.description!));
 
     if (_discipline.system != null) {
       children.add(RichText(
@@ -30,19 +32,21 @@ class DisciplineWidget extends StatelessWidget {
               text: "System: ",
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            TextSpan(text: _discipline.system),
+            TextSpan(text: discipline.value.system),
           ])));
     }
 
-    if (_discipline.levels != null) {
-      for (int i = 0; i < _discipline.levels!.length; i++) {
+    if (discipline.value.levels != null &&
+        discipline.value.levels!.length > 0) {
+      for (int i = 0; i < discipline.value.levels!.length; i++) {
         children.addIf(
-            _discipline.levels![i].level <= _discipline.level,
-            DisciplineDotWidget(
-              dot: _discipline.levels![i],
-              dotIndex: i,
-              disciplineIndex: index,
-            ));
+            discipline.value.levels![i].level <= discipline.value.level,
+            Obx(() => DisciplineDotWidget(
+                  dot: discipline.value.levels![i],
+                  index: i,
+                  removeDot: (i) =>
+                      discipline.update((val) => val?.removeDot(i)),
+                )));
       }
     }
     children.add(Row(
@@ -51,7 +55,7 @@ class DisciplineWidget extends StatelessWidget {
         IconButton(
             onPressed: () async {
               final ca = await Get.dialog<Discipline>(DisciplineDialog(
-                _discipline,
+                discipline.value,
                 index: index,
               ));
               if (ca != null) {
@@ -62,8 +66,8 @@ class DisciplineWidget extends StatelessWidget {
             icon: Icon(Icons.edit)),
         IconButton(
             onPressed: () async {
-              bool? delete =
-                  await Get.dialog<bool>(DeleteDialog(name: _discipline.name));
+              bool? delete = await Get.dialog<bool>(
+                  DeleteDialog(name: discipline.value.name));
               if (delete != null && delete == true) {
                 final DisciplineController dc = Get.find();
                 dc.disciplines.removeAt(index);
@@ -75,13 +79,13 @@ class DisciplineWidget extends StatelessWidget {
     ));
 
     return ExpansionTile(
-      title: Text(_discipline.name),
+      title: Text(discipline.value.name),
       trailing: Container(
         constraints:
-            BoxConstraints(maxWidth: _discipline.max.toDouble() * 20.0),
+            BoxConstraints(maxWidth: discipline.value.max.toDouble() * 20.0),
         child: NoTitleCounterWidget(
-          current: _discipline.level,
-          max: _discipline.max,
+          current: discipline.value.level,
+          max: discipline.value.max,
         ),
       ),
       children: children,
@@ -119,13 +123,13 @@ class DisciplinesSectionWidget extends StatelessWidget {
 class DisciplineDotWidget extends StatelessWidget {
   DisciplineDotWidget(
       {required DisciplineDot dot,
-      required this.dotIndex,
-      required this.disciplineIndex})
+      required this.index,
+      required this.removeDot})
       : this.d = dot;
 
   final DisciplineDot d;
-  final int dotIndex;
-  final int disciplineIndex;
+  final int index;
+  final Function(int) removeDot;
 
   @override
   Widget build(BuildContext context) {
@@ -146,11 +150,16 @@ class DisciplineDotWidget extends StatelessWidget {
             onTap: () async {
               var ca = await Get.dialog<DisciplineDot>(DisciplineDotPopup(
                 dot.value,
-                dotIndex: dotIndex,
-                disciplineIndex: disciplineIndex,
+                index: index,
+                deleteDot: (index) {
+                  removeDot(index);
+                  Get.back();
+                },
               ));
               if (ca != null) {
                 dot.update((val) => val = ca);
+                print(
+                    "Updated. Name: ${dot.value.name}, level: ${dot.value.level}");
               }
             },
           )),
@@ -236,8 +245,9 @@ class DisciplineDialog extends Dialog {
                   (i != discipline.value.levels!.length)
                       ? Obx(() => DisciplineDotWidget(
                             dot: discipline.value.levels![i],
-                            dotIndex: i,
-                            disciplineIndex: index,
+                            index: i,
+                            removeDot: (i) =>
+                                discipline.update((val) => val?.removeDot(i)),
                           ))
                       : TextButton(
                           onPressed: () async {
@@ -285,12 +295,12 @@ class DisciplineDialog extends Dialog {
 /// Use this whenever you want to show info about a discipline level
 class DisciplineDotPopup extends Dialog {
   DisciplineDotPopup(DisciplineDot dot,
-      {required this.disciplineIndex, required this.dotIndex})
+      {required this.deleteDot, required this.index})
       : this.d = dot;
 
   final DisciplineDot d;
-  final int disciplineIndex;
-  final int dotIndex;
+  final Function(int) deleteDot;
+  final int index;
 
   @override
   Widget build(BuildContext context) {
@@ -298,20 +308,20 @@ class DisciplineDotPopup extends Dialog {
 
     List<Widget> children = [];
 
-    children.add(Row(
-      children: makeIconRow(
-          dot.value.level, dot.value.max, Icons.circle, Icons.circle_outlined),
-      mainAxisAlignment: MainAxisAlignment.center,
-    ));
+    children.add(Obx(() => Row(
+          children: makeIconRow(dot.value.level, dot.value.max, Icons.circle,
+              Icons.circle_outlined),
+          mainAxisAlignment: MainAxisAlignment.center,
+        )));
 
     if (dot.value.description != null) {
       children.add(ExpansionTile(
           title: Text("Description"),
-          children: [Text(dot.value.description!)]));
+          children: [Obx(() => Text(dot.value.description!))]));
     }
 
     children.add(ExpansionTile(
-        title: Text("System"), children: [Text(dot.value.system)]));
+        title: Text("System"), children: [Obx(() => Text(dot.value.system))]));
 
     children.add(Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -321,7 +331,10 @@ class DisciplineDotPopup extends Dialog {
               final ca = await Get.dialog<DisciplineDot>(
                   DisciplineDotDialog(dot.value));
               if (ca != null) {
-                print("Should update, new name ${ca.name}");
+                print(
+                    "Should update, new name ${ca.name}, new level: ${ca.level}");
+                dot.update((val) => val?.copy(ca));
+                print("${dot.value.name}, ${dot.value.level}");
               }
             },
             icon: Icon(Icons.edit)),
@@ -330,13 +343,7 @@ class DisciplineDotPopup extends Dialog {
               bool? delete =
                   await Get.dialog<bool>(DeleteDialog(name: dot.value.name));
               if (delete != null && delete == true) {
-                final DisciplineController dc = Get.find();
-                if (dc.disciplines[disciplineIndex].levels == null)
-                  dc.disciplines[disciplineIndex].levels = RxList();
-
-                // TODO: update goes here?
-                dc.disciplines[disciplineIndex].levels!.removeAt(dotIndex);
-                // dc.update();
+                deleteDot(index);
                 Get.back();
               }
             },
