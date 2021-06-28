@@ -184,9 +184,7 @@ class ComplexAbilityDialog extends Dialog {
 
   @override
   Widget build(BuildContext context) {
-    var ca = (ability != null)
-        ? ability!.obs
-        : ComplexAbility(name: 'New Ability').obs;
+    var ca = (ability != null) ? ability!.obs : ComplexAbility(name: name).obs;
 
     return SimpleDialog(
       title: Text(name),

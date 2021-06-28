@@ -1,5 +1,8 @@
 import 'package:get/get.dart';
 
+String identify(String name) =>
+    name.toLowerCase().replaceAll(' ', '_').replaceAll('[\\W0-9]', '');
+
 class ComplexAbility {
   ComplexAbility({
     required this.name,
