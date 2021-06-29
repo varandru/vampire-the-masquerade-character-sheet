@@ -229,5 +229,6 @@
   "rituals": [
     "encrypt_missive",
     "donning_the_mask_of_shadows"
-  ]
+  ], 
+  "xp": {}
 }
