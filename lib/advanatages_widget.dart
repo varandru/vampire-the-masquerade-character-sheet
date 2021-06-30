@@ -102,6 +102,8 @@ class SummarizedInfoWidget extends StatelessWidget {
     final MostVariedController mvc = Get.find();
     final VirtuesController vc = Get.find();
 
+    Color highlightColor = Theme.of(context).accentColor;
+
     // Humanity
     elements.add(Text(
       "Humanity",
@@ -125,9 +127,11 @@ class SummarizedInfoWidget extends StatelessWidget {
       constraints: noTitleRestraint,
     ));
     elements.add(
-      Obx(() => Wrap(
-            children: makeWillPowerRow(mvc.will.value, vc.willpower),
-          )),
+      Obx(() => SquareButtonsRow(mvc.will.value, vc.willpower, 20,
+              (value) => mvc.will.value = value,
+              highlight: highlightColor)
+          // Wrap(children: makeWillPowerRow(mvc.will.value, vc.willpower))
+          ),
     );
 
     elements.add(Text(
@@ -137,9 +141,11 @@ class SummarizedInfoWidget extends StatelessWidget {
     ));
 
     elements.add(
-      Obx(() => Wrap(
-            children: makeBloodPoolRow(mvc.blood.value, mvc.bloodMax.value),
-          )),
+      Obx(() => SquareButtonsRow(mvc.blood.value, mvc.bloodMax.value, 20,
+              (value) => mvc.blood.value = value,
+              highlight: highlightColor)
+          // Wrap(children: makeBloodPoolRow(mvc.blood.value, mvc.bloodMax.value))
+          ),
     );
 
     return Column(
@@ -148,53 +154,49 @@ class SummarizedInfoWidget extends StatelessWidget {
     );
     // );
   }
+}
 
-  List<Widget> makeBloodPoolRow(int current, int localMax) {
+class SquareButtonsRow extends StatelessWidget {
+  SquareButtonsRow(this.current, this.localMax, this.max, this.update,
+      {this.highlight});
+
+  final int current;
+  final int localMax;
+  final int max;
+  final Function(int) update;
+  final Color? highlight;
+
+  @override
+  Widget build(BuildContext context) {
     List<Widget> row = [];
-    final MostVariedController c = Get.find();
     for (int i = 0; i < current; i++) {
       row.add(IconButton(
-        icon: Icon(Icons.add_box),
+        icon: Icon(
+          Icons.add_box,
+          color: ((i + 1) % 5 == 0) ? highlight : null,
+        ),
         iconSize: 20,
-        onPressed: () => c.blood.value = i,
+        onPressed: () => update(i),
       ));
     }
     for (int i = current; i < localMax; i++) {
       row.add(IconButton(
-        icon: Icon(Icons.check_box_outline_blank),
+        icon: Icon(
+          Icons.check_box_outline_blank,
+          color: ((i + 1) % 5 == 0) ? highlight : null,
+        ),
         iconSize: 20,
-        onPressed: () => c.blood.value = i + 1,
-      ));
-    }
-    for (int i = localMax; i < maxBloodCount; i++) {
-      row.add(Icon(Icons.select_all, size: 20));
-    }
-
-    return row;
-  }
-
-  List<Widget> makeWillPowerRow(int current, int localMax) {
-    List<Widget> row = [];
-    final MostVariedController c = Get.find();
-    for (int i = 0; i < current; i++) {
-      row.add(IconButton(
-        icon: Icon(Icons.add_box),
-        iconSize: 20,
-        onPressed: () => c.will.value = i,
-      ));
-    }
-    for (int i = current; i < localMax; i++) {
-      row.add(IconButton(
-        icon: Icon(Icons.check_box_outline_blank),
-        iconSize: 20,
-        onPressed: () => c.will.value = i + 1,
+        onPressed: () => update(i + 1),
       ));
     }
     for (int i = localMax; i < maxWillpowerCount; i++) {
-      row.add(Icon(Icons.select_all, size: 20));
+      row.add(IconButton(
+        icon: Icon(Icons.disabled_by_default),
+        onPressed: () => null,
+      ));
     }
 
-    return row;
+    return Wrap(children: row);
   }
 }
 
