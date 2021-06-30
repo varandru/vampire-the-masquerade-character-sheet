@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.vampire_the_masquerade_character_sheet">
    <application
-        android:label="vampire_the_masquerade_character_sheet"
+        android:label="V:tM Character Sheet"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
