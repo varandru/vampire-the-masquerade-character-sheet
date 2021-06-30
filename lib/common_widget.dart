@@ -111,8 +111,11 @@ class ComplexAbilityWidget extends StatelessWidget {
             Center(
               child: IconButton(
                   onPressed: () async {
-                    final ca = await Get.dialog<ComplexAbility>(
-                        ComplexAbilityDialog(name: 'Edit ${attribute.name}'));
+                    final ca =
+                        await Get.dialog<ComplexAbility>(ComplexAbilityDialog(
+                      name: 'Edit ${attribute.name}',
+                      ability: attribute,
+                    ));
                     if (ca != null) {
                       updateCallback(ca, index);
                     }
