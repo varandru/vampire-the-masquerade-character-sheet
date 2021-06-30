@@ -150,19 +150,19 @@ jobs:
         Copy-Item (vswhere -latest -find 'VC\Redist\MSVC\*\x64\*\vcruntime140_1.dll') .
     - name: Rename build for Android
       if: matrix.target == 'Android'
-      run: mv app-release.apk $GITHUB_WORKSPACE/vtm-character-sheet${{ matrix.target }}.apk
+      run: mv app-release.apk $GITHUB_WORKSPACE/vtm_character_sheet${{ matrix.target }}.apk
       working-directory: ${{ matrix.build_path }}
     # - name: Compress build for Linux
     #   if: matrix.target == 'Linux'
-    #   run: tar czf $GITHUB_WORKSPACE/vtm-character-sheet${{ matrix.target }}.tar.gz *
+    #   run: tar czf $GITHUB_WORKSPACE/vtm_character_sheet${{ matrix.target }}.tar.gz *
     #   working-directory: ${{ matrix.build_path }}
     # - name: Compress build for macOS
     #   if: matrix.target == 'macOS'
-    #   run: ditto -c -k --sequesterRsrc --keepParent Flutter\ VtMDiceRoller.app $GITHUB_WORKSPACE/vtm-character-sheet${{ matrix.target }}.zip
+    #   run: ditto -c -k --sequesterRsrc --keepParent Flutter\ VtMDiceRoller.app $GITHUB_WORKSPACE/vtm_character_sheet${{ matrix.target }}.zip
     #   working-directory: ${{ matrix.build_path }}
     # - name: Compress build for Windows
     #   if: matrix.target == 'Windows'
-    #   run: compress-archive -Path * -DestinationPath ${env:GITHUB_WORKSPACE}\vtm-character-sheet${{ matrix.target }}.zip
+    #   run: compress-archive -Path * -DestinationPath ${env:GITHUB_WORKSPACE}\vtm_character_sheet${{ matrix.target }}.zip
     #   working-directory: ${{ matrix.build_path }}
 
     # Upload the build.
@@ -173,6 +173,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ needs.draft-release.outputs.upload_url }}
-        asset_path: ./vtm-character-sheet${{ matrix.target }}${{ matrix.asset_extension }}
-        asset_name: vtm-character-sheet${{ matrix.target }}${{ matrix.asset_extension }}
+        asset_path: ./vtm_character_sheet${{ matrix.target }}${{ matrix.asset_extension }}
+        asset_name: vtm_character_sheet${{ matrix.target }}${{ matrix.asset_extension }}
         asset_content_type: ${{ matrix.asset_content_type }}
