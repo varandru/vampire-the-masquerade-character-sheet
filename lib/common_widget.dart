@@ -68,62 +68,6 @@ class ComplexAbilityWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
       ),
       onTap: () {
-        List<Widget> children = [];
-        if (attribute.specialization.isNotEmpty) {
-          children.add(Text(attribute.specialization,
-              style: Theme.of(context).textTheme.headline5));
-        }
-        if (attribute.description.isNotEmpty) {
-          children.add(Text("Description:",
-              style: Theme.of(context).textTheme.headline6));
-          children.add(Text(attribute.description));
-        }
-        if (attribute.isDeletable) {
-          children.add(Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              IconButton(
-                  onPressed: () async {
-                    final ca =
-                        await Get.dialog<ComplexAbility>(ComplexAbilityDialog(
-                      name: 'Edit ${attribute.name}',
-                      ability: attribute,
-                    ));
-                    if (ca != null) {
-                      updateCallback(ca, index);
-                    }
-                  },
-                  icon: Icon(Icons.edit)),
-              IconButton(
-                  onPressed: () async {
-                    bool? delete = await Get.dialog<bool>(
-                        DeleteDialog(name: attribute.name));
-                    if (delete != null && delete == true) {
-                      deleteCallback(index);
-                      Get.back();
-                    }
-                  },
-                  icon: Icon(Icons.delete)),
-            ],
-          ));
-        } else {
-          children.add(
-            Center(
-              child: IconButton(
-                  onPressed: () async {
-                    final ca =
-                        await Get.dialog<ComplexAbility>(ComplexAbilityDialog(
-                      name: 'Edit ${attribute.name}',
-                      ability: attribute,
-                    ));
-                    if (ca != null) {
-                      updateCallback(ca, index);
-                    }
-                  },
-                  icon: Icon(Icons.edit)),
-            ),
-          );
-        }
         Get.dialog<void>(ComplexAbilityPopup(attribute,
             updateCallback: updateCallback,
             deleteCallback: deleteCallback,
