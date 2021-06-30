@@ -423,12 +423,11 @@ class DisciplineDotDialog extends Dialog {
 }
 
 class AddDisciplineButton extends SpeedDialChild {
-  AddDisciplineButton(BuildContext context)
+  AddDisciplineButton()
       : super(
           child: Icon(Icons.auto_fix_high),
           backgroundColor: Colors.green.shade300,
           label: "Add a discipline",
-          labelBackgroundColor: Theme.of(context).colorScheme.surface,
           onTap: () async {
             final ca =
                 await Get.dialog<Discipline>(DisciplineDialog(null, index: 0));

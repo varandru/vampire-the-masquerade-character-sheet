@@ -225,7 +225,6 @@ class RitualSectionWidget extends StatelessWidget {
             ? Text("Rituals", style: Theme.of(context).textTheme.headline4)
             : Obx(() => RitualWidget(
                   rc.rituals[i - 1],
-                  // index: i - 1,
                 )),
         itemCount: rc.rituals.length + 1,
         shrinkWrap: true,
@@ -236,12 +235,11 @@ class RitualSectionWidget extends StatelessWidget {
 }
 
 class AddRitualButton extends SpeedDialChild {
-  AddRitualButton(BuildContext context)
+  AddRitualButton()
       : super(
           child: Icon(Icons.gesture),
           backgroundColor: Colors.blue.shade300,
           label: "Add a ritual",
-          labelBackgroundColor: Theme.of(context).colorScheme.surface,
           onTap: () async {
             final ca = await Get.dialog<Ritual>(RitualDialog(null));
             if (ca != null) {

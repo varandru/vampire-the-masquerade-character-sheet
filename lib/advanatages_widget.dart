@@ -201,12 +201,12 @@ class SquareButtonsRow extends StatelessWidget {
 }
 
 class AddBackgroundButton extends SpeedDialChild {
-  AddBackgroundButton(BuildContext context)
+  AddBackgroundButton()
       : super(
           child: Icon(Icons.groups),
           backgroundColor: Colors.yellow.shade300,
           label: "Add custom background",
-          labelBackgroundColor: Theme.of(context).colorScheme.surface,
+          // labelBackgroundColor: Theme.of(context).colorScheme.surface,
           onTap: () async {
             final ca = await Get.dialog<ComplexAbility>(
                 ComplexAbilityDialog(name: 'New Background'));

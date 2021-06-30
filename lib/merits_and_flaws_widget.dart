@@ -241,12 +241,11 @@ class MeritDialog extends Dialog {
 }
 
 class AddMeritButton extends SpeedDialChild {
-  AddMeritButton(BuildContext context)
+  AddMeritButton()
       : super(
           child: Icon(Icons.sentiment_very_satisfied_outlined),
           backgroundColor: Colors.lightGreen.shade300,
           label: "Add custom merit",
-          labelBackgroundColor: Theme.of(context).colorScheme.surface,
           onTap: () async {
             final ca = await Get.dialog<Merit>(MeritDialog(name: 'New Merit'));
             if (ca != null) {
@@ -258,12 +257,11 @@ class AddMeritButton extends SpeedDialChild {
 }
 
 class AddFlawButton extends SpeedDialChild {
-  AddFlawButton(BuildContext context)
+  AddFlawButton()
       : super(
           child: Icon(Icons.sentiment_very_dissatisfied_outlined),
           backgroundColor: Colors.pink.shade300,
           label: "Add custom flaw",
-          labelBackgroundColor: Theme.of(context).colorScheme.surface,
           onTap: () async {
             final ca = await Get.dialog<Merit>(MeritDialog(name: 'New Flaw'));
             if (ca != null) {
