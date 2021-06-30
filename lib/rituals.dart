@@ -76,9 +76,11 @@ class RitualController extends GetxController {
   void load(List<dynamic> ids, Map<String, dynamic> dictionary) {
     for (var id in ids) {
       var ritual = Ritual(id: id);
-      ritual.fromJson(dictionary[ritual.id]);
-      // TODO: fill school by id
-      if (!rituals.contains(ritual)) rituals.add(ritual);
+      if (dictionary[ritual.id] != null) {
+        ritual.fromJson(dictionary[ritual.id]);
+        // TODO: fill school by id
+        if (!rituals.contains(ritual)) rituals.add(ritual);
+      }
     }
   }
 }

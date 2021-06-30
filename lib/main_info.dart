@@ -161,13 +161,10 @@ class MostVariedController extends GetxController {
   var bloodMax = 20.obs;
   var will = 0.obs;
 
-  var xp = 0.obs;
-
   void load(Map<String, dynamic> json) {
     blood.value = json["blood"] ?? 0;
     bloodMax.value = json["bloodMax"] ?? 20;
     will.value = json["will"] ?? 0;
-    xp.value = json["xp"] ?? 0;
   }
 
   Map<String, dynamic> save() {
@@ -175,7 +172,6 @@ class MostVariedController extends GetxController {
     json["blood"] = blood.value;
     json["bloodMax"] = bloodMax.value;
     json["will"] = will.value;
-    json["xp"] = xp.value;
     return json;
   }
 }

@@ -2,8 +2,7 @@
   "most_varied_variables": {
     "blood": 20,
     "bloodMax": 20,
-    "will": 10,
-    "xp": 0
+    "will": 10
   },
   "virtues": {
     "consience": 2,
@@ -229,5 +228,6 @@
   "rituals": [
     "encrypt_missive",
     "donning_the_mask_of_shadows"
-  ]
+  ], 
+  "xp": {}
 }

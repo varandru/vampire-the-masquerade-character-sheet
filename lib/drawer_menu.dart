@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:vampire_the_masquerade_character_sheet/ritual_widget.dart';
+import 'package:vampire_the_masquerade_character_sheet/xp_widget.dart';
 import 'abilities_widget.dart';
 import 'advanatages_widget.dart';
 import 'attributes_widget.dart';
@@ -16,7 +17,8 @@ enum SelectedMenuItem {
   Abilities,
   Disciplines,
   MeritsFlaws,
-  WeaponsArmor
+  WeaponsArmor,
+  XP
 }
 
 class DrawerMenu extends Drawer {
@@ -77,6 +79,14 @@ class DrawerMenu extends Drawer {
                 ? Theme.of(context).colorScheme.primary
                 : Theme.of(context).colorScheme.onPrimary,
             onTap: () => Get.offAll(() => WeaponsAndArmorScaffold()),
+          ),
+          ListTile(
+            title: Text('XP'),
+            trailing: Icon(Icons.insights),
+            tileColor: _item == SelectedMenuItem.XP
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.onPrimary,
+            onTap: () => Get.offAll(() => XpScaffold(context)),
           ),
           ListTile(
             title: Text('Close'),
@@ -166,6 +176,22 @@ class DisciplinesScaffold extends MenuScaffold {
           floatingActionButton: CommonFloatingButton(
               [AddDisciplineButton(context), AddRitualButton(context)],
               context),
+        );
+}
+
+// XP Menu
+class XpScaffold extends MenuScaffold {
+  XpScaffold(BuildContext context)
+      : super(
+          name: "XP log",
+          body: XpSectionWidget(),
+          selectedItem: SelectedMenuItem.XP,
+          floatingActionButton: CommonFloatingButton([
+            XpEntryNewAbilityButton(context),
+            XpEntryUpgradedAbilityButton(context),
+            AddXpEntryGainedButton(context)
+          ], context),
+          actions: [RecalculateXpButton()],
         );
 }
 

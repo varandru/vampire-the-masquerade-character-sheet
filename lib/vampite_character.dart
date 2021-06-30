@@ -8,6 +8,7 @@ import 'package:vampire_the_masquerade_character_sheet/advantages.dart';
 import 'package:vampire_the_masquerade_character_sheet/disciplines.dart';
 import 'package:vampire_the_masquerade_character_sheet/merits_and_flaws.dart';
 import 'package:vampire_the_masquerade_character_sheet/rituals.dart';
+import 'package:vampire_the_masquerade_character_sheet/xp.dart';
 
 import 'abilities.dart';
 import 'attributes.dart';
@@ -24,6 +25,7 @@ class VampireCharacter extends GetxController {
   late MeritsAndFlawsController meritsAndFlawsController;
   late DisciplineController disciplineController;
   late RitualController ritualController;
+  late XPController xpController;
 
   late String _characterFileName;
   late bool installed;
@@ -44,12 +46,14 @@ class VampireCharacter extends GetxController {
     meritsAndFlawsController = Get.put(MeritsAndFlawsController());
     disciplineController = Get.put(DisciplineController());
     ritualController = Get.put(RitualController());
+    xpController = Get.put(XPController());
   }
 
   void _loadToControllers(Map<String, dynamic> json) {
     mostVariedController.load(json["most_varied_variables"]);
     virtuesController.load(json["virtues"]);
     mainInfo.load(json["main_info"]);
+    xpController.load(json["xp"]);
   }
 
   Map<String, dynamic> _saveFromControllers() {
@@ -63,6 +67,7 @@ class VampireCharacter extends GetxController {
     json["flaws"] = meritsAndFlawsController.saveFlaws();
     json["disciplines"] = disciplineController.save();
     json["rituals"] = ritualController.save();
+    json["xp"] = xpController.save();
     return json;
   }
 
@@ -242,6 +247,10 @@ class VampireCharacter extends GetxController {
       getApplicationDocumentsDirectory().then((value) {
         File characterFile = File(value.path + '/' + _characterFileName);
         Map<String, dynamic> json = _saveFromControllers();
+        print("Saving character to file ${characterFile.path}");
+        for (var entry in json.entries) {
+          print("${entry.key} : '${entry.value}'");
+        }
         characterFile.writeAsStringSync(jsonEncode(json));
       });
     } else if (GetPlatform.isWeb) {
@@ -326,7 +335,7 @@ class VampireCharacter extends GetxController {
   Future<void> init() async {
     await loadSharedPreferences();
     // TEMP
-    installed = false;
+    // installed = false;
     if (!installed) {
       await install();
     }
