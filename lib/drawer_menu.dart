@@ -31,6 +31,7 @@ class DrawerMenu extends Drawer {
             // Important: Remove any padding from the ListView.
             padding: EdgeInsets.zero,
             children: <Widget>[
+              DrawerHeader(child: Container()),
               ListTile(
                 title: Text('Primary information'),
                 trailing: Icon(Icons.face),

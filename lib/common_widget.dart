@@ -229,7 +229,7 @@ class ComplexAbilityDialog extends Dialog {
             Text('Current Value: '),
             IconButton(
                 onPressed: () => ca.update((val) {
-                      val?.current--;
+                      if (val != null) if (val.current > val.min) val.current--;
                     }),
                 icon: Icon(
                   Icons.remove_circle_outline,
@@ -238,7 +238,7 @@ class ComplexAbilityDialog extends Dialog {
             Obx(() => Text("${ca.value.current}")),
             IconButton(
                 onPressed: () => ca.update((val) {
-                      val?.current++;
+                      if (val != null) if (val.current < val.max) val.current++;
                     }),
                 icon: Icon(
                   Icons.add_circle_outline,
