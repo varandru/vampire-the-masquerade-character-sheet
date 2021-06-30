@@ -247,6 +247,10 @@ class VampireCharacter extends GetxController {
       getApplicationDocumentsDirectory().then((value) {
         File characterFile = File(value.path + '/' + _characterFileName);
         Map<String, dynamic> json = _saveFromControllers();
+        print("Saving character to file ${characterFile.path}");
+        for (var entry in json.entries) {
+          print("${entry.key} : '${entry.value}'");
+        }
         characterFile.writeAsStringSync(jsonEncode(json));
       });
     } else if (GetPlatform.isWeb) {
@@ -331,7 +335,7 @@ class VampireCharacter extends GetxController {
   Future<void> init() async {
     await loadSharedPreferences();
     // TEMP
-    installed = false;
+    // installed = false;
     if (!installed) {
       await install();
     }

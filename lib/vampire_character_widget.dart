@@ -34,36 +34,41 @@ class MenuScaffold extends StatelessWidget {
       {required String name,
       required Widget body,
       required SelectedMenuItem selectedItem,
+      List<IconButton> actions = const [],
       this.floatingActionButton})
       : _name = name,
         _body = body,
-        _item = selectedItem;
+        _item = selectedItem,
+        _actions = [
+              IconButton(
+                onPressed: () {
+                  final VampireCharacter vc = Get.find();
+                  vc.load();
+                },
+                icon: Icon(Icons.file_download),
+              ),
+              IconButton(
+                onPressed: () {
+                  final VampireCharacter vc = Get.find();
+                  vc.save();
+                },
+                icon: Icon(Icons.save),
+              ),
+            ] +
+            actions;
 
   final String _name;
   final Widget _body;
   final SelectedMenuItem _item;
   final Widget? floatingActionButton;
+  final List<IconButton> _actions;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(_name),
-        actions: [
-          IconButton(
-            onPressed: () {
-              final VampireCharacter vc = Get.find();
-              vc.load();
-            },
-            icon: Icon(Icons.read_more),
-          ),
-          IconButton(
-            onPressed: () {
-              final VampireCharacter vc = Get.find();
-              vc.save();
-            },
-            icon: Icon(Icons.save),
-          ),
-        ],
+        actions: _actions,
       ),
       body: _body,
       drawer: Drawer(

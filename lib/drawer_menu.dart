@@ -186,8 +186,12 @@ class XpScaffold extends MenuScaffold {
           name: "XP log",
           body: XpSectionWidget(),
           selectedItem: SelectedMenuItem.XP,
-          floatingActionButton:
-              CommonFloatingButton([XpEntryNewAbilityButton(context)], context),
+          floatingActionButton: CommonFloatingButton([
+            XpEntryNewAbilityButton(context),
+            XpEntryUpgradedAbilityButton(context),
+            AddXpEntryGainedButton(context)
+          ], context),
+          actions: [RecalculateXpButton()],
         );
 }
 

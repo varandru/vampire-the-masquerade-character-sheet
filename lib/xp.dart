@@ -24,6 +24,7 @@ class XPController extends GetxController {
     log.clear();
     if (json["log"] != null) {
       for (var entry in json["log"]) {
+        print("XP log entry: $entry");
         if (entry["old_level"] != null) {
           log.add(XpEntryUpgradedAbility.fromJson(entry));
         } else if (entry["cost"] != null) {
@@ -48,6 +49,8 @@ class XPController extends GetxController {
     json["total"] = xpTotal.value;
     json["spent"] = xpSpent.value;
     json["log"] = log;
+
+    print(json.toString());
 
     return json;
   }
