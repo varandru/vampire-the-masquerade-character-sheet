@@ -16,15 +16,15 @@ enum MainInfoFieldType {
 class MainInfo extends GetxController {
   MainInfo();
 
-  var _characterName = "Noah Brendel".obs;
-  var _nature = "Perfectionist".obs;
-  var _clan = "Tremere".obs;
-  var _playerName = "Vladimir Aranovskiy".obs;
-  var _demeanor = "Perfectionist".obs;
+  var _characterName = "Character Name".obs;
+  var _nature = "nature".obs;
+  var _clan = "Clan".obs;
+  var _playerName = "Player Name".obs;
+  var _demeanor = "Demeanor".obs;
   var _generation = 10.obs;
-  var _chronicle = "Academia".obs;
-  var _concept = "Intellectual".obs;
-  var _sire = "Lawrence".obs;
+  var _chronicle = "Chronicle".obs;
+  var _concept = "Concept".obs;
+  var _sire = "Sire".obs;
 
   String get characterName => _characterName.value;
   String get nature => _nature.value;
@@ -71,23 +71,23 @@ class MainInfo extends GetxController {
   String getByType(MainInfoFieldType type) {
     switch (type) {
       case MainInfoFieldType.CharacterName:
-        return characterName;
+        return characterName.isEmpty ? "Character Name" : characterName;
       case MainInfoFieldType.Nature:
-        return nature;
+        return nature.isEmpty ? "Nature" : nature;
       case MainInfoFieldType.Clan:
-        return clan;
+        return clan.isEmpty ? "Clan" : clan;
       case MainInfoFieldType.PlayerName:
-        return playerName;
+        return playerName.isEmpty ? "Player Name" : playerName;
       case MainInfoFieldType.Demeanor:
-        return demeanor;
+        return demeanor.isEmpty ? "Demeanor" : demeanor;
+      case MainInfoFieldType.Chronicle:
+        return chronicle.isEmpty ? "Chronicle" : chronicle;
+      case MainInfoFieldType.Concept:
+        return concept.isEmpty ? "Concept" : concept;
+      case MainInfoFieldType.Sire:
+        return sire.isEmpty ? "Sire" : sire;
       case MainInfoFieldType.Generation:
         return generation.toString() + "th";
-      case MainInfoFieldType.Chronicle:
-        return chronicle;
-      case MainInfoFieldType.Concept:
-        return concept;
-      case MainInfoFieldType.Sire:
-        return sire;
     }
   }
 

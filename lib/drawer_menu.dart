@@ -31,9 +31,7 @@ class DrawerMenu extends Drawer {
             // Important: Remove any padding from the ListView.
             padding: EdgeInsets.zero,
             children: <Widget>[
-              DrawerHeader(
-                child: Text('Drawer Header'),
-              ),
+              DrawerHeader(child: Container()),
               ListTile(
                 title: Text('Primary information'),
                 trailing: Icon(Icons.face),
@@ -69,13 +67,6 @@ class DrawerMenu extends Drawer {
                 trailing: Icon(Icons.insights),
                 selected: item == SelectedMenuItem.XP,
                 onTap: () => Get.offAll(() => XpScaffold()),
-              ),
-              ListTile(
-                title: Text('Close'),
-                trailing: Icon(Icons.exit_to_app),
-                onTap: () {
-                  Get.back();
-                },
               ),
               Obx(
                 () => SwitchListTile(
