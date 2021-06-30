@@ -39,12 +39,11 @@ class AbilitiesColumnWidget extends ComplexAbilityColumnWidget {
 }
 
 class AddTalentButton extends SpeedDialChild {
-  AddTalentButton(BuildContext context)
+  AddTalentButton()
       : super(
           child: Icon(Icons.person_add_alt),
           backgroundColor: Colors.red.shade300,
           label: "Add custom talent",
-          labelBackgroundColor: Theme.of(context).colorScheme.surface,
           onTap: () async {
             final ca = await Get.dialog<ComplexAbility>(
                 ComplexAbilityDialog(name: 'New talent'));
@@ -57,12 +56,11 @@ class AddTalentButton extends SpeedDialChild {
 }
 
 class AddSkillsButton extends SpeedDialChild {
-  AddSkillsButton(BuildContext context)
+  AddSkillsButton()
       : super(
           child: Icon(Icons.handyman),
           backgroundColor: Colors.green.shade300,
           label: "Add custom skill",
-          labelBackgroundColor: Theme.of(context).colorScheme.surface,
           onTap: () async {
             final ca = await Get.dialog<ComplexAbility>(
                 ComplexAbilityDialog(name: 'New skill'));
@@ -75,12 +73,11 @@ class AddSkillsButton extends SpeedDialChild {
 }
 
 class AddKnowledgeButton extends SpeedDialChild {
-  AddKnowledgeButton(BuildContext context)
+  AddKnowledgeButton()
       : super(
           child: Icon(Icons.menu_book),
           backgroundColor: Colors.blue.shade300,
           label: "Add custom knowledge",
-          labelBackgroundColor: Theme.of(context).colorScheme.surface,
           onTap: () async {
             final ca = await Get.dialog<ComplexAbility>(
                 ComplexAbilityDialog(name: 'New Knowledge'));

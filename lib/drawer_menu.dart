@@ -22,88 +22,82 @@ enum SelectedMenuItem {
 }
 
 class DrawerMenu extends Drawer {
-  DrawerMenu(SelectedMenuItem item) : _item = item;
-
-  final SelectedMenuItem _item;
-
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      // Add a ListView to the drawer. This ensures the user can scroll
-      // through the options in the drawer if there isn't enough vertical
-      // space to fit everything.
-      child: ListView(
-        // Important: Remove any padding from the ListView.
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          DrawerHeader(
-            child: Text('Drawer Header'),
+  DrawerMenu(SelectedMenuItem item)
+      : super(
+          // Add a ListView to the drawer. This ensures the user can scroll
+          // through the options in the drawer if there isn't enough vertical
+          // space to fit everything.
+          child: ListView(
+            // Important: Remove any padding from the ListView.
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              DrawerHeader(
+                child: Text('Drawer Header'),
+              ),
+              ListTile(
+                title: Text('Primary information'),
+                trailing: Icon(Icons.face),
+                selected: item == SelectedMenuItem.PrimaryInfo,
+                onTap: () => Get.offAll(() => PrimaryInfoScaffold()),
+              ),
+              ListTile(
+                title: Text('Attributes & Abilities'),
+                trailing: Icon(Icons.accessibility_new),
+                selected: item == SelectedMenuItem.Abilities,
+                onTap: () => Get.offAll(() => AttributesAndAbilitiesScaffold()),
+              ),
+              ListTile(
+                title: Text('Disciplines'),
+                trailing: Icon(Icons.auto_awesome),
+                selected: item == SelectedMenuItem.Disciplines,
+                onTap: () => Get.offAll(() => DisciplinesScaffold()),
+              ),
+              ListTile(
+                title: Text('Merits & Flaws'),
+                trailing: Icon(Icons.exposure),
+                selected: item == SelectedMenuItem.MeritsFlaws,
+                onTap: () => Get.offAll(() => MeritsFlawsScaffold()),
+              ),
+              ListTile(
+                title: Text('Weapons and Armor'),
+                trailing: Icon(Icons.devices),
+                selected: item == SelectedMenuItem.WeaponsArmor,
+                onTap: () => Get.offAll(() => WeaponsAndArmorScaffold()),
+              ),
+              ListTile(
+                title: Text('XP'),
+                trailing: Icon(Icons.insights),
+                selected: item == SelectedMenuItem.XP,
+                onTap: () => Get.offAll(() => XpScaffold()),
+              ),
+              ListTile(
+                title: Text('Close'),
+                trailing: Icon(Icons.exit_to_app),
+                onTap: () {
+                  Get.back();
+                },
+              ),
+              Obx(
+                () => SwitchListTile(
+                  value: Get.isDarkMode.obs.value,
+                  onChanged: (isDark) {
+                    Get.changeTheme(
+                      isDark
+                          ? ThemeData.dark().copyWith(primaryColor: Colors.red)
+                          : ThemeData.light()
+                              .copyWith(primaryColor: Colors.red),
+                    );
+                  },
+                  title: Text("Dark theme"),
+                ),
+              ),
+            ],
           ),
-          ListTile(
-            title: Text('Primary information'),
-            trailing: Icon(Icons.face),
-            tileColor: _item == SelectedMenuItem.PrimaryInfo
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.onPrimary,
-            onTap: () => Get.offAll(() => PrimaryInfoScaffold(context)),
-          ),
-          ListTile(
-            title: Text('Attributes & Abilities'),
-            trailing: Icon(Icons.accessibility_new),
-            tileColor: _item == SelectedMenuItem.Abilities
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.onPrimary,
-            onTap: () =>
-                Get.offAll(() => AttributesAndAbilitiesScaffold(context)),
-          ),
-          ListTile(
-            title: Text('Disciplines'),
-            trailing: Icon(Icons.auto_awesome),
-            tileColor: _item == SelectedMenuItem.Disciplines
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.onPrimary,
-            onTap: () => Get.offAll(() => DisciplinesScaffold(context)),
-          ),
-          ListTile(
-            title: Text('Merits & Flaws'),
-            trailing: Icon(Icons.exposure),
-            tileColor: _item == SelectedMenuItem.MeritsFlaws
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.onPrimary,
-            onTap: () => Get.offAll(() => MeritsFlawsScaffold(context)),
-          ),
-          ListTile(
-            title: Text('Weapons and Armor'),
-            trailing: Icon(Icons.devices),
-            tileColor: _item == SelectedMenuItem.WeaponsArmor
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.onPrimary,
-            onTap: () => Get.offAll(() => WeaponsAndArmorScaffold()),
-          ),
-          ListTile(
-            title: Text('XP'),
-            trailing: Icon(Icons.insights),
-            tileColor: _item == SelectedMenuItem.XP
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.onPrimary,
-            onTap: () => Get.offAll(() => XpScaffold(context)),
-          ),
-          ListTile(
-            title: Text('Close'),
-            trailing: Icon(Icons.exit_to_app),
-            onTap: () {
-              Get.back();
-            },
-          ),
-        ],
-      ),
-    );
-  }
+        );
 }
 
 class PrimaryInfoScaffold extends MenuScaffold {
-  // Context should probably go here. But it's not used yet, so w/e
-  PrimaryInfoScaffold(BuildContext context)
+  PrimaryInfoScaffold()
       : super(
           name: "Primary Information",
           body: ListView(
@@ -115,14 +109,12 @@ class PrimaryInfoScaffold extends MenuScaffold {
             primary: true,
           ),
           selectedItem: SelectedMenuItem.PrimaryInfo,
-          floatingActionButton: CommonFloatingButton([
-            AddBackgroundButton(context),
-          ], context),
+          floatingActionButton: CommonFloatingButton([AddBackgroundButton()]),
         );
 }
 
 class AttributesAndAbilitiesScaffold extends MenuScaffold {
-  AttributesAndAbilitiesScaffold(BuildContext context)
+  AttributesAndAbilitiesScaffold()
       : super(
             name: "Attributes & Abilities",
             body: ListView(
@@ -134,11 +126,8 @@ class AttributesAndAbilitiesScaffold extends MenuScaffold {
               primary: true,
             ),
             selectedItem: SelectedMenuItem.Abilities,
-            floatingActionButton: CommonFloatingButton([
-              AddKnowledgeButton(context),
-              AddSkillsButton(context),
-              AddTalentButton(context)
-            ], context));
+            floatingActionButton: CommonFloatingButton(
+                [AddKnowledgeButton(), AddSkillsButton(), AddTalentButton()]));
 }
 
 class WeaponsAndArmorScaffold extends MenuScaffold {
@@ -152,19 +141,19 @@ class WeaponsAndArmorScaffold extends MenuScaffold {
 
 // Merits & Flaws Menu
 class MeritsFlawsScaffold extends MenuScaffold {
-  MeritsFlawsScaffold(BuildContext context)
+  MeritsFlawsScaffold()
       : super(
           name: "Merits & Flaws",
           body: MeritsAndFlawsSectionWidget(),
           selectedItem: SelectedMenuItem.MeritsFlaws,
-          floatingActionButton: CommonFloatingButton(
-              [AddFlawButton(context), AddMeritButton(context)], context),
+          floatingActionButton:
+              CommonFloatingButton([AddFlawButton(), AddMeritButton()]),
         );
 }
 
 // Disciplines Menu
 class DisciplinesScaffold extends MenuScaffold {
-  DisciplinesScaffold(BuildContext context)
+  DisciplinesScaffold()
       : super(
           name: "Disciplines",
           body: ListView.builder(
@@ -173,35 +162,33 @@ class DisciplinesScaffold extends MenuScaffold {
             itemCount: 2,
           ),
           selectedItem: SelectedMenuItem.Disciplines,
-          floatingActionButton: CommonFloatingButton(
-              [AddDisciplineButton(context), AddRitualButton(context)],
-              context),
+          floatingActionButton:
+              CommonFloatingButton([AddDisciplineButton(), AddRitualButton()]),
         );
 }
 
 // XP Menu
 class XpScaffold extends MenuScaffold {
-  XpScaffold(BuildContext context)
+  XpScaffold()
       : super(
           name: "XP log",
           body: XpSectionWidget(),
           selectedItem: SelectedMenuItem.XP,
           floatingActionButton: CommonFloatingButton([
-            XpEntryNewAbilityButton(context),
-            XpEntryUpgradedAbilityButton(context),
-            AddXpEntryGainedButton(context)
-          ], context),
+            XpEntryNewAbilityButton(),
+            XpEntryUpgradedAbilityButton(),
+            AddXpEntryGainedButton()
+          ]),
           actions: [RecalculateXpButton()],
         );
 }
 
 // ignore: must_be_immutable
 class CommonFloatingButton extends SpeedDial {
-  CommonFloatingButton(List<SpeedDialChild> children, BuildContext context)
+  CommonFloatingButton(List<SpeedDialChild> children)
       : super(
             icon: Icons.add,
             activeIcon: Icons.close,
-            backgroundColor: Theme.of(context).colorScheme.primaryVariant,
             closeManually: true,
             children: children);
 }

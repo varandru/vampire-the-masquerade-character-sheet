@@ -143,12 +143,11 @@ class XpEntryNewAbilityDialog extends Dialog {
 }
 
 class XpEntryNewAbilityButton extends SpeedDialChild {
-  XpEntryNewAbilityButton(BuildContext context)
+  XpEntryNewAbilityButton()
       : super(
           child: Icon(Icons.add_circle_outline),
           backgroundColor: Colors.red.shade300,
           label: "Spend XP on an ability",
-          labelBackgroundColor: Theme.of(context).colorScheme.surface,
           onTap: () async {
             final ca =
                 await Get.dialog<XpEntryNewAbility>(XpEntryNewAbilityDialog());
@@ -305,12 +304,11 @@ class XpEntryUpgradedAbilityDialog extends Dialog {
 }
 
 class XpEntryUpgradedAbilityButton extends SpeedDialChild {
-  XpEntryUpgradedAbilityButton(BuildContext context)
+  XpEntryUpgradedAbilityButton()
       : super(
           child: Icon(Icons.arrow_circle_up),
           backgroundColor: Colors.red.shade300,
           label: "Spend XP to improve an ability",
-          labelBackgroundColor: Theme.of(context).colorScheme.surface,
           onTap: () async {
             final ca = await Get.dialog<XpEntryUpgradedAbility>(
                 XpEntryUpgradedAbilityDialog());
@@ -415,12 +413,11 @@ class XpEntryGainedDialog extends Dialog {
 }
 
 class AddXpEntryGainedButton extends SpeedDialChild {
-  AddXpEntryGainedButton(BuildContext context)
+  AddXpEntryGainedButton()
       : super(
           child: Icon(Icons.add_circle_outline),
           backgroundColor: Colors.green.shade300,
           label: "Log XP gained",
-          labelBackgroundColor: Theme.of(context).colorScheme.surface,
           onTap: () async {
             final ca = await Get.dialog<XpEntryGained>(XpEntryGainedDialog());
             if (ca != null) {
