@@ -74,7 +74,9 @@ class DrawerMenu extends Drawer {
                   onChanged: (isDark) {
                     Get.changeTheme(
                       isDark
-                          ? ThemeData.dark().copyWith(primaryColor: Colors.red)
+                          ? ThemeData.dark().copyWith(
+                              primaryColor: Colors.red,
+                              accentColor: Colors.redAccent)
                           : ThemeData.light()
                               .copyWith(primaryColor: Colors.red),
                     );
@@ -182,4 +184,19 @@ class CommonFloatingButton extends SpeedDial {
             activeIcon: Icons.close,
             closeManually: true,
             children: children);
+}
+
+class CommonSpeedDialChild extends SpeedDialChild {
+  CommonSpeedDialChild(
+      {Widget? child,
+      Color? backgroundColor,
+      String? label,
+      void Function()? onTap})
+      : super(
+            child: child,
+            backgroundColor: backgroundColor,
+            label: label,
+            onTap: onTap,
+            labelBackgroundColor:
+                Get.isDarkMode ? Colors.grey.shade800 : Colors.grey.shade50);
 }

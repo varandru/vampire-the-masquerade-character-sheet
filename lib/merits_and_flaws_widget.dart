@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:get/get.dart';
 
 import 'common_widget.dart';
+import 'drawer_menu.dart';
 import 'merits_and_flaws.dart';
 
 class MeritWidget extends StatelessWidget {
@@ -240,7 +240,7 @@ class MeritDialog extends Dialog {
   }
 }
 
-class AddMeritButton extends SpeedDialChild {
+class AddMeritButton extends CommonSpeedDialChild {
   AddMeritButton()
       : super(
           child: Icon(Icons.sentiment_very_satisfied_outlined),
@@ -256,7 +256,7 @@ class AddMeritButton extends SpeedDialChild {
         );
 }
 
-class AddFlawButton extends SpeedDialChild {
+class AddFlawButton extends CommonSpeedDialChild {
   AddFlawButton()
       : super(
           child: Icon(Icons.sentiment_very_dissatisfied_outlined),

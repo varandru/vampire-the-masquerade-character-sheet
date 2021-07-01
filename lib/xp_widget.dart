@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:get/get.dart';
 import 'package:vampire_the_masquerade_character_sheet/xp.dart';
+
+import 'drawer_menu.dart';
 
 class XpSectionWidget extends StatelessWidget {
   @override
@@ -145,7 +146,7 @@ class XpEntryNewAbilityDialog extends Dialog {
   }
 }
 
-class XpEntryNewAbilityButton extends SpeedDialChild {
+class XpEntryNewAbilityButton extends CommonSpeedDialChild {
   XpEntryNewAbilityButton()
       : super(
           child: Icon(Icons.add_circle_outline),
@@ -315,7 +316,7 @@ class XpEntryUpgradedAbilityDialog extends Dialog {
   }
 }
 
-class XpEntryUpgradedAbilityButton extends SpeedDialChild {
+class XpEntryUpgradedAbilityButton extends CommonSpeedDialChild {
   XpEntryUpgradedAbilityButton()
       : super(
           child: Icon(Icons.arrow_circle_up),
@@ -427,7 +428,7 @@ class XpEntryGainedDialog extends Dialog {
   }
 }
 
-class AddXpEntryGainedButton extends SpeedDialChild {
+class AddXpEntryGainedButton extends CommonSpeedDialChild {
   AddXpEntryGainedButton()
       : super(
           child: Icon(Icons.add_circle_outline),

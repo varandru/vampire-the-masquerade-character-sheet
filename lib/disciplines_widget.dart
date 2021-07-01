@@ -1,10 +1,10 @@
 // A widget for a single discipline, ExpansionTile
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:get/get.dart';
 
 import 'common_widget.dart';
 import 'disciplines.dart';
+import 'drawer_menu.dart';
 
 class DisciplineWidget extends StatelessWidget {
   DisciplineWidget(Discipline discipline, {required this.index})
@@ -428,7 +428,7 @@ class DisciplineDotDialog extends Dialog {
   }
 }
 
-class AddDisciplineButton extends SpeedDialChild {
+class AddDisciplineButton extends CommonSpeedDialChild {
   AddDisciplineButton()
       : super(
           child: Icon(Icons.auto_fix_high),

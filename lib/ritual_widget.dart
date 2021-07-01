@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:get/get.dart';
 import 'package:vampire_the_masquerade_character_sheet/common_logic.dart';
 
 import 'common_widget.dart';
+import 'drawer_menu.dart';
 import 'rituals.dart';
 
 class RitualWidget extends StatelessWidget {
@@ -238,7 +238,7 @@ class RitualSectionWidget extends StatelessWidget {
   }
 }
 
-class AddRitualButton extends SpeedDialChild {
+class AddRitualButton extends CommonSpeedDialChild {
   AddRitualButton()
       : super(
           child: Icon(Icons.gesture),
