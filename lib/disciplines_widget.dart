@@ -158,8 +158,6 @@ class DisciplineDotWidget extends StatelessWidget {
               ));
               if (ca != null) {
                 dot.update((val) => val = ca);
-                print(
-                    "Updated. Name: ${dot.value.name}, level: ${dot.value.level}");
               }
             },
           )),

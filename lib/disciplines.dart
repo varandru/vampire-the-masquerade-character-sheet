@@ -25,7 +25,6 @@ class Discipline {
       isIncremental = false;
     }
     if (isIncremental == null) {
-      // TODO: catch exceptions. It should not add, not break everything
       throw ("Either general or specific system must be present in discipline $name");
     }
     print("Added discipline $name");
@@ -137,10 +136,14 @@ class DisciplineController extends GetxController {
           level: discipline["level"],
         );
         if (!disciplines.contains(base)) {
-          disciplines.add(Discipline.fromDictionary(
-            base: base,
-            entry: entry,
-          ));
+          try {
+            disciplines.add(Discipline.fromDictionary(
+              base: base,
+              entry: entry,
+            ));
+          } catch (e) {
+            continue;
+          }
         }
       }
     }

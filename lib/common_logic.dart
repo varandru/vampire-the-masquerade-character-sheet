@@ -11,7 +11,6 @@ class ComplexAbility {
     this.max = 5,
     this.specialization = "",
     this.description = "",
-    this.levelDescriptions,
     this.isIncremental = true,
     this.hasSpecialization = true,
     this.isDeletable = true,
@@ -23,7 +22,6 @@ class ComplexAbility {
   int max;
   String specialization;
   String description;
-  List<String>? levelDescriptions = [];
 
   /// Does this ability get directly better at higher levels?
   /// If there is variety, this is false
@@ -63,7 +61,7 @@ class ComplexAbility {
         isNameEditable = true;
 
   void fillFromDictionary(ComplexAbilityEntry entry) {
-    levelDescriptions = entry.levels;
+    // levelDescriptions = entry.levels;
     if (entry.description != null) description = entry.description!;
   }
 
@@ -123,17 +121,25 @@ class ComplexAbilityColumn {
   var name = "Name".obs;
   RxList<ComplexAbility> values = RxList();
 
-  void editValue(ComplexAbility value, int index) {
-    values[index] = value;
+  void sortByName() {
+    values.sort((a1, a2) => a1.name.compareTo(a2.name));
   }
 
-  void deleteValue(int index) {
-    values.removeAt(index);
+  void editValue(ComplexAbility value, ComplexAbility old) {
+    values[values.indexOf(old)] = value;
+    sortByName();
+  }
+
+  void deleteValue(ComplexAbility value) {
+    print("Tried to delete ${value.name}");
+    values.remove(value);
+    sortByName();
   }
 
   void add(ComplexAbility ca) {
     if (!values.contains(ca)) {
       values.add(ca);
+      sortByName();
     }
   }
 

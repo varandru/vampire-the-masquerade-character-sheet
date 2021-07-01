@@ -4,15 +4,6 @@ import 'common_logic.dart';
 class BackgroundsController extends GetxController {
   var backgrounds = ComplexAbilityColumn('Backgrounds').obs;
 
-  void initializeFromConstants() {
-    backgrounds.value.values.value = [
-      ComplexAbility(name: "Mentor", current: 2),
-      ComplexAbility(name: "Herd", current: 1),
-      ComplexAbility(name: "Resources", current: 2),
-      ComplexAbility(name: "Generation", current: 3),
-    ];
-  }
-
   void load(List<dynamic> json, BackgroundDictionary dictionary) {
     // 1. Category headers. Re-read mostly for localization, might kill later
     if (dictionary.name.isNotEmpty) {
