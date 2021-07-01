@@ -13,6 +13,7 @@ import 'package:vampire_the_masquerade_character_sheet/xp.dart';
 import 'abilities.dart';
 import 'attributes.dart';
 import 'main_info.dart';
+import 'virtues.dart';
 
 /// Controller for the whole character. Handles saving and loading data from files, and, possibly, any other character-wide operations
 class VampireCharacter extends GetxController {

@@ -105,10 +105,12 @@ class XpEntryNewAbilityDialog extends Dialog {
             if (result != null) val?.cost = result;
           }),
           autovalidateMode: AutovalidateMode.onUserInteraction,
-          validator: (value) =>
-              (value != null && value.isNumericOnly && int.parse(value) > 0)
-                  ? null
-                  : "This should be a number",
+          validator: (value) => (value != null &&
+                  value.isNumericOnly &&
+                  int.tryParse(value) != null &&
+                  int.tryParse(value)! > 0)
+              ? null
+              : "This should be a number",
           keyboardType: TextInputType.number,
           decoration: InputDecoration(labelText: "XP cost"),
         ),
@@ -235,7 +237,8 @@ class XpEntryUpgradedAbilityDialog extends Dialog {
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 validator: (value) => (value != null &&
                         value.isNumericOnly &&
-                        int.parse(value) > 0)
+                        int.tryParse(value) != null &&
+                        int.tryParse(value)! > 0)
                     ? null
                     : "This should be a number",
                 keyboardType: TextInputType.number,
@@ -251,7 +254,10 @@ class XpEntryUpgradedAbilityDialog extends Dialog {
                   if (result != null) val?.newLevel = result;
                 }),
                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (value) => (value != null && value.isNumericOnly)
+                validator: (value) => (value != null &&
+                        value.isNumericOnly &&
+                        int.tryParse(value) != null &&
+                        int.tryParse(value)! > 0)
                     ? null
                     : "This should be a number",
                 keyboardType: TextInputType.number,
@@ -269,10 +275,12 @@ class XpEntryUpgradedAbilityDialog extends Dialog {
             if (result != null) val?.cost = result;
           }),
           autovalidateMode: AutovalidateMode.onUserInteraction,
-          validator: (value) =>
-              (value != null && value.isNumericOnly && int.parse(value) > 0)
-                  ? null
-                  : "This should be a number",
+          validator: (value) => (value != null &&
+                  value.isNumericOnly &&
+                  int.tryParse(value) != null &&
+                  int.tryParse(value)! > 0)
+              ? null
+              : "This should be a number",
           keyboardType: TextInputType.number,
           decoration: InputDecoration(labelText: "XP cost"),
         ),
@@ -379,7 +387,10 @@ class XpEntryGainedDialog extends Dialog {
             if (result != null) val?.gained = result;
           }),
           autovalidateMode: AutovalidateMode.onUserInteraction,
-          validator: (value) => (value != null && value.isNumericOnly)
+          validator: (value) => (value != null &&
+                  value.isNumericOnly &&
+                  int.tryParse(value) != null &&
+                  int.tryParse(value)! > 0)
               ? null
               : "This should be a number",
           keyboardType: TextInputType.number,
@@ -402,7 +413,7 @@ class XpEntryGainedDialog extends Dialog {
             TextButton(
               child: Text('OK'),
               onPressed: () {
-                if (entry.value.gained != 0)
+                if (entry.value.gained > 0)
                   Get.back(result: entry.value);
                 else
                   Get.back(result: null);

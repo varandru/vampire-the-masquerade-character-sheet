@@ -137,7 +137,9 @@ class RitualDialog extends StatelessWidget {
             Text('Level: '),
             IconButton(
                 onPressed: () => _ritual.update((val) {
-                      val?.level--;
+                      if (val != null) {
+                        if (val.level > 1) val.level--;
+                      }
                     }),
                 icon: Icon(
                   Icons.remove_circle_outline,
@@ -146,7 +148,9 @@ class RitualDialog extends StatelessWidget {
             Obx(() => Text("${_ritual.value.level}")),
             IconButton(
                 onPressed: () => _ritual.update((val) {
-                      val?.level++;
+                      if (val != null) {
+                        if (val.level < 10) val.level++;
+                      }
                     }),
                 icon: Icon(
                   Icons.add_circle_outline,

@@ -15,6 +15,7 @@ class ComplexAbility {
     this.isIncremental = true,
     this.hasSpecialization = true,
     this.isDeletable = true,
+    this.isNameEditable = true,
   });
   String name;
   int current;
@@ -36,6 +37,10 @@ class ComplexAbility {
   /// Attributes can't. Abilities can. Backgrounds sure as hell can
   bool isDeletable;
 
+  /// Can this ability's name be edited?
+  /// Virtues can't. All the rest can.
+  bool isNameEditable;
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -54,7 +59,8 @@ class ComplexAbility {
         description = "",
         min = 1,
         max = 5,
-        isIncremental = true;
+        isIncremental = true,
+        isNameEditable = true;
 
   void fillFromDictionary(ComplexAbilityEntry entry) {
     levelDescriptions = entry.levels;
