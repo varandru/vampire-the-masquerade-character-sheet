@@ -87,10 +87,21 @@ class SummarizedInfoWidget extends StatelessWidget {
       style: Theme.of(context).textTheme.headline6,
       textAlign: TextAlign.center,
     ));
-    elements.add(Container(
-      child: NoTitleCounterWidget(current: 5),
-      constraints: noTitleRestraint,
-    ));
+    elements.add(
+      Container(
+        child: InkWell(
+          child: Obx(() => NoTitleCounterWidget(current: vc.humanity)),
+          onTap: () async {
+            var val = await Get.dialog<int>(
+                SingleNumberEditor(vc.humanity, "Edit Humanity"));
+            if (val != null) {
+              vc.additionalHumanity.value += val - vc.humanity;
+            }
+          },
+        ),
+        constraints: noTitleRestraint,
+      ),
+    );
 
     // Willpower
     elements.add(Text(
@@ -99,8 +110,19 @@ class SummarizedInfoWidget extends StatelessWidget {
       textAlign: TextAlign.center,
     ));
     elements.add(Container(
-      child: Obx(() =>
-          NoTitleCounterWidget(current: vc.willpower, max: maxWillpowerCount)),
+      child: InkWell(
+        child: Obx(() => NoTitleCounterWidget(
+              current: vc.willpower,
+              max: maxWillpowerCount,
+            )),
+        onTap: () async {
+          var val = await Get.dialog<int>(
+              SingleNumberEditor(vc.willpower, "Edit Willpower maximum"));
+          if (val != null) {
+            vc.additionalWillpower.value += val - vc.willpower;
+          }
+        },
+      ),
       constraints: noTitleRestraint,
     ));
     elements.add(
@@ -111,25 +133,124 @@ class SummarizedInfoWidget extends StatelessWidget {
           ),
     );
 
-    elements.add(Text(
-      "Bloodpool",
-      style: Theme.of(context).textTheme.headline6,
-      textAlign: TextAlign.center,
-    ));
+    elements.add(
+      InkWell(
+          child: Text(
+            "Bloodpool",
+            style: Theme.of(context).textTheme.headline6,
+            textAlign: TextAlign.center,
+          ),
+          onTap: () async {
+            var val = await Get.dialog<int>(SingleNumberEditor(
+                mvc.bloodMax.value, "Edit Bloodpool maximum"));
+            if (val != null) {
+              mvc.bloodMax.value = val;
+            }
+          }),
+    );
 
     elements.add(
       Obx(() => SquareButtonsRow(mvc.blood.value, mvc.bloodMax.value, 20,
-              (value) => mvc.blood.value = value,
-              highlight: highlightColor)
-          // Wrap(children: makeBloodPoolRow(mvc.blood.value, mvc.bloodMax.value))
-          ),
+          (value) => mvc.blood.value = value,
+          highlight: highlightColor)),
     );
 
-    return Column(
-      children: elements,
-      // mainAxisSize: MainAxisSize.min,
-    );
+    // return Column(
+    //   children: elements,
     // );
+
+    return ListView.builder(
+      itemBuilder: (context, i) {
+        switch (i) {
+          case 0:
+            return Text(
+              "Humanity",
+              style: Theme.of(context).textTheme.headline6,
+              textAlign: TextAlign.center,
+            );
+          case 1:
+            return Container(
+                child: InkWell(
+                    child: Obx(() => NoTitleCounterWidget(
+                          current: vc.humanity,
+                          max: 10,
+                        )),
+                    onTap: () async {
+                      var val = await Get.dialog<int>(SingleNumberEditor(
+                        vc.humanity,
+                        "Edit Humanity",
+                        max: 10,
+                      ));
+                      if (val != null) {
+                        vc.additionalHumanity.value += val - vc.humanity;
+                      }
+                    }),
+                constraints: noTitleRestraint);
+          case 2:
+            return Text(
+              "Willpower",
+              style: Theme.of(context).textTheme.headline6,
+              textAlign: TextAlign.center,
+            );
+          case 3:
+            return Container(
+              child: InkWell(
+                child: Obx(() => NoTitleCounterWidget(
+                      current: vc.willpower,
+                      max: maxWillpowerCount,
+                    )),
+                onTap: () async {
+                  var val = await Get.dialog<int>(SingleNumberEditor(
+                    vc.willpower,
+                    "Edit Willpower maximum",
+                    max: 10,
+                  ));
+                  if (val != null) {
+                    vc.additionalWillpower.value += val - vc.willpower;
+                  }
+                },
+              ),
+              constraints: noTitleRestraint,
+            );
+          case 4:
+            return Obx(() => SquareButtonsRow(mvc.will.value, vc.willpower,
+                    maxWillpowerCount, (value) => mvc.will.value = value,
+                    highlight: highlightColor)
+                // Wrap(children: makeWillPowerRow(mvc.will.value, vc.willpower))
+                );
+          case 5:
+            return InkWell(
+                child: Text(
+                  "Bloodpool",
+                  style: Theme.of(context).textTheme.headline6,
+                  textAlign: TextAlign.center,
+                ),
+                onTap: () async {
+                  var val = await Get.dialog<int>(SingleNumberEditor(
+                    mvc.bloodMax.value,
+                    "Edit Bloodpool maximum",
+                    max: 20,
+                  ));
+                  if (val != null) {
+                    mvc.bloodMax.value = val;
+                    if (mvc.blood > val) mvc.blood.value = val;
+                  }
+                });
+          case 6:
+            return Obx(() => SquareButtonsRow(
+                mvc.blood.value,
+                mvc.bloodMax.value,
+                maxBloodCount,
+                (value) => mvc.blood.value = value,
+                highlight: highlightColor));
+          default:
+            return Placeholder();
+        }
+      },
+      itemCount: 7,
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+    );
   }
 }
 
@@ -166,7 +287,7 @@ class SquareButtonsRow extends StatelessWidget {
         onPressed: () => update(i + 1),
       ));
     }
-    for (int i = localMax; i < maxWillpowerCount; i++) {
+    for (int i = localMax; i < max; i++) {
       row.add(IconButton(
         icon: Icon(Icons.disabled_by_default),
         onPressed: () => null,
@@ -174,5 +295,56 @@ class SquareButtonsRow extends StatelessWidget {
     }
 
     return Wrap(children: row);
+  }
+}
+
+class SingleNumberEditor extends StatelessWidget {
+  SingleNumberEditor(this.value, this.title, {this.min = 0, this.max = 10});
+
+  final String title;
+  final int value;
+  final int min;
+  final int max;
+
+  @override
+  Widget build(BuildContext context) {
+    var current = value.obs;
+
+    return SimpleDialog(
+      title: Text(title),
+      children: [
+        Row(
+          children: [
+            Text('Current Value: '),
+            IconButton(
+                onPressed: () => current.value > min ? current-- : null,
+                icon: Icon(
+                  Icons.remove_circle_outline,
+                  color: Colors.red,
+                )),
+            Obx(() => Text("${current.value}")),
+            IconButton(
+                onPressed: () => current.value < max ? current++ : null,
+                icon: Icon(
+                  Icons.add_circle_outline,
+                  color: Colors.green,
+                )),
+          ],
+        ),
+        Row(
+          children: [
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () => Get.back(result: null),
+            ),
+            TextButton(
+              child: Text('OK'),
+              onPressed: () => Get.back(result: current.value),
+            ),
+          ],
+          mainAxisAlignment: MainAxisAlignment.end,
+        ),
+      ],
+    );
   }
 }
