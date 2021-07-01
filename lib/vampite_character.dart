@@ -161,7 +161,6 @@ class VampireCharacter extends GetxController {
 
   /// Loads a local JSON character file
   Future<void> load() async {
-    Get.snackbar("Loading", "Loading character information");
     if (GetPlatform.isAndroid || GetPlatform.isWeb) {
       if (GetPlatform.isAndroid) {
         var direcrory = await getApplicationDocumentsDirectory();
@@ -226,7 +225,6 @@ class VampireCharacter extends GetxController {
             ritualController.load(json["rituals"], rd);
         }
         // else just use the defaults
-
       } else if (GetPlatform.isWeb) {
         // Web can't really store local files. Being in the, y'know, Web
         // But I use Chrome for debugging, so I kinda need it to not throw
