@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:get/get.dart';
 import 'abilities.dart';
 import 'common_logic.dart';
 import 'common_widget.dart';
+import 'drawer_menu.dart';
 
 class AbilitiesSectionWidget extends StatelessWidget {
   @override
@@ -38,7 +38,7 @@ class AbilitiesColumnWidget extends ComplexAbilityColumnWidget {
   final type;
 }
 
-class AddTalentButton extends SpeedDialChild {
+class AddTalentButton extends CommonSpeedDialChild {
   AddTalentButton()
       : super(
           child: Icon(Icons.person_add_alt),
@@ -55,7 +55,7 @@ class AddTalentButton extends SpeedDialChild {
         );
 }
 
-class AddSkillsButton extends SpeedDialChild {
+class AddSkillsButton extends CommonSpeedDialChild {
   AddSkillsButton()
       : super(
           child: Icon(Icons.handyman),
@@ -72,7 +72,7 @@ class AddSkillsButton extends SpeedDialChild {
         );
 }
 
-class AddKnowledgeButton extends SpeedDialChild {
+class AddKnowledgeButton extends CommonSpeedDialChild {
   AddKnowledgeButton()
       : super(
           child: Icon(Icons.menu_book),

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:get/get.dart';
 
 import 'advantages.dart';
 import 'common_widget.dart';
 import 'common_logic.dart';
+import 'drawer_menu.dart';
 import 'virtues_widget.dart';
 
 const maxBloodCount = 20;
@@ -39,7 +39,7 @@ class AdvantagesWidget extends StatelessWidget {
   }
 }
 
-class AddBackgroundButton extends SpeedDialChild {
+class AddBackgroundButton extends CommonSpeedDialChild {
   AddBackgroundButton()
       : super(
           child: Icon(Icons.groups),
