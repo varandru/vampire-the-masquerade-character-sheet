@@ -47,8 +47,9 @@ class ComplexAbilityWidget extends StatelessWidget {
 
   final ComplexAbility attribute;
   final int index;
-  final Function(ComplexAbility ability, int index) updateCallback;
-  final Function(int index) deleteCallback;
+  late final Function(ComplexAbility ability, ComplexAbility old)
+      updateCallback;
+  late final Function(ComplexAbility ability) deleteCallback;
 
   @override
   Widget build(BuildContext context) {
@@ -82,8 +83,8 @@ class ComplexAbilityColumnWidget extends StatelessWidget {
 
   late final RxString name;
   late final RxList<ComplexAbility> values;
-  late final Function(ComplexAbility ability, int index) editValue;
-  late final Function(int index) deleteValue;
+  late final Function(ComplexAbility ability, ComplexAbility old) editValue;
+  late final Function(ComplexAbility ability) deleteValue;
 
   @override
   Widget build(BuildContext context) {
@@ -123,20 +124,23 @@ class ComplexAbilityPopup extends Dialog {
 
   final ComplexAbility attribute;
   final int index;
-  final Function(ComplexAbility ability, int index) updateCallback;
-  final Function(int index) deleteCallback;
+  late final Function(ComplexAbility ability, ComplexAbility old)
+      updateCallback;
+  late final Function(ComplexAbility ability) deleteCallback;
   final TextTheme textTheme;
 
   @override
   Widget build(BuildContext context) {
     List<Widget> children = [];
-    if (attribute.specialization.isNotEmpty) {
-      children.add(Text(attribute.specialization, style: textTheme.headline5));
-    }
-    if (attribute.description.isNotEmpty) {
-      children.add(Text("Description:", style: textTheme.headline6));
-      children.add(Text(attribute.description));
-    }
+
+    children.addIf(attribute.specialization.isNotEmpty,
+        Text(attribute.specialization, style: textTheme.headline5));
+
+    children.addIf(attribute.description.isNotEmpty,
+        Text("Description:", style: textTheme.headline6));
+    children.addIf(
+        attribute.description.isNotEmpty, Text(attribute.description));
+
     if (attribute.isDeletable) {
       children.add(Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -149,7 +153,8 @@ class ComplexAbilityPopup extends Dialog {
                   ability: attribute,
                 ));
                 if (ca != null) {
-                  updateCallback(ca, index);
+                  updateCallback(ca, attribute);
+                  Get.back();
                 }
               },
               icon: Icon(Icons.edit)),
@@ -158,7 +163,7 @@ class ComplexAbilityPopup extends Dialog {
                 bool? delete =
                     await Get.dialog<bool>(DeleteDialog(name: attribute.name));
                 if (delete != null && delete == true) {
-                  deleteCallback(index);
+                  deleteCallback(attribute);
                   Get.back();
                 }
               },
@@ -176,7 +181,8 @@ class ComplexAbilityPopup extends Dialog {
                   ability: attribute,
                 ));
                 if (ca != null) {
-                  updateCallback(ca, index);
+                  updateCallback(ca, attribute);
+                  Get.back();
                 }
               },
               icon: Icon(Icons.edit)),
@@ -198,91 +204,98 @@ class ComplexAbilityDialog extends Dialog {
   ComplexAbilityDialog({
     this.ability,
     this.name = 'New Ability',
+    this.hasSpecializations = true,
   });
 
   final String name;
   final ComplexAbility? ability;
+  final bool hasSpecializations;
+  // final
 
   @override
   Widget build(BuildContext context) {
-    var ca = (ability != null) ? ability!.obs : ComplexAbility(name: name).obs;
+    var ca = (ability != null)
+        ? ability!.obs
+        : ComplexAbility(name: name, hasSpecialization: hasSpecializations).obs;
+
+    List<Widget> children = [];
+    if (ca.value.isNameEditable) {
+      children.add(TextField(
+        controller: TextEditingController()..text = ca.value.name,
+        onChanged: (value) => ca.update(
+          (val) => val?.name = value,
+        ),
+        decoration: InputDecoration(labelText: "Name"),
+      ));
+    } else {
+      children.add(Text(ca.value.name));
+    }
+
+    children.add(Row(
+      children: [
+        Text('Current Value: '),
+        IconButton(
+            onPressed: () => ca.update((val) {
+                  if (val != null) if (val.current > val.min) val.current--;
+                }),
+            icon: Icon(
+              Icons.remove_circle_outline,
+              color: Colors.red,
+            )),
+        Obx(() => Text("${ca.value.current}")),
+        IconButton(
+            onPressed: () => ca.update((val) {
+                  if (val != null) if (val.current < val.max) val.current++;
+                }),
+            icon: Icon(
+              Icons.add_circle_outline,
+              color: Colors.green,
+            )),
+      ],
+    ));
+
+    children.addIf(
+        ca.value.hasSpecialization,
+        TextField(
+          controller: TextEditingController()..text = ca.value.specialization,
+          onChanged: (value) => ca.update((val) {
+            val?.specialization = value;
+          }),
+          decoration: InputDecoration(labelText: "Specialization"),
+        ));
+
+    children.add(TextField(
+      controller: TextEditingController()..text = ca.value.description,
+      onChanged: (value) => ca.update((val) {
+        val?.description = value;
+      }),
+      keyboardType: TextInputType.multiline,
+      maxLines: null,
+      decoration: InputDecoration(labelText: "Description"),
+    ));
+
+    children.add(Row(
+      children: [
+        TextButton(
+          child: Text('Cancel'),
+          onPressed: () => Get.back(result: null),
+        ),
+        TextButton(
+          child: Text('OK'),
+          onPressed: () {
+            if (ca.value.name.isNotEmpty)
+              Get.back(result: ca.value);
+            else
+              Get.back(result: null);
+          },
+        ),
+      ],
+      mainAxisAlignment: MainAxisAlignment.end,
+    ));
 
     return SimpleDialog(
       title: Text(name),
-      children: [
-        Row(
-          children: [
-            Text('Name: '),
-            Expanded(
-              child: ca.value.isNameEditable
-                  ? TextField(
-                      controller: TextEditingController()..text = ca.value.name,
-                      onChanged: (value) => ca.update(
-                            (val) {
-                              val?.name = value;
-                            },
-                          ))
-                  : Text(ca.value.name),
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            Text('Current Value: '),
-            IconButton(
-                onPressed: () => ca.update((val) {
-                      if (val != null) if (val.current > val.min) val.current--;
-                    }),
-                icon: Icon(
-                  Icons.remove_circle_outline,
-                  color: Colors.red,
-                )),
-            Obx(() => Text("${ca.value.current}")),
-            IconButton(
-                onPressed: () => ca.update((val) {
-                      if (val != null) if (val.current < val.max) val.current++;
-                    }),
-                icon: Icon(
-                  Icons.add_circle_outline,
-                  color: Colors.green,
-                )),
-          ],
-        ),
-        Row(
-          children: [
-            Text('Description: '),
-            Expanded(
-              child: TextField(
-                controller: TextEditingController()
-                  ..text = ca.value.description,
-                onChanged: (value) => ca.update((val) {
-                  val?.description = value;
-                }),
-                keyboardType: TextInputType.multiline,
-                maxLines: null,
-              ),
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            TextButton(
-              child: Text('Cancel'),
-              onPressed: () => Get.back(result: null),
-            ),
-            TextButton(
-              child: Text('OK'),
-              onPressed: () {
-                if (ca.value.name.isNotEmpty)
-                  Get.back(result: ca.value);
-                else
-                  Get.back(result: null);
-              },
-            ),
-          ],
-          mainAxisAlignment: MainAxisAlignment.end,
-        ),
-      ],
+      children: children,
     );
   }
 }

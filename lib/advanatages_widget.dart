@@ -47,8 +47,10 @@ class AddBackgroundButton extends CommonSpeedDialChild {
           label: "Add custom background",
           // labelBackgroundColor: Theme.of(context).colorScheme.surface,
           onTap: () async {
-            final ca = await Get.dialog<ComplexAbility>(
-                ComplexAbilityDialog(name: 'New Background'));
+            final ca = await Get.dialog<ComplexAbility>(ComplexAbilityDialog(
+              name: 'New Background',
+              hasSpecializations: false,
+            ));
             if (ca != null) {
               BackgroundsController bc = Get.find();
               bc.backgrounds.value.add(ca);
