@@ -214,13 +214,15 @@ class ComplexAbilityDialog extends Dialog {
           children: [
             Text('Name: '),
             Expanded(
-              child: TextField(
-                  controller: TextEditingController()..text = ca.value.name,
-                  onChanged: (value) => ca.update(
-                        (val) {
-                          val?.name = value;
-                        },
-                      )),
+              child: ca.value.isNameEditable
+                  ? TextField(
+                      controller: TextEditingController()..text = ca.value.name,
+                      onChanged: (value) => ca.update(
+                            (val) {
+                              val?.name = value;
+                            },
+                          ))
+                  : Text(ca.value.name),
             ),
           ],
         ),

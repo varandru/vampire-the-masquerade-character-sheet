@@ -196,12 +196,18 @@ class DisciplineDialog extends Dialog {
         Row(children: [
           Text('Current Level: '),
           IconButton(
-              onPressed: () => discipline.update((val) => val?.level--),
+              onPressed: () => discipline.update((val) {
+                    if (val != null) {
+                      if (val.level > 1) val.level--;
+                    }
+                  }),
               icon: Icon(Icons.remove_circle_outline, color: Colors.red)),
           Obx(() => Text("${discipline.value.level}")),
           IconButton(
               onPressed: () => discipline.update((val) {
-                    val?.level++;
+                    if (val != null) {
+                      if (val.level < 10) val.level++;
+                    }
                   }),
               icon: Icon(
                 Icons.add_circle_outline,
@@ -432,6 +438,7 @@ class AddDisciplineButton extends SpeedDialChild {
             final ca =
                 await Get.dialog<Discipline>(DisciplineDialog(null, index: 0));
             if (ca != null) {
+              if (ca.system == null && ca.levels == null) return;
               DisciplineController bc = Get.find();
               bc.disciplines.add(ca);
             }
