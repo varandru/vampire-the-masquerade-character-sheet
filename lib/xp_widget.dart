@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:vampire_the_masquerade_character_sheet/common_widget.dart';
 import 'package:vampire_the_masquerade_character_sheet/xp.dart';
 
 import 'drawer_menu.dart';
@@ -8,6 +9,8 @@ class XpSectionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final XPController xpc = Get.find();
+
+    final deleteCallback = (int index) => xpc.log.removeAt(index);
 
     return Column(
       children: [
@@ -22,11 +25,12 @@ class XpSectionWidget extends StatelessWidget {
               itemBuilder: (context, i) {
                 var logEntry = xpc.log[i];
                 if (logEntry is XpEntryNewAbility)
-                  return XpEntryNewAbilityWidget(logEntry);
+                  return XpEntryNewAbilityWidget(logEntry, deleteCallback, i);
                 else if (logEntry is XpEntryUpgradedAbility)
-                  return XpEntryUpgradedAbilityWidget(logEntry);
+                  return XpEntryUpgradedAbilityWidget(
+                      logEntry, deleteCallback, i);
                 else if (logEntry is XpEntryGained)
-                  return XpEntryGainedWidget(logEntry);
+                  return XpEntryGainedWidget(logEntry, deleteCallback, i);
                 return Obx(() => Text("${xpc.log[i - 1].description}"));
               },
               itemCount: xpc.log.length,
@@ -40,36 +44,44 @@ class XpSectionWidget extends StatelessWidget {
 }
 
 class XpEntryNewAbilityWidget extends StatelessWidget {
-  XpEntryNewAbilityWidget(this.ability);
+  XpEntryNewAbilityWidget(this.ability, this.deleteCallback, this.index);
 
   final XpEntryNewAbility ability;
+  final Function(int) deleteCallback;
+  final int index;
 
   @override
   Widget build(BuildContext context) {
     final ability = this.ability.obs;
 
-    return ListTile(
-      leading: Icon(
-        Icons.add_circle_outline,
-        color: Colors.red,
+    return Dismissible(
+      key: ValueKey<XpEntryNewAbility>(ability.value),
+      child: ListTile(
+        leading: Icon(
+          Icons.add_circle_outline,
+          color: Colors.red,
+        ),
+        title: Obx(() => Text(ability.value.name)),
+        subtitle: Obx(() => Text(ability.value.description)),
+        trailing: Obx(() => Text(
+              ability.value.cost.toString(),
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headline6,
+            )),
+        onTap: () async {
+          var ca = await Get.dialog<XpEntryNewAbility>(XpEntryNewAbilityDialog(
+            entryNewAbility: ability.value,
+          ));
+          if (ca != null) {
+            final XPController xpc = Get.find();
+            xpc.xpSpent.value += ca.cost - ability.value.cost;
+            ability.update((val) => val?.copy(ca));
+          }
+        },
       ),
-      title: Obx(() => Text(ability.value.name)),
-      subtitle: Obx(() => Text(ability.value.description)),
-      trailing: Obx(() => Text(
-            ability.value.cost.toString(),
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.headline6,
-          )),
-      onTap: () async {
-        var ca = await Get.dialog<XpEntryNewAbility>(XpEntryNewAbilityDialog(
-          entryNewAbility: ability.value,
-        ));
-        if (ca != null) {
-          final XPController xpc = Get.find();
-          xpc.xpSpent.value += ca.cost - ability.value.cost;
-          ability.update((val) => val?.copy(ca));
-        }
-      },
+      onDismissed: (direction) => deleteCallback(index),
+      confirmDismiss: (direction) =>
+          Get.dialog<bool>(DeleteDialog(name: "log entry")),
     );
   }
 }
@@ -165,37 +177,45 @@ class XpEntryNewAbilityButton extends CommonSpeedDialChild {
 }
 
 class XpEntryUpgradedAbilityWidget extends StatelessWidget {
-  XpEntryUpgradedAbilityWidget(this.ability);
+  XpEntryUpgradedAbilityWidget(this.ability, this.deleteCallback, this.index);
 
   final XpEntryUpgradedAbility ability;
+  final Function(int) deleteCallback;
+  final int index;
 
   @override
   Widget build(BuildContext context) {
     final entry = ability.obs;
 
-    return ListTile(
-      leading: Icon(
-        Icons.arrow_circle_up,
-        color: Colors.red,
+    return Dismissible(
+      key: ValueKey<XpEntryUpgradedAbility>(entry.value),
+      child: ListTile(
+        leading: Icon(
+          Icons.arrow_circle_up,
+          color: Colors.red,
+        ),
+        title: Text(
+            "${entry.value.name}: ${entry.value.oldLevel} -> ${entry.value.newLevel}"),
+        trailing: Text(
+          entry.value.cost.toString(),
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.headline6,
+        ),
+        onTap: () async {
+          var ca = await Get.dialog<XpEntryUpgradedAbility>(
+              XpEntryUpgradedAbilityDialog(
+            entryUpgradedAbility: entry.value,
+          ));
+          if (ca != null) {
+            final XPController xpc = Get.find();
+            xpc.xpSpent.value += ca.cost - entry.value.cost;
+            entry.update((val) => val?.copy(ca));
+          }
+        },
       ),
-      title: Text(
-          "${entry.value.name}: ${entry.value.oldLevel} -> ${entry.value.newLevel}"),
-      trailing: Text(
-        entry.value.cost.toString(),
-        textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.headline6,
-      ),
-      onTap: () async {
-        var ca = await Get.dialog<XpEntryUpgradedAbility>(
-            XpEntryUpgradedAbilityDialog(
-          entryUpgradedAbility: entry.value,
-        ));
-        if (ca != null) {
-          final XPController xpc = Get.find();
-          xpc.xpSpent.value += ca.cost - entry.value.cost;
-          entry.update((val) => val?.copy(ca));
-        }
-      },
+      onDismissed: (direction) => deleteCallback(index),
+      confirmDismiss: (direction) =>
+          Get.dialog<bool>(DeleteDialog(name: "log entry")),
     );
   }
 }
@@ -335,34 +355,42 @@ class XpEntryUpgradedAbilityButton extends CommonSpeedDialChild {
 }
 
 class XpEntryGainedWidget extends StatelessWidget {
-  XpEntryGainedWidget(this.ability);
+  XpEntryGainedWidget(this.ability, this.deleteCallback, this.index);
 
   final XpEntryGained ability;
+  final Function(int) deleteCallback;
+  final int index;
 
   @override
   Widget build(BuildContext context) {
     final entry = ability.obs;
-    return ListTile(
-      leading: Icon(
-        Icons.add_circle_outline,
-        color: Colors.green,
+    return Dismissible(
+      key: ValueKey<XpEntryGained>(entry.value),
+      child: ListTile(
+        leading: Icon(
+          Icons.add_circle_outline,
+          color: Colors.green,
+        ),
+        title: Text(entry.value.description),
+        trailing: Text(
+          entry.value.gained.toString(),
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.headline6,
+        ),
+        onTap: () async {
+          var ca = await Get.dialog<XpEntryGained>(XpEntryGainedDialog(
+            entryGained: entry.value,
+          ));
+          if (ca != null) {
+            final XPController xpc = Get.find();
+            xpc.xpTotal.value += ca.gained - entry.value.gained;
+            entry.update((val) => val?.copy(ca));
+          }
+        },
       ),
-      title: Text(entry.value.description),
-      trailing: Text(
-        entry.value.gained.toString(),
-        textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.headline6,
-      ),
-      onTap: () async {
-        var ca = await Get.dialog<XpEntryGained>(XpEntryGainedDialog(
-          entryGained: entry.value,
-        ));
-        if (ca != null) {
-          final XPController xpc = Get.find();
-          xpc.xpTotal.value += ca.gained - entry.value.gained;
-          entry.update((val) => val?.copy(ca));
-        }
-      },
+      onDismissed: (direction) => deleteCallback(index),
+      confirmDismiss: (direction) =>
+          Get.dialog<bool>(DeleteDialog(name: "log entry")),
     );
   }
 }
