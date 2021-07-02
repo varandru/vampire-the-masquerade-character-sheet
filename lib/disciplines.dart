@@ -127,9 +127,9 @@ class DisciplineController extends GetxController {
 
       var entry = dictionary.entries[discipline["name"]];
 
-      if (entry == null) {
-        throw ("Discipline ${discipline["name"]} not found, add it to dictionary");
-      } else {
+      if (entry != null) {
+        // throw ("Discipline ${discipline["name"]} not found, add it to dictionary");
+        // } else {
         Discipline base = Discipline(
           name: discipline["name"],
           level: discipline["level"],
