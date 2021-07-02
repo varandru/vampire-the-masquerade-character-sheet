@@ -23,183 +23,143 @@
     "sire": ""
   },
   "attributes": {
-    "physical": [
-      {
-        "id": "strength",
+    "physical": {
+      "strength": {
         "current": 1
       },
-      {
-        "id": "dexterity",
+      "dexterity": {
         "current": 1
       },
-      {
-        "id": "stamina",
+      "stamina": {
         "current": 1
       }
-    ],
-    "mental": [
-      {
-        "id": "perception",
+    },
+    "mental": {
+      "perception": {
         "current": 1
       },
-      {
-        "id": "intelligence",
+      "intelligence": {
         "current": 1
       },
-      {
-        "id": "wits",
+      "wits": {
         "current": 1
       }
-    ],
-    "social": [
-      {
-        "id": "charisma",
+    },
+    "social": {
+      "charisma": {
         "current": 1
       },
-      {
-        "id": "manipulation",
+      "manipulation": {
         "current": 1
       },
-      {
-        "id": "appearance",
+      "appearance": {
         "current": 1
       }
-    ]
+    }
   },
   "abilities": {
-    "talents": [
-      {
-        "id": "alertness",
+    "talents": {
+      "alertness": {
         "current": 0
       },
-      {
-        "id": "athletics",
+      "athletics": {
         "current": 0
       },
-      {
-        "id": "brawl",
+      "brawl": {
         "current": 0
       },
-      {
-        "id": "dodge",
+      "dodge": {
         "current": 0
       },
-      {
-        "id": "empathy",
+      "empathy": {
         "current": 0
       },
-      {
-        "id": "expression",
+      "expression": {
         "current": 0
       },
-      {
-        "id": "intimidation",
+      "intimidation": {
         "current": 0
       },
-      {
-        "id": "leadership",
+      "leadership": {
         "current": 0
       },
-      {
-        "id": "streetwise",
+      "streetwise": {
         "current": 0
       },
-      {
-        "id": "subterfuge",
+      "subterfuge": {
         "current": 0
       }
-    ],
-    "skills": [
-      {
-        "id": "animal_ken",
+    },
+    "skills": {
+      "animal_ken": {
         "current": 0
       },
-      {
-        "id": "crafts",
+      "crafts": {
         "current": 0
       },
-      {
-        "id": "drive",
+      "drive": {
         "current": 0
       },
-      {
-        "id": "etiquette",
+      "etiquette": {
         "current": 0
       },
-      {
-        "id": "firearms",
+      "firearms": {
         "current": 0
       },
-      {
-        "id": "melee",
+      "melee": {
         "current": 0
       },
-      {
-        "id": "performance",
+      "performance": {
         "current": 0
       },
-      {
-        "id": "security",
+      "security": {
         "current": 0
       },
-      {
-        "id": "stealth",
+      "stealth": {
         "current": 0
       },
-      {
-        "id": "survival",
+      "survival": {
         "current": 0
       }
-    ],
-    "knowledges": [
-      {
-        "id": "academics",
+    },
+    "knowledges": {
+      "academics": {
         "current": 0
       },
-      {
-        "id": "computers",
+      "computers": {
         "current": 0
       },
-      {
-        "id": "finance",
+      "finance": {
         "current": 0
       },
-      {
-        "id": "investigation",
+      "investigation": {
         "current": 0
       },
-      {
-        "id": "law",
+      "law": {
         "current": 0
       },
-      {
-        "id": "linguistics",
+      "linguistics": {
         "current": 0
       },
-      {
-        "id": "medicine",
+      "medicine": {
         "current": 0
       },
-      {
-        "id": "occult",
+      "occult": {
         "current": 0
       },
-      {
-        "id": "politics",
+      "politics": {
         "current": 0
       },
-      {
-        "id": "science",
+      "science": {
         "current": 0
       }
-    ]
+    }
   },
-  "backgrounds": [
-    {
-      "id": "generation",
+  "backgrounds": {
+    "generation": {
       "current": 0
     }
-  ],
+  },
   "merits": [],
   "flaws": [],
   "disciplines": [],
