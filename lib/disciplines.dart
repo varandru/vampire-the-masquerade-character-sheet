@@ -72,7 +72,6 @@ class Discipline {
   }
 }
 
-// TODO: display the table
 class DisciplineDot {
   DisciplineDot(
       {required this.name,
