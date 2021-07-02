@@ -8,7 +8,7 @@ class Ritual {
   Ritual({
     required this.id,
     this.name = "",
-    this.schoolId = "",
+    this.schoolId = "undefined",
     this.school = "",
     this.level = 1,
     this.description = "",
@@ -49,9 +49,9 @@ class Ritual {
   void fromJson(Map<String, dynamic> json) {
     level = json["level"];
     name = json["name"];
-    schoolId = json["school_id"];
+    schoolId = json["school_id"] ?? "undefined";
     description = json["description"];
-    system = json["system"];
+    system = json["system"] ?? "";
   }
 
   @override
@@ -69,8 +69,7 @@ class RitualController extends GetxController {
   RxList<Ritual> rituals = RxList();
 
   List<dynamic> save() {
-    return List<String>.generate(
-        rituals.length, (index) => rituals[index].name);
+    return List<String>.generate(rituals.length, (index) => rituals[index].id);
   }
 
   void load(List<dynamic> ids, Map<String, dynamic> dictionary) {
@@ -78,7 +77,6 @@ class RitualController extends GetxController {
       var ritual = Ritual(id: id);
       if (dictionary[ritual.id] != null) {
         ritual.fromJson(dictionary[ritual.id]);
-        // TODO: fill school by id
         if (!rituals.contains(ritual)) rituals.add(ritual);
       }
     }
