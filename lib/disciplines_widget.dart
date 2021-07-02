@@ -197,6 +197,7 @@ class DisciplineDialog extends Dialog {
               onPressed: () => discipline.update((val) {
                     if (val != null) {
                       if (val.level > 1) val.level--;
+                      val.level > 5 ? val.max = val.level : val.max = 5;
                     }
                   }),
               icon: Icon(Icons.remove_circle_outline, color: Colors.red)),
@@ -205,6 +206,7 @@ class DisciplineDialog extends Dialog {
               onPressed: () => discipline.update((val) {
                     if (val != null) {
                       if (val.level < 10) val.level++;
+                      val.level > 5 ? val.max = val.level : val.max = 5;
                     }
                   }),
               icon: Icon(
@@ -318,11 +320,11 @@ class DisciplineDotPopup extends Dialog {
           mainAxisAlignment: MainAxisAlignment.center,
         )));
 
-    if (dot.value.description != null) {
-      children.add(ExpansionTile(
-          title: Text("Description"),
-          children: [Obx(() => Text(dot.value.description!))]));
-    }
+    children.addIf(
+        dot.value.description != null,
+        ExpansionTile(
+            title: Text("Description"),
+            children: [Obx(() => Text(dot.value.description!))]));
 
     children.add(ExpansionTile(
         title: Text("System"), children: [Obx(() => Text(dot.value.system))]));
@@ -335,10 +337,7 @@ class DisciplineDotPopup extends Dialog {
               final ca = await Get.dialog<DisciplineDot>(
                   DisciplineDotDialog(dot.value));
               if (ca != null) {
-                print(
-                    "Should update, new name ${ca.name}, new level: ${ca.level}");
                 dot.update((val) => val?.copy(ca));
-                print("${dot.value.name}, ${dot.value.level}");
               }
             },
             icon: Icon(Icons.edit)),
@@ -382,12 +381,24 @@ class DisciplineDotDialog extends Dialog {
       Row(children: [
         Text('Level: '),
         IconButton(
-            onPressed: () => dot.update((val) => val?.level--),
+            onPressed: () => dot.update((val) {
+                  if (val != null) {
+                    if (val.level > 1) {
+                      val.level--;
+                      val.level > 5 ? val.max = val.level : val.max = 5;
+                    }
+                  }
+                }),
             icon: Icon(Icons.remove_circle_outline, color: Colors.red)),
         Obx(() => Text("${dot.value.level}")),
         IconButton(
             onPressed: () => dot.update((val) {
-                  val?.level++;
+                  if (val != null) {
+                    if (val.level < 10) {
+                      val.level++;
+                      val.level > 5 ? val.max = val.level : val.max = 5;
+                    }
+                  }
                 }),
             icon: Icon(
               Icons.add_circle_outline,
