@@ -5,6 +5,7 @@ String identify(String name) =>
 
 class ComplexAbility {
   ComplexAbility({
+    required this.id,
     required this.name,
     this.current = 1,
     this.min = 0,
@@ -16,6 +17,8 @@ class ComplexAbility {
     this.isDeletable = true,
     this.isNameEditable = true,
   });
+
+  final String id;
   String name;
   int current;
   int min;
@@ -51,7 +54,8 @@ class ComplexAbility {
     Map<String, dynamic> json, {
     this.hasSpecialization = true,
     this.isDeletable = true,
-  })  : name = json['name'],
+  })  : id = json["id"],
+        name = "",
         current = json['current'],
         specialization = json['specialization'] ?? "",
         description = "",
@@ -74,9 +78,9 @@ class ComplexAbility {
   }
 }
 
-// String name is not in the entry, it's a map key
+// String id is not in the entry, it's a map key
 class ComplexAbilityEntry {
-  // String name = "";
+  String name = "";
   List<String> specializations = [];
   List<String> levels = [];
   String? description;

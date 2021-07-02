@@ -27,9 +27,8 @@
       "prefix": "Outstanding"
     }
   ],
-  "physical": [
-    {
-      "id": "1_strength",
+  "physical": {
+    "1_strength": {
       "name": "Strength",
       "specialization": [
         "Never Lets Go",
@@ -46,8 +45,7 @@
       ],
       "description": "Strength is the raw, brute power of a character. It governs how much weight a character can lift, how much he can physically push, and how hard he can hit another character or object. The Strength Trait is added to a character’s damage dice pool when he hits his opponent in hand-to-hand combat. It is also used when a character wishes to break, lift, or carry something, as well as when a character tries to jump a distance."
     },
-    {
-      "id": "2_dexterity",
+    "2_dexterity": {
       "name": "Dexterity",
       "specialization": [
         "Precise",
@@ -64,8 +62,7 @@
       ],
       "description": "The Dexterity Attribute measures a character’s general physical prowess. It encompasses the character’s speed, agility, and overall quickness, as well as indicating the character’s ability to manipulate objects with control and precision. Also included under Dexterity’s heading are hand-eye coordination, reflexes, and bodily grace."
     },
-    {
-      "id": "3_stamina",
+    "3_stamina": {
       "name": "Stamina",
       "specialization": [
         "Tireless",
@@ -82,10 +79,9 @@
       ],
       "description": "The Stamina Trait reflects a character’s health, toughness, and resilience. It indicates how long a character can exert herself and how much punishment she can withstand before suffering physical trauma. Stamina also includes a bit of psychic fortitude, indicating a character’s grit and tenacity."
     }
-  ],
-  "social": [
-    {
-      "id": "1_charisma",
+  },
+  "social": {
+    "1_charisma": {
       "name": "Charisma",
       "specialization": [
         "Graceful",
@@ -98,8 +94,7 @@
       ],
       "description": ""
     },
-    {
-      "id": "2_manipulation",
+    "2_manipulation": {
       "name": "Manipulation",
       "specialization": [
         "Persuasive",
@@ -110,8 +105,7 @@
       ],
       "description": ""
     },
-    {
-      "id": "3_appearance",
+    "3_appearance": {
       "name": "Appearance",
       "specialization": [
         "Unconventional Looks",
@@ -122,10 +116,9 @@
       ],
       "description": ""
     }
-  ],
-  "mental": [
-    {
-      "id": "1_perception",
+  },
+  "mental": {
+    "1_perception": {
       "name": "Perception",
       "specialization": [
         "Attentive",
@@ -136,8 +129,7 @@
       ],
       "description": ""
     },
-    {
-      "id": "2_intelligence",
+    "2_intelligence": {
       "name": "Intelligence",
       "specialization": [
         "Book Knowledge",
@@ -148,8 +140,7 @@
       ],
       "description": ""
     },
-    {
-      "id": "3_wits",
+    "3_wits": {
       "name": "Wits",
       "specialization": [
         "Getting the Jump on Others",
@@ -159,5 +150,5 @@
       ],
       "description": ""
     }
-  ]
+  }
 }

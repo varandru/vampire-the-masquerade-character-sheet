@@ -27,126 +27,97 @@
       "prefix": "Outstanding"
     }
   ],
-  "talents": [
-    {
-      "id": "alertness",
+  "talents": {
+    "alertness": {
       "name": "Alertness"
     },
-    {
-      "id": "athletics",
+    "athletics": {
       "name": "Athletics"
     },
-    {
-      "id": "brawl",
+    "brawl": {
       "name": "Brawl"
     },
-    {
-      "id": "dodge",
+    "dodge": {
       "name": "Dodge"
     },
-    {
-      "id": "empathy",
+    "empathy": {
       "name": "Empathy"
     },
-    {
-      "id": "expression",
+    "expression": {
       "name": "Expression"
     },
-    {
-      "id": "intimidation",
+    "intimidation": {
       "name": "Intimidation"
     },
-    {
-      "id": "leadership",
+    "leadership": {
       "name": "Leadership"
     },
-    {
-      "id": "streetwise",
+    "streetwise": {
       "name": "Streetwise"
     },
-    {
-      "id": "subterfuge",
+    "subterfuge": {
       "name": "Subterfuge"
     }
-  ],
-  "skills": [
-    {
-      "id": "animal_ken",
+  },
+  "skills": {
+    "animal_ken": {
       "name": "Animal Ken"
     },
-    {
-      "id": "crafts",
+    "crafts": {
       "name": "Crafts"
     },
-    {
-      "id": "drive",
+    "drive": {
       "name": "Drive"
     },
-    {
-      "id": "etiquette",
+    "etiquette": {
       "name": "Etiquette"
     },
-    {
-      "id": "firearms",
+    "firearms": {
       "name": "Firearms"
     },
-    {
-      "id": "melee",
+    "melee": {
       "name": "Melee"
     },
-    {
-      "id": "performance",
+    "performance": {
       "name": "Performance"
     },
-    {
-      "id": "stealth",
+    "stealth": {
       "name": "Stealth"
     },
-    {
-      "id": "survival",
+    "survival": {
       "name": "Survival"
     }
-  ],
-  "knowledges": [
-    {
-      "id": "academics",
+  },
+  "knowledges": {
+    "academics": {
       "name": "Academics"
     },
-    {
-      "id": "computers",
+    "computers": {
       "name": "Computers"
     },
-    {
-      "id": "finance",
+    "finance": {
       "name": "Finance"
     },
-    {
-      "id": "investigation",
+    "investigation": {
       "name": "Investigation"
     },
-    {
-      "id": "law",
+    "law": {
       "name": "Law"
     },
-    {
-      "id": "linguistics",
+    "linguistics": {
       "name": "Linguistics"
     },
-    {
-      "id": "medicine",
+    "medicine": {
       "name": "Medicine"
     },
-    {
-      "id": "occult",
+    "occult": {
       "name": "Occult"
     },
-    {
-      "id": "politics",
+    "politics": {
       "name": "Politics"
     },
-    {
-      "id": "science",
+    "science": {
       "name": "Science"
     }
-  ]
+  }
 }
