@@ -131,49 +131,6 @@ class AttributesController extends GetxController {
   }
 }
 
-//CRUTCH: constants for debugging and web
-class PhysicalAttributesColumn {
-  final header = "Physical";
-
-  final List<ComplexAbility> attributes = [
-    ComplexAbility(name: "Strength", current: 1, isDeletable: false),
-    ComplexAbility(
-        name: "Dexterity",
-        current: 5,
-        specialization: "Lightning Reflexes",
-        isDeletable: false),
-    ComplexAbility(name: "Stamina", current: 2, isDeletable: false),
-  ];
-}
-
-class SocialAttributesColumn {
-  final header = "Social";
-
-  var attributes = [
-    ComplexAbility(name: "Charisma", current: 1, isDeletable: false),
-    ComplexAbility(name: "Manipulation", current: 1, isDeletable: false),
-    ComplexAbility(name: "Appearance", current: 4, isDeletable: false),
-  ];
-}
-
-class MentalAttributesColumn {
-  final header = "Mental";
-
-  var attributes = [
-    ComplexAbility(name: "Perception", current: 1, isDeletable: false),
-    ComplexAbility(
-        name: "Intelligence",
-        current: 5,
-        specialization: "Analytical Thinking",
-        isDeletable: false),
-    ComplexAbility(
-        name: "Wits",
-        current: 4,
-        specialization: "Adapt to others",
-        isDeletable: false)
-  ];
-}
-
 class AttributeDictionary {
   Map<String, ComplexAbilityEntry> physical = Map();
   Map<String, ComplexAbilityEntry> social = Map();

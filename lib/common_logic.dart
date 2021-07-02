@@ -149,7 +149,11 @@ class ComplexAbilityColumn {
     if (ca.isDeletable) sortByName();
   }
 
-  List<dynamic> toJson() {
-    return values;
+  Map<String, dynamic> toJson() {
+    return Map.fromIterable(
+      values,
+      key: (value) => value.id,
+      value: (value) => value.toJson(),
+    );
   }
 }
