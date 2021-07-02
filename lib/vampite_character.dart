@@ -272,7 +272,7 @@ class VampireCharacter extends GetxController {
         (preferences.getString('attribute_dictionary') ??
             'default_attributes_en_US.json'));
 
-    attributeFile.writeAsStringSync(attributeString);
+    attributeFile.writeAsStringSync(attributeString, mode: FileMode.writeOnly);
 
     attributeString =
         await rootBundle.loadString('assets/default_abilities_en_US.json');
@@ -281,7 +281,7 @@ class VampireCharacter extends GetxController {
         (preferences.getString('default_abilities') ??
             'default_abilities_en_US.json'));
 
-    attributeFile.writeAsStringSync(attributeString);
+    attributeFile.writeAsStringSync(attributeString, mode: FileMode.writeOnly);
 
     attributeString =
         await rootBundle.loadString('assets/default_backgrounds_en_US.json');
@@ -290,7 +290,7 @@ class VampireCharacter extends GetxController {
         (preferences.getString('default_backgrounds') ??
             'default_backgrounds_en_US.json'));
 
-    attributeFile.writeAsStringSync(attributeString);
+    attributeFile.writeAsStringSync(attributeString, mode: FileMode.writeOnly);
 
     attributeString = await rootBundle
         .loadString('assets/default_merits_and_flaws_en_US.json');
@@ -299,7 +299,7 @@ class VampireCharacter extends GetxController {
         (preferences.getString('default_merits_and_flaws') ??
             'default_merits_and_flaws_en_US.json'));
 
-    attributeFile.writeAsStringSync(attributeString);
+    attributeFile.writeAsStringSync(attributeString, mode: FileMode.writeOnly);
 
     attributeString =
         await rootBundle.loadString('assets/default_disciplines_en_US.json');
@@ -308,7 +308,7 @@ class VampireCharacter extends GetxController {
         (preferences.getString('default_disciplines') ??
             'default_disciplines_en_US.json'));
 
-    attributeFile.writeAsStringSync(attributeString);
+    attributeFile.writeAsStringSync(attributeString, mode: FileMode.writeOnly);
 
     attributeString =
         await rootBundle.loadString('assets/default_rituals_en_US.json');
@@ -317,7 +317,7 @@ class VampireCharacter extends GetxController {
         (preferences.getString('default_disciplines') ??
             'default_rituals_en_US.json'));
 
-    attributeFile.writeAsStringSync(attributeString);
+    attributeFile.writeAsStringSync(attributeString, mode: FileMode.writeOnly);
 
     attributeString =
         await rootBundle.loadString('assets/default_character_en_US.json');
@@ -325,7 +325,7 @@ class VampireCharacter extends GetxController {
         '/' +
         (preferences.getString('default_character') ?? 'character.json'));
 
-    attributeFile.writeAsStringSync(attributeString);
+    attributeFile.writeAsStringSync(attributeString, mode: FileMode.writeOnly);
 
     await preferences.setBool('installed', true);
     print("Installation Done!");
@@ -333,8 +333,7 @@ class VampireCharacter extends GetxController {
 
   Future<void> init() async {
     await loadSharedPreferences();
-    // TEMP
-    // installed = false;
+
     if (!installed) {
       await install();
     }

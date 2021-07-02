@@ -139,8 +139,10 @@ class ComplexAbilityColumn {
   void add(ComplexAbility ca) {
     if (!values.contains(ca)) {
       values.add(ca);
-      if (ca.isDeletable) sortByName();
+    } else {
+      values[values.indexOf(ca)] = ca;
     }
+    if (ca.isDeletable) sortByName();
   }
 
   List<dynamic> toJson() {

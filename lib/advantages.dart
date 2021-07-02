@@ -36,10 +36,9 @@ class BackgroundsController extends GetxController {
           specialization: "",
           description: entry.description ?? "",
           isIncremental: true, // Backgrounds are incremental
+          hasSpecialization: false,
         );
 
-        print(
-            "Adding backgrounds: '${ca.name}', ${ca.current}, '${ca.description}'");
         backgrounds.value.add(ca);
       }
     }
