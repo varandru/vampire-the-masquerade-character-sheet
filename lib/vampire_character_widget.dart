@@ -23,8 +23,15 @@ class VampireWidget extends StatelessWidget {
             print("Done");
             return GetMaterialApp(
               home: PrimaryInfoScaffold(),
-              theme: ThemeData.light().copyWith(primaryColor: Colors.red),
-              darkTheme: ThemeData.dark().copyWith(primaryColor: Colors.red),
+              theme: ThemeData.light().copyWith(
+                primaryColor: Colors.red,
+                accentColor: Colors.redAccent,
+                toggleableActiveColor: Colors.redAccent,
+              ),
+              darkTheme: ThemeData.dark().copyWith(
+                  primaryColor: Colors.red,
+                  accentColor: Colors.redAccent,
+                  toggleableActiveColor: Colors.redAccent),
             );
         }
       },
@@ -62,7 +69,10 @@ class MenuScaffold extends Scaffold {
           ),
           body: body,
           drawer: Drawer(
-            child: DrawerMenu(selectedItem),
+            child: ListTileTheme(
+              child: DrawerMenu(selectedItem),
+              selectedColor: Colors.redAccent,
+            ),
           ),
           floatingActionButton: floatingActionButton,
         );

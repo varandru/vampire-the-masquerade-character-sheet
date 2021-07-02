@@ -34,22 +34,12 @@ class MeritsAndFlawsSectionWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final MeritsAndFlawsController mafc = Get.find();
 
-    int meritSum = 0;
-    for (var merit in mafc.merits) {
-      meritSum += merit.cost;
-    }
-
-    int flawSum = 0;
-    for (var flaw in mafc.flaws) {
-      flawSum += flaw.cost;
-    }
-
     return Column(
       children: [
-        Text(
-          "Merits ($meritSum)",
-          style: Theme.of(context).textTheme.headline4,
-        ),
+        Obx(() => Text(
+              "Merits (${mafc.meritSum})",
+              style: Theme.of(context).textTheme.headline4,
+            )),
         Flexible(
           child: Obx(() => ListView.builder(
                 itemBuilder: (context, i) => Obx(() => MeritWidget(
@@ -62,10 +52,10 @@ class MeritsAndFlawsSectionWidget extends StatelessWidget {
                 physics: NeverScrollableScrollPhysics(),
               )),
         ),
-        Text(
-          "Flaws ($flawSum)",
-          style: Theme.of(context).textTheme.headline4,
-        ),
+        Obx(() => Text(
+              "Flaws (${mafc.flawsSum})",
+              style: Theme.of(context).textTheme.headline4,
+            )),
         Flexible(
           child: Obx(() => ListView.builder(
                 itemBuilder: (context, i) => Obx(() => MeritWidget(
@@ -120,10 +110,13 @@ class MeritPopUp extends Dialog {
                   ));
                   if (ca != null) {
                     final MeritsAndFlawsController cmaf = Get.find();
-                    if (isMerit)
+                    if (isMerit) {
+                      cmaf.meritSum.value += merit.cost - ca.cost;
                       cmaf.merits[index] = ca;
-                    else
+                    } else {
+                      cmaf.flawsSum.value += merit.cost - ca.cost;
                       cmaf.flaws[index] = ca;
+                    }
                   }
                 },
                 icon: Icon(Icons.edit)),
@@ -133,10 +126,13 @@ class MeritPopUp extends Dialog {
                       await Get.dialog<bool>(DeleteDialog(name: merit.name));
                   if (delete != null && delete == true) {
                     final MeritsAndFlawsController cmaf = Get.find();
-                    if (isMerit)
+                    if (isMerit) {
+                      cmaf.meritSum -= cmaf.merits[index].cost;
                       cmaf.merits.removeAt(index);
-                    else
+                    } else {
+                      cmaf.flawsSum -= cmaf.flaws[index].cost;
                       cmaf.flaws.removeAt(index);
+                    }
                     Get.back();
                   }
                 },
@@ -200,6 +196,7 @@ class MeritDialog extends Dialog {
                     max: 7.0,
                     divisions: 7,
                     label: m.value.cost.toString(),
+                    activeColor: Colors.redAccent,
                     onChanged: (double value) =>
                         m.update((val) => val?.cost = value.round()),
                   ))),
@@ -249,8 +246,9 @@ class AddMeritButton extends CommonSpeedDialChild {
           onTap: () async {
             final ca = await Get.dialog<Merit>(MeritDialog(name: 'New Merit'));
             if (ca != null) {
-              MeritsAndFlawsController ac = Get.find();
-              ac.merits.add(ca);
+              MeritsAndFlawsController mfac = Get.find();
+              mfac.meritSum += ca.cost;
+              mfac.merits.add(ca);
             }
           },
         );
@@ -265,8 +263,9 @@ class AddFlawButton extends CommonSpeedDialChild {
           onTap: () async {
             final ca = await Get.dialog<Merit>(MeritDialog(name: 'New Flaw'));
             if (ca != null) {
-              MeritsAndFlawsController ac = Get.find();
-              ac.flaws.add(ca);
+              MeritsAndFlawsController mfac = Get.find();
+              mfac.flawsSum += ca.cost;
+              mfac.flaws.add(ca);
             }
           },
         );
