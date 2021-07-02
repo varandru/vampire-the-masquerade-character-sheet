@@ -25,43 +25,43 @@
   "attributes": {
     "physical": [
       {
-        "name": "Strength",
+        "id": "strength",
         "current": 1
       },
       {
-        "name": "Dexterity",
+        "id": "dexterity",
         "current": 1
       },
       {
-        "name": "Stamina",
+        "id": "stamina",
         "current": 1
       }
     ],
     "mental": [
       {
-        "name": "Perception",
+        "id": "perception",
         "current": 1
       },
       {
-        "name": "Intelligence",
+        "id": "intelligence",
         "current": 1
       },
       {
-        "name": "Wits",
+        "id": "wits",
         "current": 1
       }
     ],
     "social": [
       {
-        "name": "Charisma",
+        "id": "charisma",
         "current": 1
       },
       {
-        "name": "Manipulation",
+        "id": "manipulation",
         "current": 1
       },
       {
-        "name": "Appearance",
+        "id": "appearance",
         "current": 1
       }
     ]
@@ -69,134 +69,134 @@
   "abilities": {
     "talents": [
       {
-        "name": "Alertness",
+        "id": "alertness",
         "current": 0
       },
       {
-        "name": "Athletics",
+        "id": "athletics",
         "current": 0
       },
       {
-        "name": "Brawl",
+        "id": "brawl",
         "current": 0
       },
       {
-        "name": "Dodge",
+        "id": "dodge",
         "current": 0
       },
       {
-        "name": "Empathy",
+        "id": "empathy",
         "current": 0
       },
       {
-        "name": "Expression",
+        "id": "expression",
         "current": 0
       },
       {
-        "name": "Intimidation",
+        "id": "intimidation",
         "current": 0
       },
       {
-        "name": "Leadership",
+        "id": "leadership",
         "current": 0
       },
       {
-        "name": "Streetwise",
+        "id": "streetwise",
         "current": 0
       },
       {
-        "name": "Subterfuge",
+        "id": "subterfuge",
         "current": 0
       }
     ],
     "skills": [
       {
-        "name": "Animal Ken",
+        "id": "animal_ken",
         "current": 0
       },
       {
-        "name": "Crafts",
+        "id": "crafts",
         "current": 0
       },
       {
-        "name": "Drive",
+        "id": "drive",
         "current": 0
       },
       {
-        "name": "Etiquette",
+        "id": "etiquette",
         "current": 0
       },
       {
-        "name": "Firearms",
+        "id": "firearms",
         "current": 0
       },
       {
-        "name": "Melee",
+        "id": "melee",
         "current": 0
       },
       {
-        "name": "Performance",
+        "id": "performance",
         "current": 0
       },
       {
-        "name": "Security",
+        "id": "security",
         "current": 0
       },
       {
-        "name": "Stealth",
+        "id": "stealth",
         "current": 0
       },
       {
-        "name": "Survival",
+        "id": "survival",
         "current": 0
       }
     ],
     "knowledges": [
       {
-        "name": "Academics",
+        "id": "academics",
         "current": 0
       },
       {
-        "name": "Computers",
+        "id": "computers",
         "current": 0
       },
       {
-        "name": "Finance",
+        "id": "finance",
         "current": 0
       },
       {
-        "name": "Investigation",
+        "id": "investigation",
         "current": 0
       },
       {
-        "name": "Law",
+        "id": "law",
         "current": 0
       },
       {
-        "name": "Linguistics",
+        "id": "linguistics",
         "current": 0
       },
       {
-        "name": "Medicine",
+        "id": "medicine",
         "current": 0
       },
       {
-        "name": "Occult",
+        "id": "occult",
         "current": 0
       },
       {
-        "name": "Politics",
+        "id": "politics",
         "current": 0
       },
       {
-        "name": "Science",
+        "id": "science",
         "current": 0
       }
     ]
   },
   "backgrounds": [
     {
-      "name": "Generation",
+      "id": "generation",
       "current": 0
     }
   ],

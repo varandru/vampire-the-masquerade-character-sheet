@@ -29,94 +29,123 @@
   ],
   "talents": [
     {
+      "id": "alertness",
       "name": "Alertness"
     },
     {
+      "id": "athletics",
       "name": "Athletics"
     },
     {
+      "id": "brawl",
       "name": "Brawl"
     },
     {
+      "id": "dodge",
       "name": "Dodge"
     },
     {
+      "id": "empathy",
       "name": "Empathy"
     },
     {
+      "id": "expression",
       "name": "Expression"
     },
     {
+      "id": "intimidation",
       "name": "Intimidation"
     },
     {
+      "id": "leadership",
       "name": "Leadership"
     },
     {
+      "id": "streetwise",
       "name": "Streetwise"
     },
     {
+      "id": "subterfuge",
       "name": "Subterfuge"
     }
   ],
   "skills": [
     {
+      "id": "animal_ken",
       "name": "Animal Ken"
     },
     {
+      "id": "crafts",
       "name": "Crafts"
     },
     {
+      "id": "drive",
       "name": "Drive"
     },
     {
+      "id": "etiquette",
       "name": "Etiquette"
     },
     {
+      "id": "firearms",
       "name": "Firearms"
     },
     {
+      "id": "melee",
       "name": "Melee"
     },
     {
+      "id": "performance",
       "name": "Performance"
     },
     {
+      "id": "stealth",
       "name": "Stealth"
     },
     {
+      "id": "survival",
       "name": "Survival"
     }
   ],
   "knowledges": [
     {
+      "id": "academics",
       "name": "Academics"
     },
     {
+      "id": "computers",
       "name": "Computers"
     },
     {
+      "id": "finance",
       "name": "Finance"
     },
     {
+      "id": "investigation",
       "name": "Investigation"
     },
     {
+      "id": "law",
       "name": "Law"
     },
     {
+      "id": "linguistics",
       "name": "Linguistics"
     },
     {
+      "id": "medicine",
       "name": "Medicine"
     },
     {
+      "id": "occult",
       "name": "Occult"
     },
     {
+      "id": "politics",
       "name": "Politics"
     },
     {
+      "id": "science",
       "name": "Science"
     }
   ]

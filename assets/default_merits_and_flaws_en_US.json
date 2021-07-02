@@ -2,6 +2,7 @@
   "locale": "en-US",
   "merits": [
     {
+      "id": "computer_aptitude",
       "name": "Computer Aptitude",
       "type": "mental",
       "cost": [
@@ -12,6 +13,7 @@
   ],
   "flaws": [
     {
+      "id": "bad_sight",
       "name": "Bad Sight",
       "type": "physical",
       "cost": [
