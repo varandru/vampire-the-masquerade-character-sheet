@@ -57,6 +57,9 @@ class MeritsAndFlawsController extends GetxController {
   RxList<Merit> merits = RxList();
   RxList<Merit> flaws = RxList();
 
+  var meritSum = 0.obs;
+  var flawsSum = 0.obs;
+
   void loadMerits(List<dynamic> json, MeritsAndFlawsDictionary dictionary) {
     print("Loading merits");
     for (var merit in json) {
@@ -77,11 +80,9 @@ class MeritsAndFlawsController extends GetxController {
         description: dictionary.merits[name]?.description ?? "",
       );
 
-      print("'${m.name}', '${m.cost}', ${m.type}, '${m.description}'");
-      print("${merits.contains(m)}, ${merits.length}");
-
       if (!merits.contains(m)) {
         merits.add(m);
+        meritSum.value += m.cost;
       }
     }
   }
@@ -106,11 +107,9 @@ class MeritsAndFlawsController extends GetxController {
         description: dictionary.flaws[name]?.description ?? "",
       );
 
-      print("'${m.name}', '${m.cost}', ${m.type}, '${m.description}'");
-      print("${flaws.contains(m)}, ${flaws.length}");
-
       if (!flaws.contains(m)) {
         flaws.add(m);
+        flawsSum.value += m.cost;
       }
     }
   }

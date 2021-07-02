@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -76,9 +78,12 @@ class DrawerMenu extends Drawer {
                       isDark
                           ? ThemeData.dark().copyWith(
                               primaryColor: Colors.red,
-                              accentColor: Colors.redAccent)
-                          : ThemeData.light()
-                              .copyWith(primaryColor: Colors.red),
+                              accentColor: Colors.redAccent,
+                              toggleableActiveColor: Colors.redAccent)
+                          : ThemeData.light().copyWith(
+                              primaryColor: Colors.red,
+                              accentColor: Colors.redAccent,
+                              toggleableActiveColor: Colors.redAccent),
                     );
                   },
                   title: Text("Dark theme"),
@@ -183,7 +188,8 @@ class CommonFloatingButton extends SpeedDial {
             icon: Icons.add,
             activeIcon: Icons.close,
             closeManually: true,
-            children: children);
+            children: children,
+            backgroundColor: Colors.redAccent);
 }
 
 class CommonSpeedDialChild extends SpeedDialChild {
