@@ -61,9 +61,7 @@ class MeritsAndFlawsController extends GetxController {
   var flawsSum = 0.obs;
 
   void loadMerits(List<dynamic> json, MeritsAndFlawsDictionary dictionary) {
-    print("Loading merits");
     for (var merit in json) {
-      print(merit);
       if (merit["name"] == null) continue;
       if (!(merit["name"] is String)) continue;
       String name = merit["name"];
@@ -88,9 +86,7 @@ class MeritsAndFlawsController extends GetxController {
   }
 
   void loadFlaws(List<dynamic> json, MeritsAndFlawsDictionary dictionary) {
-    print("Loading flaws");
     for (var flaw in json) {
-      print(flaw);
       if (flaw["name"] == null) continue;
       if (!(flaw["name"] is String)) continue;
       String name = flaw["name"];
@@ -147,7 +143,6 @@ class MeritEntry {
   MeritEntry.fromJson(Map<String, dynamic> json)
       : type = typeFromString(json["type"]!),
         description = json["description"] {
-    print(json);
     if (json["cost"] != null) {
       List<int> c = [];
       for (var cost in json["cost"]) {
@@ -166,28 +161,21 @@ class MeritsAndFlawsDictionary {
 
   MeritsAndFlawsDictionary.fromJson(Map<String, dynamic> json) {
     // 1. Get locale, not done at all
-    print("Adding merits");
     // 2. Get merits
     if (json["merits"] != null && json["merits"] is List) {
       for (var m in json["merits"]) {
         if (m["name"] != null) {
           var merit = MeritEntry.fromJson(m);
           merits[m["name"]] = merit;
-
-          print("Adding merit: '${m["name"]}', ${merit.costs}, ${merit.type}");
         }
       }
     }
-
-    print("Adding flaws");
     // 3. Get flaws
     if (json["flaws"] != null && json["flaws"] is List) {
       for (var f in json["flaws"]) {
         if (f["name"] != null) {
           var flaw = MeritEntry.fromJson(f);
           flaws[f["name"]] = flaw;
-
-          print("Adding merit: '${f["name"]}', ${flaw.costs}, ${flaw.type}");
         }
       }
     }
