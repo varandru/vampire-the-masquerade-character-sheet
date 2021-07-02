@@ -127,19 +127,19 @@ class ComplexAbilityColumn {
 
   void editValue(ComplexAbility value, ComplexAbility old) {
     values[values.indexOf(old)] = value;
-    sortByName();
+    if (value.isDeletable) sortByName();
   }
 
   void deleteValue(ComplexAbility value) {
     print("Tried to delete ${value.name}");
     values.remove(value);
-    sortByName();
+    if (value.isDeletable) sortByName();
   }
 
   void add(ComplexAbility ca) {
     if (!values.contains(ca)) {
       values.add(ca);
-      sortByName();
+      if (ca.isDeletable) sortByName();
     }
   }
 
