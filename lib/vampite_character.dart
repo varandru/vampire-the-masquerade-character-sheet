@@ -20,6 +20,7 @@ import 'virtues.dart';
 
 /// Controller for the whole character. Handles saving and loading data from files, and, possibly, any other character-wide operations
 class VampireCharacter extends GetxController {
+  // TODO these should be removed, make an issue for it
   late MostVariedController mostVariedController;
   late VirtuesController virtuesController;
   late MainInfo mainInfo;
@@ -169,23 +170,12 @@ class VampireCharacter extends GetxController {
         var direcrory = await getApplicationDocumentsDirectory();
         SharedPreferences preferences = await SharedPreferences.getInstance();
 
-        // Open the database and store the reference.
-        // final database = openDatabase(
-        //     join(
-        //       await getDatabasesPath(),
-        //       'kindred_database.db',
-        //     ), onCreate: (database, index) {
-        //   // 1. Get assets/json/sql/tables.sql. It creates the tables
-        //   // 2. Load default_*.json into the tables
-        //   // Welp, that's initialization
-        //   database.execute("create table attributes(");
-        // });
-
         _characterFileName =
             preferences.getString('character_file') ?? "character.json";
         File characterFile = File(direcrory.path + '/' + _characterFileName);
 
         if (characterFile.existsSync()) {
+          // TODO like all of this is creation
           // Attribute dictionary
           AttributeDictionary atrd =
               AttributeDictionary(await _loadAttributeList());
@@ -232,6 +222,27 @@ class VampireCharacter extends GetxController {
 
           if (json["rituals"] != null)
             ritualController.load(json["rituals"], rd, dd);
+
+          // Open the database and store the reference.
+          final database = openDatabase(
+            join(
+              await getDatabasesPath(),
+              'kindred_database.db',
+            ),
+            onCreate: (database, version) async {
+              // TODO: DB initialization is here
+              version = 1;
+              // 1. Get assets/json/sql/tables.sql. It creates the tables
+              String tableScript =
+                  await rootBundle.loadString('assets/sql/tables.sql');
+
+              print("Creating tables...");
+              await database.execute(tableScript);
+              print("Done!");
+              // 2. Load default_*.json into the tables
+              // Welp, that's initialization
+            },
+          );
         }
         // else just use the defaults
       }
