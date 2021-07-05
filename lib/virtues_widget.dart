@@ -22,6 +22,7 @@ class VirtuesColumnWidget extends StatelessWidget {
     ];
     column.add(Obx(() => ComplexAbilityWidget(
           attribute: ComplexAbility(
+            id: 'consience',
             name: "Conscience",
             current: vc.consience.value,
             min: 1,
@@ -34,6 +35,7 @@ class VirtuesColumnWidget extends StatelessWidget {
         )));
     column.add(Obx(() => ComplexAbilityWidget(
           attribute: ComplexAbility(
+            id: 'selfcontrol',
             name: "Self-Control",
             current: vc.selfControl.value,
             min: 1,
@@ -46,6 +48,7 @@ class VirtuesColumnWidget extends StatelessWidget {
         )));
     column.add(Obx(() => ComplexAbilityWidget(
           attribute: ComplexAbility(
+            id: 'courage',
             name: "Courage",
             current: vc.courage.value,
             min: 1,

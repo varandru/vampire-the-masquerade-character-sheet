@@ -29,6 +29,9 @@
     "status": {
       "name": "Status",
       "description": "Where a character ranks in a particular social structure."
+    },
+    "generation": {
+      "name": "Generation"
     }
   }
 }

@@ -80,7 +80,7 @@ class VampireCharacter extends GetxController {
     File dictionaryFile = File(directory.path + '/' + attributeListFile);
 
     if (await dictionaryFile.exists()) {
-      return dictionaryFile.readAsString();
+      return dictionaryFile.path;
     } else {
       throw ("Attribute dictionary $attributeListFile does not exist");
     }
@@ -94,7 +94,7 @@ class VampireCharacter extends GetxController {
     File dictionaryFile = File(directory.path + '/' + abilitiesListFile);
 
     if (await dictionaryFile.exists()) {
-      return dictionaryFile.readAsString();
+      return dictionaryFile.path;
     } else {
       throw ("Attribute dictionary $abilitiesListFile does not exist");
     }
@@ -109,7 +109,7 @@ class VampireCharacter extends GetxController {
     File dictionaryFile = File(directory.path + '/' + backgroundsListFile);
 
     if (await dictionaryFile.exists()) {
-      return dictionaryFile.readAsString();
+      return dictionaryFile.path;
     } else {
       throw ("Attribute dictionary $backgroundsListFile does not exist");
     }
@@ -124,7 +124,7 @@ class VampireCharacter extends GetxController {
     File dictionaryFile = File(directory.path + '/' + meritsFlawsListFile);
 
     if (await dictionaryFile.exists()) {
-      return dictionaryFile.readAsString();
+      return dictionaryFile.path;
     } else {
       throw ("Attribute dictionary $meritsFlawsListFile does not exist");
     }
@@ -139,7 +139,7 @@ class VampireCharacter extends GetxController {
     File dictionaryFile = File(directory.path + '/' + disciplinesListFile);
 
     if (await dictionaryFile.exists()) {
-      return dictionaryFile.readAsString();
+      return dictionaryFile.path;
     } else {
       throw ("Attribute dictionary $disciplinesListFile does not exist");
     }
@@ -153,7 +153,7 @@ class VampireCharacter extends GetxController {
     File dictionaryFile = File(directory.path + '/' + ritualsListFile);
 
     if (await dictionaryFile.exists()) {
-      return dictionaryFile.readAsString();
+      return dictionaryFile.path;
     } else {
       throw ("Attribute dictionary $ritualsListFile does not exist");
     }
@@ -171,32 +171,25 @@ class VampireCharacter extends GetxController {
 
         if (characterFile.existsSync()) {
           // Attribute dictionary
-          AttributeDictionary atrd = AttributeDictionary();
-          var attributeList = await _loadAttributeList();
-          atrd.load(jsonDecode(attributeList));
+          AttributeDictionary atrd =
+              AttributeDictionary(await _loadAttributeList());
 
           // Abilities dictionary
-          AbilitiesDictionary abd = AbilitiesDictionary();
-          var abilitiesList = await _loadAbilitiesList();
-          abd.load(jsonDecode(abilitiesList));
+          AbilitiesDictionary abd =
+              AbilitiesDictionary(await _loadAbilitiesList());
 
           // Backgrounds dictionary
-          BackgroundDictionary backd = BackgroundDictionary();
-          var backgroundList = await _loadBackgroundList();
-          backd.load(jsonDecode(backgroundList));
+          BackgroundDictionary backd =
+              BackgroundDictionary(await _loadBackgroundList());
 
           // Merits and Flaws dictionary
-          var meritsList = await _loadMeritsAndFlawsList();
           MeritsAndFlawsDictionary mfd =
-              MeritsAndFlawsDictionary.fromJson(jsonDecode(meritsList));
+              MeritsAndFlawsDictionary(await _loadMeritsAndFlawsList());
 
-          var disciplineList = await _loadDisciplineList();
           DisciplineDictionary dd =
-              DisciplineDictionary.fromJson(jsonDecode(disciplineList));
+              DisciplineDictionary(await _loadDisciplineList());
 
-          var ritualsList = await _loadRitualsList();
-          // FIXME this is one hell of a crutch
-          Map<String, dynamic> rd = jsonDecode(ritualsList)["rituals"];
+          RitualDictionary rd = RitualDictionary(await _loadRitualsList());
 
           Map<String, dynamic> json =
               jsonDecode(characterFile.readAsStringSync());
@@ -222,15 +215,9 @@ class VampireCharacter extends GetxController {
             disciplineController.load(json["disciplines"], dd);
 
           if (json["rituals"] != null)
-            ritualController.load(json["rituals"], rd);
+            ritualController.load(json["rituals"], rd, dd);
         }
         // else just use the defaults
-      } else if (GetPlatform.isWeb) {
-        // Web can't really store local files. Being in the, y'know, Web
-        // But I use Chrome for debugging, so I kinda need it to not throw
-        print("You are launching in Web. File operations are not available");
-        attributesController.initializeFromConstants();
-        abilitiesController.initializeFromConstants();
       }
     } else {
       Get.back();
@@ -333,6 +320,8 @@ class VampireCharacter extends GetxController {
 
   Future<void> init() async {
     await loadSharedPreferences();
+
+    installed = false;
 
     if (!installed) {
       await install();

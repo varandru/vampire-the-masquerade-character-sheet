@@ -222,7 +222,10 @@ class RitualSectionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final RitualController rc = Get.find();
-    if (rc.rituals.length == 0) return Obx(() => Container());
+    if (rc.rituals.length == 0)
+      return Obx(() => Container(
+            height: rc.rituals.length.toDouble(),
+          ));
     return Obx(
       () => ListView.builder(
         itemBuilder: (context, i) => (i == 0)

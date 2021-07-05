@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:get/get.dart';
 
 String identify(String name) =>
@@ -64,6 +67,18 @@ class ComplexAbility {
         isIncremental = true,
         isNameEditable = true;
 
+  ComplexAbility.fromOther(this.id, ComplexAbility other)
+      : name = other.name,
+        current = other.current,
+        min = other.min,
+        max = other.max,
+        specialization = other.specialization,
+        description = other.description,
+        isIncremental = other.isIncremental,
+        hasSpecialization = other.isIncremental,
+        isDeletable = other.isDeletable,
+        isNameEditable = other.isNameEditable;
+
   void fillFromDictionary(ComplexAbilityEntry entry) {
     // levelDescriptions = entry.levels;
     if (entry.description != null) description = entry.description!;
@@ -86,6 +101,8 @@ class ComplexAbilityEntry {
   String? description;
 
   ComplexAbilityEntry.fromJson(Map<String, dynamic> json) {
+    name = json["name"];
+
     if (json["specialization"] != null) {
       if (json["specialization"] is List) {
         for (var specialization in json["specialization"]) {
@@ -104,15 +121,19 @@ class ComplexAbilityEntry {
   }
 
   ComplexAbilityEntry(
-      {this.specializations = const [],
+      {required this.name,
+      this.specializations = const [],
       this.levels = const [],
       this.description});
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = Map();
-    // json['name'] = name;
+
+    json['name'] = name;
     if (description != null) json['description'] = description;
     if (specializations.isNotEmpty) json['specializations'] = specializations;
+    if (levels.isNotEmpty) json["levels"] = levels;
+
     return json;
   }
 }
@@ -125,19 +146,18 @@ class ComplexAbilityColumn {
   var name = "Name".obs;
   RxList<ComplexAbility> values = RxList();
 
-  void sortByName() {
-    values.sort((a1, a2) => a1.name.compareTo(a2.name));
+  void sortById() {
+    values.sort((a1, a2) => a1.id.compareTo(a2.id));
   }
 
   void editValue(ComplexAbility value, ComplexAbility old) {
     values[values.indexOf(old)] = value;
-    if (value.isDeletable) sortByName();
+    if (value.isDeletable) sortById();
   }
 
   void deleteValue(ComplexAbility value) {
-    print("Tried to delete ${value.name}");
     values.remove(value);
-    if (value.isDeletable) sortByName();
+    if (value.isDeletable) sortById();
   }
 
   void add(ComplexAbility ca) {
@@ -146,7 +166,7 @@ class ComplexAbilityColumn {
     } else {
       values[values.indexOf(ca)] = ca;
     }
-    if (ca.isDeletable) sortByName();
+    if (ca.isDeletable) sortById();
   }
 
   Map<String, dynamic> toJson() {
@@ -155,5 +175,34 @@ class ComplexAbilityColumn {
       key: (value) => value.id,
       value: (value) => value.toJson(),
     );
+  }
+}
+
+abstract class Dictionary {
+  Dictionary(this.fileName) {
+    File dictionaryFile = File(this.fileName);
+    if (dictionaryFile.existsSync()) {
+      load(jsonDecode(dictionaryFile.readAsStringSync()));
+    } else {
+      throw ("Attribute dictionary $dictionaryFile does not exist");
+    }
+  }
+
+  bool changed = false;
+  final String fileName;
+
+  void load(Map<String, dynamic> json);
+
+  Map<String, dynamic> save();
+
+  onDispose() async {
+    if (changed) {
+      File dictionaryFile = File(fileName);
+      if (await dictionaryFile.exists()) {
+        dictionaryFile.writeAsStringSync(jsonEncode(save()));
+      } else {
+        throw ("Dictionary file $dictionaryFile does not exist");
+      }
+    }
   }
 }

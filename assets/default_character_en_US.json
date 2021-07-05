@@ -17,42 +17,42 @@
     "clan": "",
     "player_name": "",
     "demeanor": "",
-    "generation": 10,
+    "generation": 13,
     "chronicle": "",
     "concept": "",
     "sire": ""
   },
   "attributes": {
     "physical": {
-      "strength": {
+      "1_strength": {
         "current": 1
       },
-      "dexterity": {
+      "2_dexterity": {
         "current": 1
       },
-      "stamina": {
+      "3_stamina": {
         "current": 1
       }
     },
     "mental": {
-      "perception": {
+      "1_perception": {
         "current": 1
       },
-      "intelligence": {
+      "2_intelligence": {
         "current": 1
       },
-      "wits": {
+      "3_wits": {
         "current": 1
       }
     },
     "social": {
-      "charisma": {
+      "1_charisma": {
         "current": 1
       },
-      "manipulation": {
+      "2_manipulation": {
         "current": 1
       },
-      "appearance": {
+      "3_appearance": {
         "current": 1
       }
     }
@@ -162,7 +162,7 @@
   },
   "merits": [],
   "flaws": [],
-  "disciplines": [],
+  "disciplines": {},
   "rituals": [],
   "xp": {}
 }

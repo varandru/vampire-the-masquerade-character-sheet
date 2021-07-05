@@ -81,6 +81,9 @@
     "performance": {
       "name": "Performance"
     },
+    "security": {
+      "name": "Security"
+    },
     "stealth": {
       "name": "Stealth"
     },
