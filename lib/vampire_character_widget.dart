@@ -10,6 +10,8 @@ class VampireWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     var vc = Get.put(VampireCharacter());
 
+    WidgetsFlutterBinding.ensureInitialized();
+
     return FutureBuilder(
       future: vc.init(),
       builder: (context, snapshot) {

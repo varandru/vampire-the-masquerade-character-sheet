@@ -1,15 +1,18 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:vampire_the_masquerade_character_sheet/advantages.dart';
-import 'package:vampire_the_masquerade_character_sheet/disciplines.dart';
-import 'package:vampire_the_masquerade_character_sheet/merits_and_flaws.dart';
-import 'package:vampire_the_masquerade_character_sheet/rituals.dart';
-import 'package:vampire_the_masquerade_character_sheet/xp.dart';
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 
+import 'advantages.dart';
+import 'disciplines.dart';
+import 'merits_and_flaws.dart';
+import 'rituals.dart';
+import 'xp.dart';
 import 'abilities.dart';
 import 'attributes.dart';
 import 'main_info.dart';
@@ -165,6 +168,19 @@ class VampireCharacter extends GetxController {
       if (GetPlatform.isAndroid) {
         var direcrory = await getApplicationDocumentsDirectory();
         SharedPreferences preferences = await SharedPreferences.getInstance();
+
+        // Open the database and store the reference.
+        // final database = openDatabase(
+        //     join(
+        //       await getDatabasesPath(),
+        //       'kindred_database.db',
+        //     ), onCreate: (database, index) {
+        //   // 1. Get assets/json/sql/tables.sql. It creates the tables
+        //   // 2. Load default_*.json into the tables
+        //   // Welp, that's initialization
+        //   database.execute("create table attributes(");
+        // });
+
         _characterFileName =
             preferences.getString('character_file') ?? "character.json";
         File characterFile = File(direcrory.path + '/' + _characterFileName);
@@ -252,8 +268,8 @@ class VampireCharacter extends GetxController {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     var directory = await getApplicationDocumentsDirectory();
 
-    String attributeString =
-        await rootBundle.loadString('assets/default_attributes_en_US.json');
+    String attributeString = await rootBundle
+        .loadString('assets/json/default_attributes_en_US.json');
     File attributeFile = File(directory.path +
         '/' +
         (preferences.getString('attribute_dictionary') ??
@@ -262,7 +278,7 @@ class VampireCharacter extends GetxController {
     attributeFile.writeAsStringSync(attributeString, mode: FileMode.writeOnly);
 
     attributeString =
-        await rootBundle.loadString('assets/default_abilities_en_US.json');
+        await rootBundle.loadString('assets/json/default_abilities_en_US.json');
     attributeFile = File(directory.path +
         '/' +
         (preferences.getString('default_abilities') ??
@@ -270,8 +286,8 @@ class VampireCharacter extends GetxController {
 
     attributeFile.writeAsStringSync(attributeString, mode: FileMode.writeOnly);
 
-    attributeString =
-        await rootBundle.loadString('assets/default_backgrounds_en_US.json');
+    attributeString = await rootBundle
+        .loadString('assets/json/default_backgrounds_en_US.json');
     attributeFile = File(directory.path +
         '/' +
         (preferences.getString('default_backgrounds') ??
@@ -280,7 +296,7 @@ class VampireCharacter extends GetxController {
     attributeFile.writeAsStringSync(attributeString, mode: FileMode.writeOnly);
 
     attributeString = await rootBundle
-        .loadString('assets/default_merits_and_flaws_en_US.json');
+        .loadString('assets/json/default_merits_and_flaws_en_US.json');
     attributeFile = File(directory.path +
         '/' +
         (preferences.getString('default_merits_and_flaws') ??
@@ -288,8 +304,8 @@ class VampireCharacter extends GetxController {
 
     attributeFile.writeAsStringSync(attributeString, mode: FileMode.writeOnly);
 
-    attributeString =
-        await rootBundle.loadString('assets/default_disciplines_en_US.json');
+    attributeString = await rootBundle
+        .loadString('assets/json/default_disciplines_en_US.json');
     attributeFile = File(directory.path +
         '/' +
         (preferences.getString('default_disciplines') ??
@@ -298,7 +314,7 @@ class VampireCharacter extends GetxController {
     attributeFile.writeAsStringSync(attributeString, mode: FileMode.writeOnly);
 
     attributeString =
-        await rootBundle.loadString('assets/default_rituals_en_US.json');
+        await rootBundle.loadString('assets/json/default_rituals_en_US.json');
     attributeFile = File(directory.path +
         '/' +
         (preferences.getString('default_disciplines') ??
@@ -307,7 +323,7 @@ class VampireCharacter extends GetxController {
     attributeFile.writeAsStringSync(attributeString, mode: FileMode.writeOnly);
 
     attributeString =
-        await rootBundle.loadString('assets/default_character_en_US.json');
+        await rootBundle.loadString('assets/json/default_character_en_US.json');
     attributeFile = File(directory.path +
         '/' +
         (preferences.getString('default_character') ?? 'character.json'));
