@@ -1,6 +1,7 @@
 // A widget for a single discipline, ExpansionTile
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:vampire_the_masquerade_character_sheet/common_logic.dart';
 
 import 'common_widget.dart';
 import 'disciplines.dart';
@@ -169,6 +170,7 @@ class DisciplineDotWidget extends StatelessWidget {
 class DisciplineDialog extends Dialog {
   DisciplineDialog(Discipline? disc, {required this.index})
       : this.disc = new Discipline(
+            id: disc?.id ?? 'undefined',
             name: disc?.name ?? "New casting discipline",
             level: disc?.level ?? 1,
             levels: disc?.levels ?? [],
@@ -286,10 +288,15 @@ class DisciplineDialog extends Dialog {
           TextButton(
             child: Text('OK'),
             onPressed: () {
-              if (discipline.value.name.isNotEmpty)
+              if (discipline.value.name.isNotEmpty) {
+                if (discipline.value.id == 'undefined') {
+                  discipline.value = Discipline.fromOther(
+                      identify(discipline.value.name), discipline.value);
+                }
                 Get.back(result: discipline.value);
-              else
+              } else {
                 Get.back(result: null);
+              }
             },
           )
         ], mainAxisAlignment: MainAxisAlignment.end),

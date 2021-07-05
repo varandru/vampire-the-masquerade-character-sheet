@@ -1,5 +1,6 @@
 import 'package:get/get_rx/get_rx.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
+import 'package:vampire_the_masquerade_character_sheet/common_logic.dart';
 
 enum MeritType { Physical, Mental, Social, Supernatural, Undefined }
 
@@ -155,11 +156,13 @@ class MeritEntry {
   }
 }
 
-class MeritsAndFlawsDictionary {
+class MeritsAndFlawsDictionary extends Dictionary {
+  MeritsAndFlawsDictionary(String file) : super(file);
+
   Map<String, MeritEntry> merits = Map();
   Map<String, MeritEntry> flaws = Map();
 
-  MeritsAndFlawsDictionary.fromJson(Map<String, dynamic> json) {
+  void load(Map<String, dynamic> json) {
     // 1. Get locale, not done at all
     // 2. Get merits
     if (json["merits"] != null && json["merits"] is List) {
@@ -179,5 +182,12 @@ class MeritsAndFlawsDictionary {
         }
       }
     }
+  }
+
+  @override
+  Map<String, dynamic> save() {
+    Map<String, dynamic> json = Map();
+
+    return json;
   }
 }

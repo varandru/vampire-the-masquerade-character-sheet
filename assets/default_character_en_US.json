@@ -17,192 +17,152 @@
     "clan": "",
     "player_name": "",
     "demeanor": "",
-    "generation": 10,
+    "generation": 13,
     "chronicle": "",
     "concept": "",
     "sire": ""
   },
   "attributes": {
-    "physical": [
-      {
-        "name": "Strength",
+    "physical": {
+      "1_strength": {
         "current": 1
       },
-      {
-        "name": "Dexterity",
+      "2_dexterity": {
         "current": 1
       },
-      {
-        "name": "Stamina",
+      "3_stamina": {
         "current": 1
       }
-    ],
-    "mental": [
-      {
-        "name": "Perception",
+    },
+    "mental": {
+      "1_perception": {
         "current": 1
       },
-      {
-        "name": "Intelligence",
+      "2_intelligence": {
         "current": 1
       },
-      {
-        "name": "Wits",
+      "3_wits": {
         "current": 1
       }
-    ],
-    "social": [
-      {
-        "name": "Charisma",
+    },
+    "social": {
+      "1_charisma": {
         "current": 1
       },
-      {
-        "name": "Manipulation",
+      "2_manipulation": {
         "current": 1
       },
-      {
-        "name": "Appearance",
+      "3_appearance": {
         "current": 1
       }
-    ]
+    }
   },
   "abilities": {
-    "talents": [
-      {
-        "name": "Alertness",
+    "talents": {
+      "alertness": {
         "current": 0
       },
-      {
-        "name": "Athletics",
+      "athletics": {
         "current": 0
       },
-      {
-        "name": "Brawl",
+      "brawl": {
         "current": 0
       },
-      {
-        "name": "Dodge",
+      "dodge": {
         "current": 0
       },
-      {
-        "name": "Empathy",
+      "empathy": {
         "current": 0
       },
-      {
-        "name": "Expression",
+      "expression": {
         "current": 0
       },
-      {
-        "name": "Intimidation",
+      "intimidation": {
         "current": 0
       },
-      {
-        "name": "Leadership",
+      "leadership": {
         "current": 0
       },
-      {
-        "name": "Streetwise",
+      "streetwise": {
         "current": 0
       },
-      {
-        "name": "Subterfuge",
+      "subterfuge": {
         "current": 0
       }
-    ],
-    "skills": [
-      {
-        "name": "Animal Ken",
+    },
+    "skills": {
+      "animal_ken": {
         "current": 0
       },
-      {
-        "name": "Crafts",
+      "crafts": {
         "current": 0
       },
-      {
-        "name": "Drive",
+      "drive": {
         "current": 0
       },
-      {
-        "name": "Etiquette",
+      "etiquette": {
         "current": 0
       },
-      {
-        "name": "Firearms",
+      "firearms": {
         "current": 0
       },
-      {
-        "name": "Melee",
+      "melee": {
         "current": 0
       },
-      {
-        "name": "Performance",
+      "performance": {
         "current": 0
       },
-      {
-        "name": "Security",
+      "security": {
         "current": 0
       },
-      {
-        "name": "Stealth",
+      "stealth": {
         "current": 0
       },
-      {
-        "name": "Survival",
+      "survival": {
         "current": 0
       }
-    ],
-    "knowledges": [
-      {
-        "name": "Academics",
+    },
+    "knowledges": {
+      "academics": {
         "current": 0
       },
-      {
-        "name": "Computers",
+      "computers": {
         "current": 0
       },
-      {
-        "name": "Finance",
+      "finance": {
         "current": 0
       },
-      {
-        "name": "Investigation",
+      "investigation": {
         "current": 0
       },
-      {
-        "name": "Law",
+      "law": {
         "current": 0
       },
-      {
-        "name": "Linguistics",
+      "linguistics": {
         "current": 0
       },
-      {
-        "name": "Medicine",
+      "medicine": {
         "current": 0
       },
-      {
-        "name": "Occult",
+      "occult": {
         "current": 0
       },
-      {
-        "name": "Politics",
+      "politics": {
         "current": 0
       },
-      {
-        "name": "Science",
+      "science": {
         "current": 0
       }
-    ]
+    }
   },
-  "backgrounds": [
-    {
-      "name": "Generation",
+  "backgrounds": {
+    "generation": {
       "current": 0
     }
-  ],
+  },
   "merits": [],
   "flaws": [],
-  "disciplines": [],
+  "disciplines": {},
   "rituals": [],
   "xp": {}
 }

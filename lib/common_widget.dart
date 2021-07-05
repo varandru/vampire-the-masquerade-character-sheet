@@ -210,13 +210,16 @@ class ComplexAbilityDialog extends Dialog {
   final String name;
   final ComplexAbility? ability;
   final bool hasSpecializations;
-  // final
 
   @override
   Widget build(BuildContext context) {
     var ca = (ability != null)
         ? ability!.obs
-        : ComplexAbility(name: name, hasSpecialization: hasSpecializations).obs;
+        : ComplexAbility(
+                id: "undefined",
+                name: name,
+                hasSpecialization: hasSpecializations)
+            .obs;
 
     List<Widget> children = [];
     if (ca.value.isNameEditable) {
@@ -283,10 +286,15 @@ class ComplexAbilityDialog extends Dialog {
         TextButton(
           child: Text('OK'),
           onPressed: () {
-            if (ca.value.name.isNotEmpty)
+            if (ca.value.name.isNotEmpty) {
+              if (ca.value.id == 'undefined') {
+                ca.value =
+                    ComplexAbility.fromOther(identify(ca.value.name), ca.value);
+              }
               Get.back(result: ca.value);
-            else
+            } else {
               Get.back(result: null);
+            }
           },
         ),
       ],

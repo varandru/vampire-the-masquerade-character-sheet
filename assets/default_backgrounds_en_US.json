@@ -1,34 +1,37 @@
 {
   "locale": "en-US",
   "name": "Backgrounds",
-  "backgrounds": [
-    {
+  "backgrounds": {
+    "allies": {
       "name": "Allies",
       "description": "Close companions who could be called on for most anything."
     },
-    {
+    "contacts": {
       "name": "Contacts",
       "description": "Those willing to help for a favor in return."
     },
-    {
+    "fame": {
       "name": "Fame",
       "description": "How well-known the character is in society; its counterpart Notoriety generally carries negative connotation."
     },
-    {
+    "influence": {
       "name": "Influence",
       "description": "A character's ability to affect mortal society.  Elder Vampires can enjoy influence around the world."
     },
-    {
+    "mentor": {
       "name": "Mentor",
       "description": "An experienced guide through the supernatural or everyday world."
     },
-    {
+    "resources": {
       "name": "Resources",
       "description": "How much a character has to live on."
     },
-    {
+    "status": {
       "name": "Status",
       "description": "Where a character ranks in a particular social structure."
+    },
+    "generation": {
+      "name": "Generation"
     }
-  ]
+  }
 }

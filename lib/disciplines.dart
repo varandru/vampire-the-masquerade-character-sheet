@@ -1,8 +1,10 @@
 import 'package:get/get.dart';
+import 'package:vampire_the_masquerade_character_sheet/common_logic.dart';
 
 class Discipline {
   Discipline(
-      {required this.name,
+      {required this.id,
+      this.name = "",
       required this.level,
       this.description,
       this.levels,
@@ -11,9 +13,10 @@ class Discipline {
 
   Discipline.fromDictionary(
       {required Discipline base, required DisciplineEntry entry})
-      : name = base.name,
+      : id = base.id,
         level = base.level,
         description = base.description ?? entry.description,
+        name = entry.name,
         max = entry.max {
     if (entry.system != null) {
       system = entry.system;
@@ -30,6 +33,17 @@ class Discipline {
     print("Added discipline $name");
   }
 
+  Discipline.fromOther(String id, Discipline other)
+      : this.id = id,
+        name = other.name,
+        description = other.description,
+        level = other.level,
+        max = other.max,
+        isIncremental = other.isIncremental,
+        system = other.system,
+        levels = other.levels;
+
+  final String id;
   String name;
   String? description;
 
@@ -50,11 +64,10 @@ class Discipline {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is Discipline && other.name == this.name);
+      identical(this, other) || (other is Discipline && other.id == this.id);
 
   @override
-  int get hashCode => name.hashCode;
+  int get hashCode => id.hashCode;
 
   void updateDot(DisciplineDot dot, int index) {
     levels![index] = dot;
@@ -118,21 +131,18 @@ class DisciplineDot {
 class DisciplineController extends GetxController {
   RxList<Discipline> disciplines = RxList();
 
-  void load(List<dynamic> json, DisciplineDictionary dictionary) {
-    for (var discipline in json) {
-      if (discipline["name"] == null)
-        throw ("$discipline lacks neccessary fields");
-      if (discipline["level"] == null)
-        throw ("$discipline lacks neccessary fields");
+  void load(Map<String, dynamic> json, DisciplineDictionary dictionary) {
+    for (var id in json.keys) {
+      if (json[id] == null) throw ("Invalid JSON $json");
+      if (json[id]["current"] == null)
+        throw ("${json["id"]} lacks neccessary fields");
 
-      var entry = dictionary.entries[discipline["name"]];
+      var entry = dictionary.entries[id];
 
       if (entry != null) {
-        // throw ("Discipline ${discipline["name"]} not found, add it to dictionary");
-        // } else {
         Discipline base = Discipline(
-          name: discipline["name"],
-          level: discipline["level"],
+          id: id,
+          level: json[id]["current"],
         );
         if (!disciplines.contains(base)) {
           try {
@@ -159,8 +169,9 @@ class DisciplineController extends GetxController {
   }
 }
 
+// String id is the map key
 class DisciplineEntry {
-  // String name; Map key
+  late String name;
   String? description;
   int max = 5;
 
@@ -168,6 +179,7 @@ class DisciplineEntry {
   Map<int, DisciplineDot>? levels;
 
   DisciplineEntry.fromJson(Map<String, dynamic> json) {
+    name = json["name"];
     if (json["description"] != null) description = json["description"];
     if (json["max"] != null) max = json["max"];
     if (json["system"] != null) system = json["system"];
@@ -190,22 +202,13 @@ class DisciplineEntry {
   }
 }
 
-class DisciplineDictionary {
+class DisciplineDictionary extends Dictionary {
+  DisciplineDictionary(String file) : super(file);
+
   Map<String, DisciplineEntry> entries = Map();
 
-  DisciplineDictionary.fromJson(Map<String, dynamic> json) {
-    if (json["disciplines"] != null && json["disciplines"] is List) {
-      for (var discipline in json["disciplines"]) {
-        String? name = discipline["name"];
-        if (name == null) {
-          throw ("Discipline $discipline is missing a name");
-        }
-        entries[name] = DisciplineEntry.fromJson(discipline);
-      }
-    }
-  }
-
-  Map<String, dynamic> toJson() {
+  @override
+  Map<String, dynamic> save() {
     Map<String, dynamic> json = Map();
     List<dynamic> disciplines = [];
     for (var discipline in entries.entries) {
@@ -216,5 +219,16 @@ class DisciplineDictionary {
     json["locale"] = "en-US";
     json["disciplines"] = disciplines;
     return json;
+  }
+
+  @override
+  void load(Map<String, dynamic> json) {
+    if (json["disciplines"] != null &&
+        json["disciplines"] is Map<String, dynamic>) {
+      Map<String, dynamic> disciplineEntries = json["disciplines"];
+      for (var id in disciplineEntries.keys) {
+        entries[id] = DisciplineEntry.fromJson(disciplineEntries[id]);
+      }
+    }
   }
 }

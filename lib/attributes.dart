@@ -8,12 +8,6 @@ class AttributesController extends GetxController {
   ComplexAbilityColumn socialAttributes = ComplexAbilityColumn('Mental');
   ComplexAbilityColumn mentalAttributes = ComplexAbilityColumn('Social');
 
-  void initializeFromConstants() {
-    physicalAttributes.values.value = PhysicalAttributesColumn().attributes;
-    socialAttributes.values.value = SocialAttributesColumn().attributes;
-    mentalAttributes.values.value = MentalAttributesColumn().attributes;
-  }
-
   ComplexAbilityColumn getColumnByType(AttributeColumnType type) {
     switch (type) {
       case AttributeColumnType.Physical:
@@ -46,51 +40,54 @@ class AttributesController extends GetxController {
   }
 
   void _fillAttributeListByType(AttributeColumnType type,
-      List<dynamic> attributes, AttributeDictionary dictionary) {
-    for (var attribute in attributes) {
-      if (attribute["name"] != null && attribute is Map<String, dynamic>) {
-        String name = attribute["name"];
-
+      Map<String, dynamic> attributes, AttributeDictionary dictionary) {
+    for (var id in attributes.keys) {
+      if (attributes[id] != null && attributes[id] is Map<String, dynamic>) {
         ComplexAbilityEntry? entry;
 
         switch (type) {
           case AttributeColumnType.Physical:
-            entry = dictionary.physical[name];
+            entry = dictionary.physical[id];
             break;
           case AttributeColumnType.Mental:
-            entry = dictionary.mental[name];
+            entry = dictionary.mental[id];
             break;
           case AttributeColumnType.Social:
-            entry = dictionary.social[name];
+            entry = dictionary.social[id];
             break;
         }
 
         if (entry == null) {
           // If a stat is not found, add an empty one
-          entry = ComplexAbilityEntry();
+          entry = ComplexAbilityEntry(name: id);
           switch (type) {
             case AttributeColumnType.Physical:
-              dictionary.physical[name] = entry;
+              dictionary.physical[id] = entry;
               break;
             case AttributeColumnType.Mental:
-              dictionary.mental[name] = entry;
+              dictionary.mental[id] = entry;
               break;
             case AttributeColumnType.Social:
-              dictionary.social[name] = entry;
+              dictionary.social[id] = entry;
               break;
           }
+
+          dictionary.changed = true;
         }
 
         // CRUTCH This doesn't allow attributes to go above 5
         ComplexAbility ca = ComplexAbility(
-            name: name,
-            current: attribute["current"] ?? 1,
+            id: id,
+            name: entry.name,
+            current: attributes[id]["current"] ?? 1,
             min: 0,
             max: 5,
-            specialization: attribute["specialization"] ?? "",
+            specialization: attributes[id]["specialization"] ?? "",
             description: entry.description ?? "",
             isIncremental: true, // Attributes are incremental, AFAIK
             isDeletable: false);
+
+        print("Attribute: ${ca.name}, $id");
 
         switch (type) {
           case AttributeColumnType.Physical:
@@ -131,50 +128,9 @@ class AttributesController extends GetxController {
   }
 }
 
-//CRUTCH: constants for debugging and web
-class PhysicalAttributesColumn {
-  final header = "Physical";
+class AttributeDictionary extends Dictionary {
+  AttributeDictionary(String file) : super(file);
 
-  final List<ComplexAbility> attributes = [
-    ComplexAbility(name: "Strength", current: 1, isDeletable: false),
-    ComplexAbility(
-        name: "Dexterity",
-        current: 5,
-        specialization: "Lightning Reflexes",
-        isDeletable: false),
-    ComplexAbility(name: "Stamina", current: 2, isDeletable: false),
-  ];
-}
-
-class SocialAttributesColumn {
-  final header = "Social";
-
-  var attributes = [
-    ComplexAbility(name: "Charisma", current: 1, isDeletable: false),
-    ComplexAbility(name: "Manipulation", current: 1, isDeletable: false),
-    ComplexAbility(name: "Appearance", current: 4, isDeletable: false),
-  ];
-}
-
-class MentalAttributesColumn {
-  final header = "Mental";
-
-  var attributes = [
-    ComplexAbility(name: "Perception", current: 1, isDeletable: false),
-    ComplexAbility(
-        name: "Intelligence",
-        current: 5,
-        specialization: "Analytical Thinking",
-        isDeletable: false),
-    ComplexAbility(
-        name: "Wits",
-        current: 4,
-        specialization: "Adapt to others",
-        isDeletable: false)
-  ];
-}
-
-class AttributeDictionary {
   Map<String, ComplexAbilityEntry> physical = Map();
   Map<String, ComplexAbilityEntry> social = Map();
   Map<String, ComplexAbilityEntry> mental = Map();
@@ -203,25 +159,47 @@ class AttributeDictionary {
     }
 
     // 4. Get physical attributes
-    if (json["physical"] != null && json["physical"] is List) {
-      for (var attribute in json["physical"]) {
-        if (attribute["name"] == null) continue;
-        physical[attribute["name"]] = ComplexAbilityEntry.fromJson(attribute);
+    if (json["physical"] != null && json["physical"] is Map<String, dynamic>) {
+      for (var id in json["physical"].keys) {
+        if (json["physical"][id] == null) continue;
+        physical[id] = ComplexAbilityEntry.fromJson(json["physical"][id]);
       }
     }
     // 5. Get social attributes
-    if (json["social"] != null && json["social"] is List) {
-      for (var attribute in json["social"]) {
-        if (attribute["name"] == null) continue;
-        social[attribute["name"]] = ComplexAbilityEntry.fromJson(attribute);
+    if (json["social"] != null && json["social"] is Map<String, dynamic>) {
+      for (var id in json["social"].keys) {
+        if (json["social"][id] == null) continue;
+        social[id] = ComplexAbilityEntry.fromJson(json["social"][id]);
       }
     }
     // 6. Get mental attributes
-    if (json["mental"] != null && json["mental"] is List) {
-      for (var attribute in json["mental"]) {
-        if (attribute["name"] == null) continue;
-        mental[attribute["name"]] = ComplexAbilityEntry.fromJson(attribute);
+    if (json["mental"] != null && json["mental"] is Map<String, dynamic>) {
+      for (var id in json["mental"].keys) {
+        if (json["mental"][id] == null) continue;
+        mental[id] = ComplexAbilityEntry.fromJson(json["mental"][id]);
       }
     }
+  }
+
+  @override
+  Map<String, dynamic> save() {
+    Map<String, dynamic> json = Map();
+
+    // CRUTCH until localization
+    json["locale"] = "en-US";
+
+    json["attribute_names"] = <String, dynamic>{
+      "physical": physicalAttributesName,
+      "social": socialAttributesName,
+      "mental": mentalAttributesName
+    };
+
+    json["level_prefixes"] = levelPrefixes;
+
+    json["physical"] = physical;
+    json["social"] = social;
+    json["mental"] = mental;
+
+    return json;
   }
 }

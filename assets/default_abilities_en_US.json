@@ -27,97 +27,100 @@
       "prefix": "Outstanding"
     }
   ],
-  "talents": [
-    {
+  "talents": {
+    "alertness": {
       "name": "Alertness"
     },
-    {
+    "athletics": {
       "name": "Athletics"
     },
-    {
+    "brawl": {
       "name": "Brawl"
     },
-    {
+    "dodge": {
       "name": "Dodge"
     },
-    {
+    "empathy": {
       "name": "Empathy"
     },
-    {
+    "expression": {
       "name": "Expression"
     },
-    {
+    "intimidation": {
       "name": "Intimidation"
     },
-    {
+    "leadership": {
       "name": "Leadership"
     },
-    {
+    "streetwise": {
       "name": "Streetwise"
     },
-    {
+    "subterfuge": {
       "name": "Subterfuge"
     }
-  ],
-  "skills": [
-    {
+  },
+  "skills": {
+    "animal_ken": {
       "name": "Animal Ken"
     },
-    {
+    "crafts": {
       "name": "Crafts"
     },
-    {
+    "drive": {
       "name": "Drive"
     },
-    {
+    "etiquette": {
       "name": "Etiquette"
     },
-    {
+    "firearms": {
       "name": "Firearms"
     },
-    {
+    "melee": {
       "name": "Melee"
     },
-    {
+    "performance": {
       "name": "Performance"
     },
-    {
+    "security": {
+      "name": "Security"
+    },
+    "stealth": {
       "name": "Stealth"
     },
-    {
+    "survival": {
       "name": "Survival"
     }
-  ],
-  "knowledges": [
-    {
+  },
+  "knowledges": {
+    "academics": {
       "name": "Academics"
     },
-    {
+    "computers": {
       "name": "Computers"
     },
-    {
+    "finance": {
       "name": "Finance"
     },
-    {
+    "investigation": {
       "name": "Investigation"
     },
-    {
+    "law": {
       "name": "Law"
     },
-    {
+    "linguistics": {
       "name": "Linguistics"
     },
-    {
+    "medicine": {
       "name": "Medicine"
     },
-    {
+    "occult": {
       "name": "Occult"
     },
-    {
+    "politics": {
       "name": "Politics"
     },
-    {
+    "science": {
       "name": "Science"
     }
-  ]
+  }
 }

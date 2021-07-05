@@ -1,13 +1,13 @@
 {
   "locale": "en-US",
-  "disciplines": [
-    {
+  "disciplines": {
+    "potence": {
       "name": "Potence",
       "description": "Vampires endowed with this Discipline possess preternatural strength. Potence enables vampires to leap tremendous distances, lift massive weights and strike opponents with terrifying force. Even the lowest ranks of this power gift the Kindred with physical might beyond mortal bounds. More powerful immortals have been known to leap so far they seem to be flying, toss cars aside like tin cans, and punch through concrete as if it were cardboard. While the mental Disciplines are awe-inspiring, Potence’s brute effectiveness is formidable in its own right.\nClans Brujah, Giovanni, Lasombra and Nosferatu are the primary possessors of this Discipline. Still, members of other clans often make a point to search out someone who can enlighten them in the ways of Potence.",
       "is_incremental": true,
       "system": "The player rolls all Strength-related tests normally, but then adds an automatic success for each point he has in Potence. Thus, the character succeeds at most Strength feats without needing to make a roll at all. In melee and brawling combat, the automatic successes are applied to the damage roll results."
     },
-    {
+    "obfuscate": {
       "name": "Obfuscate",
       "description": "This uncanny power enables Kindred to conceal themselves from others’ sight. By simply wishing to remain unseen, a vampire can disappear, even if he stands in full view of a crowd.\nThe immortal doesn’t actually become invisible; he simply deludes any observers into thinking he has vanished. Additional uses of Obfuscate include changing the Kindred’s features and concealing other people or objects.\nUnless the vampire purposefully makes himself seen, he can remain obscured indefinitely. At higher levels of power, the vampire may fade from view so subtly that those nearby never register the point at which he “left.”\nUnder most circumstances, few mortals or supernaturals can penetrate Obfuscate’s cloaking fog. Animals, operating on a more instinctual level, often perceive (and fear) the vampire’s presence even if they can’t detect him with their normal senses. Children and other innocents to whom deception is foreign might also be able to pierce the deception, at the Storyteller’s discretion.\nThe Auspex Discipline enables Kindred to see through Obfuscate. Even that is not guaranteed, however; refer to “Seeing the Unseen,” p. 152, for more details.\nSince Obfuscate affects the viewer‘s mind, Kindred cannot use this Discipline to cloak their presence from mechanical devices.\nVideo recordings and photographs capture the vampire’s image faithfully. Even so, such is Obfuscate’s ability to bend the mind that someone using a recording device will not see the immortal’s image until she views the footage at a later date, if even then.\nSeveral clans - Assamites, Followers of Set, Malkavians, Nosferatu -use this power, but it stands as the hallmark of the Nosferatu. A number of elder Kindred believe Caine, or perhaps Lilith, bestowed the clan with this Discipline to compensate for the hideous physical deformities its members suffer.\nMost Obfuscate powers last for a scene or so, or until the vampire ceases maintaining them. Once evoked, they require very little mental effort to keep in place.",
       "is_incremental": false,
@@ -69,5 +69,5 @@
         }
       ]
     }
-  ]
+  }
 }
