@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:sqflite_common/sqlite_api.dart';
 import 'package:vampire_the_masquerade_character_sheet/common_logic.dart';
 
 class Discipline {
@@ -98,6 +99,8 @@ class DisciplineDot {
   String system;
 
   int level;
+
+  /// Is max even used?
   int max;
 
   DisciplineDot.fromJson(Map<String, dynamic> json)
@@ -126,6 +129,14 @@ class DisciplineDot {
     level = other.level;
     max = other.max;
   }
+
+  Map<String, Object?> toDatabase(int foreignKey) => {
+        'discipline_id': foreignKey,
+        'level': level,
+        'system': system,
+        'maximum': max,
+        'description': description,
+      };
 }
 
 class DisciplineController extends GetxController {
@@ -173,6 +184,8 @@ class DisciplineController extends GetxController {
 class DisciplineEntry {
   late String name;
   String? description;
+
+  /// Is max even used?
   int max = 5;
 
   String? system;
@@ -200,6 +213,13 @@ class DisciplineEntry {
     if (levels != null) json["levels"] = levels;
     return json;
   }
+
+  Map<String, Object?> toDatabase(String id) => {
+        'txt_id': id,
+        'description': description,
+        'maximum': max,
+        'system': system
+      };
 }
 
 class DisciplineDictionary extends Dictionary {
@@ -228,6 +248,21 @@ class DisciplineDictionary extends Dictionary {
       Map<String, dynamic> disciplineEntries = json["disciplines"];
       for (var id in disciplineEntries.keys) {
         entries[id] = DisciplineEntry.fromJson(disciplineEntries[id]);
+      }
+    }
+  }
+
+  @override
+  void loadAllToDatabase(Database database) async {
+    for (var entry in entries.entries) {
+      int id = await database.insert(
+          'disciplines', entry.value.toDatabase(entry.key),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+      if (entry.value.levels != null) {
+        for (var dot in entry.value.levels!.values) {
+          await database.insert('discipline_levels', dot.toDatabase(id),
+              conflictAlgorithm: ConflictAlgorithm.replace);
+        }
       }
     }
   }

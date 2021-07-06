@@ -76,19 +76,8 @@ class VampireCharacter extends GetxController {
     return json;
   }
 
-  Future<String> _loadAttributeList() async {
-    var directory = await getApplicationDocumentsDirectory();
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    final attributeListFile = preferences.getString('attribute_dictionary') ??
-        'default_attributes_en_US.json';
-    File dictionaryFile = File(directory.path + '/' + attributeListFile);
-
-    if (await dictionaryFile.exists()) {
-      return dictionaryFile.path;
-    } else {
-      throw ("Attribute dictionary $attributeListFile does not exist");
-    }
-  }
+  Future<String> _loadAttributeList() async =>
+      rootBundle.loadString('assets/json/default_attributes_en_US.json');
 
   Future<String> _loadAbilitiesList() async {
     var directory = await getApplicationDocumentsDirectory();
@@ -175,7 +164,6 @@ class VampireCharacter extends GetxController {
         File characterFile = File(direcrory.path + '/' + _characterFileName);
 
         if (characterFile.existsSync()) {
-          // TODO like all of this is creation
           // Attribute dictionary
           AttributeDictionary atrd =
               AttributeDictionary(await _loadAttributeList());
@@ -229,9 +217,9 @@ class VampireCharacter extends GetxController {
               await getDatabasesPath(),
               'kindred_database.db',
             ),
+            version: 1,
             onCreate: (database, version) async {
               // TODO: DB initialization is here
-              version = 1;
               // 1. Get assets/json/sql/tables.sql. It creates the tables
               String tableScript =
                   await rootBundle.loadString('assets/sql/tables.sql');
@@ -240,7 +228,42 @@ class VampireCharacter extends GetxController {
               await database.execute(tableScript);
               print("Done!");
               // 2. Load default_*.json into the tables
-              // Welp, that's initialization
+              // Attribute dictionary
+              print("Loading defaults...");
+              AttributeDictionary atrd =
+                  AttributeDictionary(await _loadAttributeList());
+              atrd.loadAllToDatabase(database);
+              print("Attributes done");
+
+              // Abilities dictionary
+              AbilitiesDictionary abd =
+                  AbilitiesDictionary(await _loadAbilitiesList());
+              abd.loadAllToDatabase(database);
+              print("Abilities done");
+
+              // Backgrounds dictionary
+              BackgroundDictionary backd =
+                  BackgroundDictionary(await _loadBackgroundList());
+              backd.loadAllToDatabase(database);
+              print("Backgrounds done");
+
+              // Merits and Flaws dictionary
+              MeritsAndFlawsDictionary mfd =
+                  MeritsAndFlawsDictionary(await _loadMeritsAndFlawsList());
+              mfd.loadAllToDatabase(database);
+              print("Merits and flaws done");
+
+              // Disciplines dictionary
+              DisciplineDictionary dd =
+                  DisciplineDictionary(await _loadDisciplineList());
+              dd.loadAllToDatabase(database);
+              print("Disciplines done");
+
+              // Rituals dictionary
+              RitualDictionary rd = RitualDictionary(await _loadRitualsList());
+              rd.loadAllToDatabase(database);
+              print("Rituals done");
+              print("Default database initialized");
             },
           );
         }
@@ -276,6 +299,7 @@ class VampireCharacter extends GetxController {
   }
 
   Future<void> install() async {
+    // TODO: there is no installation anymore
     SharedPreferences preferences = await SharedPreferences.getInstance();
     var directory = await getApplicationDocumentsDirectory();
 

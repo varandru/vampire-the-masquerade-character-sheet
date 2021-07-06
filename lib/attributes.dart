@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:sqflite_common/sqlite_api.dart';
 import 'common_logic.dart';
 
 enum AttributeColumnType { Physical, Mental, Social }
@@ -80,10 +81,9 @@ class AttributesController extends GetxController {
             id: id,
             name: entry.name,
             current: attributes[id]["current"] ?? 1,
+            specialization: attributes[id]["specialization"] ?? "",
             min: 0,
             max: 5,
-            specialization: attributes[id]["specialization"] ?? "",
-            description: entry.description ?? "",
             isIncremental: true, // Attributes are incremental, AFAIK
             isDeletable: false);
 
@@ -201,5 +201,63 @@ class AttributeDictionary extends Dictionary {
     json["mental"] = mental;
 
     return json;
+  }
+
+  @override
+  void loadAllToDatabase(Database database) async {
+    for (var textId in physical.keys) {
+      int id = await database.insert(
+          'attributes', physical[textId]!.toDatabaseMap(textId),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+      if (physical[id]!.specializations.isNotEmpty) {
+        for (var entry
+            in physical[id]!.specializationsToDatabase(id, 'attribute_id')!) {
+          await database.insert('attribute_specializations', entry,
+              conflictAlgorithm: ConflictAlgorithm.replace);
+        }
+      }
+      if (physical[id]!.levels.isNotEmpty) {
+        for (var entry in physical[id]!.levelsToDatabase(id, 'attribute_id')!) {
+          await database.insert('attribute_levels', entry,
+              conflictAlgorithm: ConflictAlgorithm.replace);
+        }
+      }
+    }
+    for (var textId in social.keys) {
+      int id = await database.insert(
+          'attributes', social[textId]!.toDatabaseMap(textId),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+      if (social[id]!.specializations.isNotEmpty) {
+        for (var entry
+            in social[id]!.specializationsToDatabase(id, 'attribute_id')!) {
+          await database.insert('attribute_specializations', entry,
+              conflictAlgorithm: ConflictAlgorithm.replace);
+        }
+      }
+      if (social[id]!.levels.isNotEmpty) {
+        for (var entry in social[id]!.levelsToDatabase(id, 'attribute_id')!) {
+          await database.insert('attribute_levels', entry,
+              conflictAlgorithm: ConflictAlgorithm.replace);
+        }
+      }
+    }
+    for (var textId in mental.keys) {
+      int id = await database.insert(
+          'attributes', mental[textId]!.toDatabaseMap(textId),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+      if (mental[id]!.specializations.isNotEmpty) {
+        for (var entry
+            in mental[id]!.specializationsToDatabase(id, 'attribute_id')!) {
+          await database.insert('attribute_specializations', entry,
+              conflictAlgorithm: ConflictAlgorithm.replace);
+        }
+      }
+      if (mental[id]!.levels.isNotEmpty) {
+        for (var entry in mental[id]!.levelsToDatabase(id, 'attribute_id')!) {
+          await database.insert('attribute_levels', entry,
+              conflictAlgorithm: ConflictAlgorithm.replace);
+        }
+      }
+    }
   }
 }

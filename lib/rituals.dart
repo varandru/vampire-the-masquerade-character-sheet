@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:sqflite_common/sqlite_api.dart';
 
 import 'disciplines.dart';
 import 'common_logic.dart';
@@ -59,7 +60,7 @@ class Ritual {
   void fromEntry(RitualEntry entry) {
     level = entry.level;
     name = entry.name;
-    schoolId = entry.schoolId.isEmpty ? entry.schoolId : "undefined";
+    schoolId = entry.schoolId != null ? entry.schoolId! : "undefined";
     description = entry.description;
     system = entry.system;
   }
@@ -123,10 +124,20 @@ class RitualEntry {
     return json;
   }
 
+  Map<String, Object?> toDatabase(String id) => {
+        'txt_id': id,
+        'name': name,
+        'discipline_id': disciplineId,
+        'level': level,
+        'description': description,
+        'system': system,
+      };
+
   int level;
   String name;
   String school = 'Undefined';
-  String schoolId;
+  String? schoolId;
+  int? disciplineId;
   String? description;
   String system;
 }
@@ -147,5 +158,20 @@ class RitualDictionary extends Dictionary {
   @override
   Map<String, dynamic> save() {
     return Map.fromEntries(entries.entries);
+  }
+
+  @override
+  void loadAllToDatabase(Database database) async {
+    for (var entry in entries.entries) {
+      if (entry.value.disciplineId == null) {
+        var response = await database.query('disciplines',
+            columns: ['id'],
+            where: 'txt_id = ?',
+            whereArgs: [entry.value.schoolId]);
+        entry.value.disciplineId = response[0]['id']! as int;
+      }
+      await database.insert('rituals', entry.value.toDatabase(entry.key),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+    }
   }
 }

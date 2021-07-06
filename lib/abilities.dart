@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:sqflite_common/sqlite_api.dart';
 
 import 'common_logic.dart';
 
@@ -84,7 +85,6 @@ class AbilitiesController extends GetxController {
           min: 0,
           max: 5,
           specialization: abilities[id]["specialization"] ?? "",
-          description: entry.description ?? "",
           isIncremental: true, // Abilities are incremental, AFAIK
         );
 
@@ -188,5 +188,63 @@ class AbilitiesDictionary extends Dictionary {
     json["knowledges"] = knowledges;
 
     return json;
+  }
+
+  @override
+  void loadAllToDatabase(Database database) async {
+    for (var textId in talents.keys) {
+      int id = await database.insert(
+          'abilities', talents[textId]!.toDatabaseMap(textId),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+      if (talents[id]!.specializations.isNotEmpty) {
+        for (var entry
+            in talents[id]!.specializationsToDatabase(id, 'ability_id')!) {
+          await database.insert('ability_specializations', entry,
+              conflictAlgorithm: ConflictAlgorithm.replace);
+        }
+      }
+      if (talents[id]!.levels.isNotEmpty) {
+        for (var entry in talents[id]!.levelsToDatabase(id, 'ability_id')!) {
+          await database.insert('ability_levels', entry,
+              conflictAlgorithm: ConflictAlgorithm.replace);
+        }
+      }
+    }
+    for (var textId in skills.keys) {
+      int id = await database.insert(
+          'abilities', skills[textId]!.toDatabaseMap(textId),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+      if (skills[id]!.specializations.isNotEmpty) {
+        for (var entry
+            in skills[id]!.specializationsToDatabase(id, 'ability_id')!) {
+          await database.insert('ability_specializations', entry,
+              conflictAlgorithm: ConflictAlgorithm.replace);
+        }
+      }
+      if (skills[id]!.levels.isNotEmpty) {
+        for (var entry in skills[id]!.levelsToDatabase(id, 'ability_id')!) {
+          await database.insert('ability_specializations', entry,
+              conflictAlgorithm: ConflictAlgorithm.replace);
+        }
+      }
+    }
+    for (var textId in knowledges.keys) {
+      int id = await database.insert(
+          'abilities', knowledges[textId]!.toDatabaseMap(textId),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+      if (knowledges[id]!.specializations.isNotEmpty) {
+        for (var entry
+            in knowledges[id]!.specializationsToDatabase(id, 'ability_id')!) {
+          await database.insert('ability_specializations', entry,
+              conflictAlgorithm: ConflictAlgorithm.replace);
+        }
+      }
+      if (knowledges[id]!.levels.isNotEmpty) {
+        for (var entry in knowledges[id]!.levelsToDatabase(id, 'ability_id')!) {
+          await database.insert('ability_specializations', entry,
+              conflictAlgorithm: ConflictAlgorithm.replace);
+        }
+      }
+    }
   }
 }

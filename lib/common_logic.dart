@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:get/get.dart';
+import 'package:sqflite/sqflite.dart';
 
 String identify(String name) =>
     name.toLowerCase().replaceAll(' ', '_').replaceAll('[\\W0-9]', '');
@@ -13,8 +14,7 @@ class ComplexAbility {
     this.current = 1,
     this.min = 0,
     this.max = 5,
-    // this.specialization = "",
-    // this.description = "",
+    this.specialization = "",
     this.isIncremental = true,
     this.hasSpecialization = true,
     this.isDeletable = true,
@@ -26,9 +26,7 @@ class ComplexAbility {
   int current;
   int min;
   int max;
-  // Pull these from DB
-  // String specialization;
-  // String description;
+  String specialization;
 
   /// Does this ability get directly better at higher levels?
   /// If there is variety, this is false
@@ -62,7 +60,6 @@ class ComplexAbility {
         name = "",
         current = json['current'],
         specialization = json['specialization'] ?? "",
-        description = "",
         min = 1,
         max = 5,
         isIncremental = true,
@@ -74,7 +71,6 @@ class ComplexAbility {
         min = other.min,
         max = other.max,
         specialization = other.specialization,
-        description = other.description,
         isIncremental = other.isIncremental,
         hasSpecialization = other.isIncremental,
         isDeletable = other.isDeletable,
@@ -82,7 +78,7 @@ class ComplexAbility {
 
   void fillFromDictionary(ComplexAbilityEntry entry) {
     // levelDescriptions = entry.levels;
-    if (entry.description != null) description = entry.description!;
+    // if (entry.description != null) description = entry.description!;
   }
 
   Map<String, dynamic> toJson() {
@@ -137,6 +133,30 @@ class ComplexAbilityEntry {
 
     return json;
   }
+
+  Map<String, Object?> toDatabaseMap(String id) =>
+      {"txt_id": id, "name": name, "description": description};
+
+  List<Map<String, Object?>>? specializationsToDatabase(
+          int foreignKey, String foreignKeyName) =>
+      specializations.isEmpty
+          ? null
+          : List.generate(
+              specializations.length,
+              (index) =>
+                  {foreignKeyName: foreignKey, "name": specializations[index]});
+
+  List<Map<String, Object?>>? levelsToDatabase(
+          int foreignKey, String foreignKeyName) =>
+      levels.isEmpty
+          ? null
+          : List.generate(
+              levels.length,
+              (index) => {
+                    foreignKeyName: foreignKey,
+                    'description': levels[index],
+                    'level': index + 1
+                  });
 }
 
 class ComplexAbilityColumn {
@@ -195,6 +215,9 @@ abstract class Dictionary {
   void load(Map<String, dynamic> json);
 
   Map<String, dynamic> save();
+
+  /// Legal dynamics map to TEXT, INTEGER, REAL, BLOB, NULL. How am I going to insert arrays? Great question
+  void loadAllToDatabase(Database database);
 
   onDispose() async {
     if (changed) {

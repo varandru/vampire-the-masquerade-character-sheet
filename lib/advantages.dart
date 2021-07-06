@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:sqflite_common/sqlite_api.dart';
 import 'common_logic.dart';
 
 class BackgroundsController extends GetxController {
@@ -35,7 +36,6 @@ class BackgroundsController extends GetxController {
           min: 0,
           max: 5,
           specialization: "",
-          description: entry.description ?? "",
           isIncremental: true, // Backgrounds are incremental
           hasSpecialization: false,
         );
@@ -53,7 +53,6 @@ class BackgroundsController extends GetxController {
       Map<String, dynamic> attr = Map();
       attr["name"] = attribute.name;
       attr["current"] = attribute.current;
-      attr["specialization"] = attribute.specialization;
       shortAttributes.add(attr);
     }
     return shortAttributes;
@@ -102,5 +101,21 @@ class BackgroundDictionary extends Dictionary {
     changed = false;
 
     return json;
+  }
+
+  @override
+  void loadAllToDatabase(Database database) async {
+    for (var textId in backgrounds.keys) {
+      int id = await database.insert(
+          'backgrounds', backgrounds[textId]!.toDatabaseMap(textId),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+      if (backgrounds[id]!.levels.isNotEmpty) {
+        for (var entry
+            in backgrounds[id]!.levelsToDatabase(id, 'background_id')!) {
+          await database.insert('background_levels', entry,
+              conflictAlgorithm: ConflictAlgorithm.replace);
+        }
+      }
+    }
   }
 }

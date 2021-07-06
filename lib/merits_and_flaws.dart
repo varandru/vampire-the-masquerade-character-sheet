@@ -1,5 +1,6 @@
 import 'package:get/get_rx/get_rx.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
+import 'package:sqflite_common/sqlite_api.dart';
 import 'package:vampire_the_masquerade_character_sheet/common_logic.dart';
 
 enum MeritType { Physical, Mental, Social, Supernatural, Undefined }
@@ -25,6 +26,36 @@ MeritType typeFromString(String? name) {
   if (name == "social") return MeritType.Social;
   if (name == "supernatural") return MeritType.Supernatural;
   return MeritType.Undefined;
+}
+
+int intFromType(MeritType type) {
+  switch (type) {
+    case MeritType.Physical:
+      return 1;
+    case MeritType.Mental:
+      return 2;
+    case MeritType.Social:
+      return 3;
+    case MeritType.Supernatural:
+      return 4;
+    case MeritType.Undefined:
+      return 0;
+  }
+}
+
+MeritType typeFromInt(int type) {
+  switch (type) {
+    case 1:
+      return MeritType.Physical;
+    case 2:
+      return MeritType.Mental;
+    case 3:
+      return MeritType.Social;
+    case 4:
+      return MeritType.Supernatural;
+    default:
+      return MeritType.Undefined;
+  }
 }
 
 class Merit {
@@ -130,19 +161,21 @@ class MeritsAndFlawsController extends GetxController {
 
 class MeritEntry {
   MeritEntry({
+    required this.name,
     required this.type,
     this.costs = const [],
     this.description,
   });
 
   // Map key
-  // final String name;
+  final String name;
   final MeritType type;
   late final List<int> costs;
   final String? description;
 
   MeritEntry.fromJson(Map<String, dynamic> json)
       : type = typeFromString(json["type"]!),
+        name = json["name"]!,
         description = json["description"] {
     if (json["cost"] != null) {
       List<int> c = [];
@@ -154,6 +187,12 @@ class MeritEntry {
       costs = [];
     }
   }
+
+  Map<String, Object?> toDatabase(String id) => {
+        'txt_id': id,
+        'name': name,
+        'description': description,
+      };
 }
 
 class MeritsAndFlawsDictionary extends Dictionary {
@@ -189,5 +228,24 @@ class MeritsAndFlawsDictionary extends Dictionary {
     Map<String, dynamic> json = Map();
 
     return json;
+  }
+
+  @override
+  void loadAllToDatabase(Database database) async {
+    for (var merit in merits.entries) {
+      int id = await database.insert(
+          'merits', merit.value.toDatabase(merit.key),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+      for (var cost in merit.value.costs) {
+        await database.insert('merit_costs', {'merit_id': id, 'cost': cost});
+      }
+    }
+    for (var flaw in flaws.entries) {
+      int id = await database.insert('flaws', flaw.value.toDatabase(flaw.key),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+      for (var cost in flaw.value.costs) {
+        await database.insert('flaw_costs', {'flaw_id': id, 'cost': cost});
+      }
+    }
   }
 }
