@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.vampire_the_masquerade_character_sheet">
+package="com.github.varandru.vampire_the_masquerade_character_sheet" 
+    android:versionCode = "10002" android:versionName = "v1.0.2">
    <application
         android:label="V:tM Character Sheet"
         android:icon="@mipmap/ic_launcher">
