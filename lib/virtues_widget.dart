@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'advanatages_widget.dart';
+import 'background_widget.dart';
 import 'common_logic.dart';
 import 'common_widget.dart';
 import 'main_info.dart';
@@ -22,41 +22,41 @@ class VirtuesColumnWidget extends StatelessWidget {
     ];
     column.add(Obx(() => ComplexAbilityWidget(
           attribute: ComplexAbility(
-            id: 'consience',
+            id: 0,
+            txtId: 'consience',
             name: "Conscience",
-            current: vc.consience.value,
+            current: vc.conscience,
             min: 1,
             isDeletable: false,
             isNameEditable: false,
           ),
-          updateCallback: (ability, index) =>
-              vc.consience.value = ability.current,
+          updateCallback: (ability, index) => vc.conscience = ability.current,
           deleteCallback: (index) => null,
         )));
     column.add(Obx(() => ComplexAbilityWidget(
           attribute: ComplexAbility(
-            id: 'selfcontrol',
+            id: 1,
+            txtId: 'selfcontrol',
             name: "Self-Control",
-            current: vc.selfControl.value,
+            current: vc.selfControl,
             min: 1,
             isDeletable: false,
             isNameEditable: false,
           ),
-          updateCallback: (ability, index) =>
-              vc.selfControl.value = ability.current,
+          updateCallback: (ability, index) => vc.selfControl = ability.current,
           deleteCallback: (index) => null,
         )));
     column.add(Obx(() => ComplexAbilityWidget(
           attribute: ComplexAbility(
-            id: 'courage',
+            id: 2,
+            txtId: 'courage',
             name: "Courage",
-            current: vc.courage.value,
+            current: vc.courage,
             min: 1,
             isDeletable: false,
             isNameEditable: false,
           ),
-          updateCallback: (ability, index) =>
-              vc.courage.value = ability.current,
+          updateCallback: (ability, index) => vc.courage = ability.current,
           deleteCallback: (index) => null,
         )));
 
@@ -98,7 +98,7 @@ class SummarizedInfoWidget extends StatelessWidget {
             var val = await Get.dialog<int>(
                 SingleNumberEditor(vc.humanity, "Edit Humanity"));
             if (val != null) {
-              vc.additionalHumanity.value += val - vc.humanity;
+              vc.humanity += val - vc.humanity;
             }
           },
         ),
@@ -122,15 +122,15 @@ class SummarizedInfoWidget extends StatelessWidget {
           var val = await Get.dialog<int>(
               SingleNumberEditor(vc.willpower, "Edit Willpower maximum"));
           if (val != null) {
-            vc.additionalWillpower.value += val - vc.willpower;
+            vc.willpower += val - vc.willpower;
           }
         },
       ),
       constraints: noTitleRestraint,
     ));
     elements.add(
-      Obx(() => SquareButtonsRow(mvc.will.value, vc.willpower, 20,
-              (value) => mvc.will.value = value,
+      Obx(() => SquareButtonsRow(
+              mvc.will, vc.willpower, 20, (value) => mvc.will = value,
               highlight: highlightColor)
           // Wrap(children: makeWillPowerRow(mvc.will.value, vc.willpower))
           ),
@@ -144,17 +144,17 @@ class SummarizedInfoWidget extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           onTap: () async {
-            var val = await Get.dialog<int>(SingleNumberEditor(
-                mvc.bloodMax.value, "Edit Bloodpool maximum"));
+            var val = await Get.dialog<int>(
+                SingleNumberEditor(mvc.bloodMax, "Edit Bloodpool maximum"));
             if (val != null) {
-              mvc.bloodMax.value = val;
+              mvc.bloodMax = val;
             }
           }),
     );
 
     elements.add(
-      Obx(() => SquareButtonsRow(mvc.blood.value, mvc.bloodMax.value, 20,
-          (value) => mvc.blood.value = value,
+      Obx(() => SquareButtonsRow(
+          mvc.blood, mvc.bloodMax, 20, (value) => mvc.blood = value,
           highlight: highlightColor)),
     );
 
@@ -185,7 +185,7 @@ class SummarizedInfoWidget extends StatelessWidget {
                         max: 10,
                       ));
                       if (val != null) {
-                        vc.additionalHumanity.value += val - vc.humanity;
+                        vc.humanity += val - vc.humanity;
                       }
                     }),
                 constraints: noTitleRestraint);
@@ -209,15 +209,15 @@ class SummarizedInfoWidget extends StatelessWidget {
                     max: 10,
                   ));
                   if (val != null) {
-                    vc.additionalWillpower.value += val - vc.willpower;
+                    vc.willpower += val - vc.willpower;
                   }
                 },
               ),
               constraints: noTitleRestraint,
             );
           case 4:
-            return Obx(() => SquareButtonsRow(mvc.will.value, vc.willpower,
-                    maxWillpowerCount, (value) => mvc.will.value = value,
+            return Obx(() => SquareButtonsRow(mvc.will, vc.willpower,
+                    maxWillpowerCount, (value) => mvc.will = value,
                     highlight: highlightColor)
                 // Wrap(children: makeWillPowerRow(mvc.will.value, vc.willpower))
                 );
@@ -230,21 +230,18 @@ class SummarizedInfoWidget extends StatelessWidget {
                 ),
                 onTap: () async {
                   var val = await Get.dialog<int>(SingleNumberEditor(
-                    mvc.bloodMax.value,
+                    mvc.bloodMax,
                     "Edit Bloodpool maximum",
                     max: 20,
                   ));
                   if (val != null) {
-                    mvc.bloodMax.value = val;
-                    if (mvc.blood > val) mvc.blood.value = val;
+                    mvc.bloodMax = val;
+                    if (mvc.blood > val) mvc.blood = val;
                   }
                 });
           case 6:
-            return Obx(() => SquareButtonsRow(
-                mvc.blood.value,
-                mvc.bloodMax.value,
-                maxBloodCount,
-                (value) => mvc.blood.value = value,
+            return Obx(() => SquareButtonsRow(mvc.blood, mvc.bloodMax,
+                maxBloodCount, (value) => mvc.blood = value,
                 highlight: highlightColor));
           default:
             return Placeholder();

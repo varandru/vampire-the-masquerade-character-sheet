@@ -116,13 +116,17 @@ class ComplexAbilityColumnWidget extends StatelessWidget {
 }
 
 class ComplexAbilityPopup extends Dialog {
-  ComplexAbilityPopup(this.attribute,
-      {required this.updateCallback,
-      required this.deleteCallback,
-      this.index = 0,
-      required this.textTheme});
+  ComplexAbilityPopup(
+    this._attribute, {
+    // required ComplexAbilityEntry entry,
+    required this.updateCallback,
+    required this.deleteCallback,
+    this.index = 0,
+    required this.textTheme,
+  });
 
-  final ComplexAbility attribute;
+  final ComplexAbility _attribute;
+  // final ComplexAbilityEntry _entry;
   final int index;
   late final Function(ComplexAbility ability, ComplexAbility old)
       updateCallback;
@@ -133,15 +137,14 @@ class ComplexAbilityPopup extends Dialog {
   Widget build(BuildContext context) {
     List<Widget> children = [];
 
-    children.addIf(attribute.specialization.isNotEmpty,
-        Text(attribute.specialization, style: textTheme.headline5));
+    children.addIf(_attribute.specialization.isNotEmpty,
+        Text(_attribute.specialization, style: textTheme.headline5));
 
-    children.addIf(attribute.description.isNotEmpty,
-        Text("Description:", style: textTheme.headline6));
-    children.addIf(
-        attribute.description.isNotEmpty, Text(attribute.description));
+    // children.addIf(_entry.description != null,
+    //     Text("Description:", style: textTheme.headline6));
+    // children.addIf(_entry.description != null, Text(_entry.description!));
 
-    if (attribute.isDeletable) {
+    if (_attribute.isDeletable) {
       children.add(Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -149,11 +152,11 @@ class ComplexAbilityPopup extends Dialog {
               onPressed: () async {
                 final ca =
                     await Get.dialog<ComplexAbility>(ComplexAbilityDialog(
-                  name: 'Edit ${attribute.name}',
-                  ability: attribute,
+                  name: 'Edit ${_attribute.name}',
+                  ability: _attribute,
                 ));
                 if (ca != null) {
-                  updateCallback(ca, attribute);
+                  updateCallback(ca, _attribute);
                   Get.back();
                 }
               },
@@ -161,9 +164,9 @@ class ComplexAbilityPopup extends Dialog {
           IconButton(
               onPressed: () async {
                 bool? delete =
-                    await Get.dialog<bool>(DeleteDialog(name: attribute.name));
+                    await Get.dialog<bool>(DeleteDialog(name: _attribute.name));
                 if (delete != null && delete == true) {
-                  deleteCallback(attribute);
+                  deleteCallback(_attribute);
                   Get.back();
                 }
               },
@@ -177,11 +180,11 @@ class ComplexAbilityPopup extends Dialog {
               onPressed: () async {
                 final ca =
                     await Get.dialog<ComplexAbility>(ComplexAbilityDialog(
-                  name: 'Edit ${attribute.name}',
-                  ability: attribute,
+                  name: 'Edit ${_attribute.name}',
+                  ability: _attribute,
                 ));
                 if (ca != null) {
-                  updateCallback(ca, attribute);
+                  updateCallback(ca, _attribute);
                   Get.back();
                 }
               },
@@ -191,7 +194,7 @@ class ComplexAbilityPopup extends Dialog {
     }
     return SimpleDialog(
       title: Text(
-        attribute.name,
+        _attribute.name,
         textAlign: TextAlign.center,
         style: textTheme.headline4,
       ),
@@ -213,10 +216,12 @@ class ComplexAbilityDialog extends Dialog {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: edit dialog. Should load and possibly modify DB entry
     var ca = (ability != null)
         ? ability!.obs
         : ComplexAbility(
-                id: "undefined",
+                id: null,
+                txtId: "undefined",
                 name: name,
                 hasSpecialization: hasSpecializations)
             .obs;
@@ -267,15 +272,15 @@ class ComplexAbilityDialog extends Dialog {
           decoration: InputDecoration(labelText: "Specialization"),
         ));
 
-    children.add(TextField(
-      controller: TextEditingController()..text = ca.value.description,
-      onChanged: (value) => ca.update((val) {
-        val?.description = value;
-      }),
-      keyboardType: TextInputType.multiline,
-      maxLines: null,
-      decoration: InputDecoration(labelText: "Description"),
-    ));
+    // children.add(TextField(
+    //   controller: TextEditingController()..text = ca.value.description,
+    //   onChanged: (value) => ca.update((val) {
+    //     val?.description = value;
+    //   }),
+    //   keyboardType: TextInputType.multiline,
+    //   maxLines: null,
+    //   decoration: InputDecoration(labelText: "Description"),
+    // ));
 
     children.add(Row(
       children: [
@@ -287,7 +292,7 @@ class ComplexAbilityDialog extends Dialog {
           child: Text('OK'),
           onPressed: () {
             if (ca.value.name.isNotEmpty) {
-              if (ca.value.id == 'undefined') {
+              if (ca.value.txtId == 'undefined') {
                 ca.value =
                     ComplexAbility.fromOther(identify(ca.value.name), ca.value);
               }

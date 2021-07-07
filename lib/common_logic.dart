@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:get/get.dart';
 import 'package:sqflite/sqflite.dart';
@@ -11,6 +10,7 @@ class ComplexAbility {
   ComplexAbility({
     required this.id,
     required this.name,
+    this.txtId = '',
     this.current = 1,
     this.min = 0,
     this.max = 5,
@@ -21,7 +21,8 @@ class ComplexAbility {
     this.isNameEditable = true,
   });
 
-  final String id;
+  final int? id;
+  final String? txtId;
   String name;
   int current;
   int min;
@@ -56,7 +57,8 @@ class ComplexAbility {
     Map<String, dynamic> json, {
     this.hasSpecialization = true,
     this.isDeletable = true,
-  })  : id = json["id"],
+  })  : txtId = json["id"],
+        id = null,
         name = "",
         current = json['current'],
         specialization = json['specialization'] ?? "",
@@ -65,8 +67,9 @@ class ComplexAbility {
         isIncremental = true,
         isNameEditable = true;
 
-  ComplexAbility.fromOther(this.id, ComplexAbility other)
+  ComplexAbility.fromOther(this.txtId, ComplexAbility other)
       : name = other.name,
+        id = other.id,
         current = other.current,
         min = other.min,
         max = other.max,
@@ -75,11 +78,6 @@ class ComplexAbility {
         hasSpecialization = other.isIncremental,
         isDeletable = other.isDeletable,
         isNameEditable = other.isNameEditable;
-
-  void fillFromDictionary(ComplexAbilityEntry entry) {
-    // levelDescriptions = entry.levels;
-    // if (entry.description != null) description = entry.description!;
-  }
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = Map();
@@ -96,6 +94,7 @@ class ComplexAbilityEntry {
   List<String> specializations = [];
   List<String> levels = [];
   String? description;
+  int? databaseId;
 
   ComplexAbilityEntry.fromJson(Map<String, dynamic> json) {
     name = json["name"];
@@ -168,7 +167,16 @@ class ComplexAbilityColumn {
   RxList<ComplexAbility> values = RxList();
 
   void sortById() {
-    values.sort((a1, a2) => a1.id.compareTo(a2.id));
+    values.sort((a1, a2) {
+      if (a1.id == null && a2.id == null)
+        return a1.txtId?.compareTo(a2.txtId ?? '') ?? 0;
+      else if (a1.id == null)
+        return -1;
+      else if (a2.id == null)
+        return 1;
+      else
+        return a1.id!.compareTo(a2.id!);
+    });
   }
 
   void editValue(ComplexAbility value, ComplexAbility old) {
@@ -200,33 +208,15 @@ class ComplexAbilityColumn {
 }
 
 abstract class Dictionary {
-  Dictionary(this.fileName) {
-    File dictionaryFile = File(this.fileName);
-    if (dictionaryFile.existsSync()) {
-      load(jsonDecode(dictionaryFile.readAsStringSync()));
-    } else {
-      throw ("Attribute dictionary $dictionaryFile does not exist");
-    }
+  Dictionary(final String json) {
+    load(jsonDecode(json));
   }
 
   bool changed = false;
-  final String fileName;
-
   void load(Map<String, dynamic> json);
 
   Map<String, dynamic> save();
 
   /// Legal dynamics map to TEXT, INTEGER, REAL, BLOB, NULL. How am I going to insert arrays? Great question
-  void loadAllToDatabase(Database database);
-
-  onDispose() async {
-    if (changed) {
-      File dictionaryFile = File(fileName);
-      if (await dictionaryFile.exists()) {
-        dictionaryFile.writeAsStringSync(jsonEncode(save()));
-      } else {
-        throw ("Dictionary file $dictionaryFile does not exist");
-      }
-    }
-  }
+  Future<void> loadAllToDatabase(Database database);
 }

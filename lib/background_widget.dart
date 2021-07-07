@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'advantages.dart';
+import 'backgrounds.dart';
 import 'common_widget.dart';
 import 'common_logic.dart';
 import 'drawer_menu.dart';

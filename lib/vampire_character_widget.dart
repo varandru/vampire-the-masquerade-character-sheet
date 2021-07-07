@@ -67,14 +67,15 @@ class MenuScaffold extends Scaffold {
                     },
                     icon: Icon(Icons.save),
                   ),
-                  IconButton(
-                    onPressed: () async {
-                      final VampireCharacter vc = Get.find();
-                      await vc.install();
-                      await vc.load();
-                    },
-                    icon: Icon(Icons.restart_alt_outlined),
-                  ),
+                  // TODO: this was the reset button
+                  // IconButton(
+                  //   onPressed: () async {
+                  //     final VampireCharacter vc = Get.find();
+                  //     await vc.install();
+                  //     await vc.load();
+                  //   },
+                  //   icon: Icon(Icons.restart_alt_outlined),
+                  // ),
                 ],
           ),
           body: body,

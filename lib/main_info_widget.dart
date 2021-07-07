@@ -32,7 +32,7 @@ class MainInfoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final MainInfo controller = Get.find();
+    final MainInfoController controller = Get.find();
     return Container(
       margin: EdgeInsets.all(10.0),
       child: TextButton(

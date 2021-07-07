@@ -142,30 +142,34 @@ class DisciplineDot {
 class DisciplineController extends GetxController {
   RxList<Discipline> disciplines = RxList();
 
-  void load(Map<String, dynamic> json, DisciplineDictionary dictionary) {
+  void load(Map<String, dynamic> json) {
+    // TODO: some fields must load from database
     for (var id in json.keys) {
       if (json[id] == null) throw ("Invalid JSON $json");
       if (json[id]["current"] == null)
         throw ("${json["id"]} lacks neccessary fields");
 
-      var entry = dictionary.entries[id];
+      // var entry = dictionary.entries[id];
 
-      if (entry != null) {
-        Discipline base = Discipline(
-          id: id,
-          level: json[id]["current"],
-        );
-        if (!disciplines.contains(base)) {
-          try {
-            disciplines.add(Discipline.fromDictionary(
-              base: base,
-              entry: entry,
-            ));
-          } catch (e) {
-            continue;
-          }
-        }
-      }
+      // if (entry != null) {
+      Discipline base = Discipline(
+        id: id,
+        name: id,
+        level: json[id]["current"],
+      );
+
+      if (!disciplines.contains(base)) disciplines.add(base);
+      // if (!disciplines.contains(base)) {
+      //   try {
+      //     disciplines.add(Discipline.fromDictionary(
+      //       base: base,
+      //       entry: entry,
+      //     ));
+      //   } catch (e) {
+      //     continue;
+      //   }
+      // }
+      // }
     }
   }
 
@@ -253,7 +257,7 @@ class DisciplineDictionary extends Dictionary {
   }
 
   @override
-  void loadAllToDatabase(Database database) async {
+  Future<void> loadAllToDatabase(Database database) async {
     for (var entry in entries.entries) {
       int id = await database.insert(
           'disciplines', entry.value.toDatabase(entry.key),

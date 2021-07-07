@@ -3,8 +3,11 @@ create table attributes(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   txt_id TEXT UNIQUE,
   name TEXT,
-  description TEXT
+  description TEXT,
+  type INTEGER -- 0 - physical, 1 - social, 2 - mental
 );
+
+create unique index idx_attribute_txt_id on attributes(txt_id);
 
 create table attribute_specializations (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -29,6 +32,8 @@ create table abilities(
   description TEXT
 );
 
+create unique index idx_ability_txt_id on abilities(txt_id);
+
 create table ability_specializations (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   ability_id INTEGER, 
@@ -52,6 +57,8 @@ create table backgrounds(
   description TEXT
 );
 
+create unique index idx_background_txt_id on backgrounds(txt_id);
+
 create table background_levels (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   background_id INTEGER, 
@@ -69,6 +76,8 @@ create table merits (
   description TEXT
 );
 
+create unique index idx_merit_txt_id on merits(txt_id);
+
 create table merit_costs (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   merit_id INTEGER,
@@ -85,6 +94,8 @@ create table flaws (
   description TEXT
 );
 
+create unique index idx_flaw_txt_id on flaws(txt_id);
+
 create table flaw_costs (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   flaw_id INTEGER,
@@ -96,10 +107,13 @@ create table flaw_costs (
 create table disciplines (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   txt_id TEXT UNIQUE,
+  name TEXT,
   description TEXT,
   maximum INTEGER, 
   system TEXT
 );
+
+create unique index idx_discipline_txt_id on disciplines(txt_id);
 
 create table discipline_levels(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -125,7 +139,7 @@ create table rituals (
 
 create table characters (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT UNIQUE INDEX,
+  name TEXT UNIQUE,
   
   player_name TEXT,
   chronicle TEXT, 
@@ -148,6 +162,8 @@ create table characters (
   blood INTEGER
 );
 
+create unique index idx_character_name on characters(name);
+
 -- Player's attributes. 
 create table player_attributes(
   player_id INTEGER,
@@ -164,6 +180,15 @@ create table player_abilities(
   current INTEGER,
   FOREIGN KEY(player_id) REFERENCES characters(id),
   FOREIGN KEY(ability_id) REFERENCES abilities(id)
+);
+
+-- Player's backgrounds
+create table player_backgrounds(
+  player_id INTEGER,
+  background_id INTEGER,
+  current INTEGER,
+  FOREIGN KEY(player_id) REFERENCES characters(id),
+  FOREIGN KEY(background_id) REFERENCES backgrounds(id)
 );
 
 create table player_disciplines(

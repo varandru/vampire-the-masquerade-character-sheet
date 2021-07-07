@@ -92,54 +92,56 @@ class MeritsAndFlawsController extends GetxController {
   var meritSum = 0.obs;
   var flawsSum = 0.obs;
 
-  void loadMerits(List<dynamic> json, MeritsAndFlawsDictionary dictionary) {
-    for (var merit in json) {
-      if (merit["name"] == null) continue;
-      if (!(merit["name"] is String)) continue;
-      String name = merit["name"];
-      if (dictionary.merits[name] == null) {
-        continue;
-      }
-      int cost = dictionary.merits[name]!.costs.length > 0
-          ? merit["cost"] ?? dictionary.merits[name]!.costs[0]
-          : 1;
-      Merit m = Merit(
-        name: merit["name"]!,
-        type: dictionary.merits[name]!.type,
-        cost: cost,
-        description: dictionary.merits[name]?.description ?? "",
-      );
+  void loadMerits(List<dynamic> json) {
+    // TODO: json contains ids. Basic merits should be loaded
+    // for (var merit in json) {
+    //   if (merit["name"] == null) continue;
+    //   if (!(merit["name"] is String)) continue;
+    //   String name = merit["name"];
+    //   if (dictionary.merits[name] == null) {
+    //     continue;
+    //   }
+    //   int cost = dictionary.merits[name]!.costs.length > 0
+    //       ? merit["cost"] ?? dictionary.merits[name]!.costs[0]
+    //       : 1;
+    //   Merit m = Merit(
+    //     name: merit["name"]!,
+    //     type: dictionary.merits[name]!.type,
+    //     cost: cost,
+    //     description: dictionary.merits[name]?.description ?? "",
+    //   );
 
-      if (!merits.contains(m)) {
-        merits.add(m);
-        meritSum.value += m.cost;
-      }
-    }
+    //   if (!merits.contains(m)) {
+    //     merits.add(m);
+    //     meritSum.value += m.cost;
+    //   }
+    // }
   }
 
-  void loadFlaws(List<dynamic> json, MeritsAndFlawsDictionary dictionary) {
-    for (var flaw in json) {
-      if (flaw["name"] == null) continue;
-      if (!(flaw["name"] is String)) continue;
-      String name = flaw["name"];
-      if (dictionary.flaws[name] == null) {
-        continue;
-      }
-      int cost = dictionary.flaws[name]!.costs.length > 0
-          ? flaw["cost"] ?? dictionary.flaws[name]!.costs[0]
-          : 1;
-      Merit m = Merit(
-        name: flaw["name"]!,
-        type: dictionary.flaws[name]!.type,
-        cost: cost,
-        description: dictionary.flaws[name]?.description ?? "",
-      );
+  void loadFlaws(List<dynamic> json) {
+    // TODO: see loadMerits
+    // for (var flaw in json) {
+    //   if (flaw["name"] == null) continue;
+    //   if (!(flaw["name"] is String)) continue;
+    //   String name = flaw["name"];
+    //   if (dictionary.flaws[name] == null) {
+    //     continue;
+    //   }
+    //   int cost = dictionary.flaws[name]!.costs.length > 0
+    //       ? flaw["cost"] ?? dictionary.flaws[name]!.costs[0]
+    //       : 1;
+    //   Merit m = Merit(
+    //     name: flaw["name"]!,
+    //     type: dictionary.flaws[name]!.type,
+    //     cost: cost,
+    //     description: dictionary.flaws[name]?.description ?? "",
+    //   );
 
-      if (!flaws.contains(m)) {
-        flaws.add(m);
-        flawsSum.value += m.cost;
-      }
-    }
+    //   if (!flaws.contains(m)) {
+    //     flaws.add(m);
+    //     flawsSum.value += m.cost;
+    //   }
+    // }
   }
 
   List<dynamic> saveMerits() {
@@ -160,18 +162,19 @@ class MeritsAndFlawsController extends GetxController {
 }
 
 class MeritEntry {
-  MeritEntry({
-    required this.name,
-    required this.type,
-    this.costs = const [],
-    this.description,
-  });
+  MeritEntry(
+      {required this.name,
+      required this.type,
+      this.costs = const [],
+      this.description,
+      this.databaseId});
 
   // Map key
   final String name;
   final MeritType type;
   late final List<int> costs;
   final String? description;
+  int? databaseId;
 
   MeritEntry.fromJson(Map<String, dynamic> json)
       : type = typeFromString(json["type"]!),
@@ -231,7 +234,7 @@ class MeritsAndFlawsDictionary extends Dictionary {
   }
 
   @override
-  void loadAllToDatabase(Database database) async {
+  Future<void> loadAllToDatabase(Database database) async {
     for (var merit in merits.entries) {
       int id = await database.insert(
           'merits', merit.value.toDatabase(merit.key),
@@ -239,6 +242,7 @@ class MeritsAndFlawsDictionary extends Dictionary {
       for (var cost in merit.value.costs) {
         await database.insert('merit_costs', {'merit_id': id, 'cost': cost});
       }
+      merit.value.databaseId = id;
     }
     for (var flaw in flaws.entries) {
       int id = await database.insert('flaws', flaw.value.toDatabase(flaw.key),

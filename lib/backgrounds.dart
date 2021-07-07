@@ -1,37 +1,31 @@
 import 'package:get/get.dart';
 import 'package:sqflite_common/sqlite_api.dart';
+import 'package:vampire_the_masquerade_character_sheet/vampite_character.dart';
 import 'common_logic.dart';
 
 class BackgroundsController extends GetxController {
+  late final Database _database;
   var backgrounds = ComplexAbilityColumn('Backgrounds').obs;
 
-  void load(Map<String, dynamic> json, BackgroundDictionary dictionary) {
+  void fromJson(Map<String, dynamic> json, BackgroundDictionary bd) {
     // 1. Category headers. Re-read mostly for localization, might kill later
-    if (dictionary.name.isNotEmpty) {
-      backgrounds.value.name.value = dictionary.name;
-    }
+    // if (dictionary.name.isNotEmpty) {
+    //   backgrounds.value.name.value = dictionary.name;
+    // }
 
-    _fillBackgroundList(json, dictionary);
+    _fillBackgroundList(json, bd);
   }
 
   void _fillBackgroundList(
-      Map<String, dynamic> attributes, BackgroundDictionary dictionary) {
+      Map<String, dynamic> attributes, BackgroundDictionary bd) {
+    print("Filling background?");
     for (var id in attributes.keys) {
+      print("Adding $id from JSON");
+      var entry = bd.backgrounds[id];
       if (attributes[id] != null && attributes[id] is Map<String, dynamic>) {
-        ComplexAbilityEntry? entry;
-        entry = dictionary.backgrounds[id];
-
-        if (entry == null) {
-          // If a stat is not found, add an empty one
-          entry = ComplexAbilityEntry(name: id);
-          dictionary.backgrounds[id] = entry;
-          dictionary.changed = true;
-        }
-
-        // CRUTCH This doesn't allow attributes to go above 5
         ComplexAbility ca = ComplexAbility(
-          id: id,
-          name: entry.name,
+          id: entry?.databaseId,
+          name: entry?.name ?? id,
           current: attributes[id]["current"] ?? 1,
           min: 0,
           max: 5,
@@ -39,8 +33,6 @@ class BackgroundsController extends GetxController {
           isIncremental: true, // Backgrounds are incremental
           hasSpecialization: false,
         );
-
-        print("Advantage: ${ca.name}, $id");
 
         backgrounds.value.add(ca);
       }
@@ -56,6 +48,29 @@ class BackgroundsController extends GetxController {
       shortAttributes.add(attr);
     }
     return shortAttributes;
+  }
+
+  void fromDatabase(Database database) async {
+    _database = database;
+
+    var r = await _database.query('player_backgrounds',
+        where: 'player_id = ?',
+        whereArgs: [Get.find<VampireCharacter>().characterId.value]);
+    for (var response in r) {
+      var entry = (await _database.query(
+        'backgrounds',
+        columns: ['name'],
+        where: 'id = ?',
+        whereArgs: [response['background_id'] as int],
+      ))[0];
+
+      backgrounds.value.add(ComplexAbility(
+        id: Get.find<VampireCharacter>().characterId.value,
+        name: entry['name'] as String,
+        current: response['level'] as int,
+        hasSpecialization: false,
+      ));
+    }
   }
 }
 
@@ -104,14 +119,14 @@ class BackgroundDictionary extends Dictionary {
   }
 
   @override
-  void loadAllToDatabase(Database database) async {
+  Future<void> loadAllToDatabase(Database database) async {
     for (var textId in backgrounds.keys) {
       int id = await database.insert(
           'backgrounds', backgrounds[textId]!.toDatabaseMap(textId),
           conflictAlgorithm: ConflictAlgorithm.replace);
-      if (backgrounds[id]!.levels.isNotEmpty) {
+      if (backgrounds[textId]!.levels.isNotEmpty) {
         for (var entry
-            in backgrounds[id]!.levelsToDatabase(id, 'background_id')!) {
+            in backgrounds[textId]!.levelsToDatabase(id, 'background_id')!) {
           await database.insert('background_levels', entry,
               conflictAlgorithm: ConflictAlgorithm.replace);
         }

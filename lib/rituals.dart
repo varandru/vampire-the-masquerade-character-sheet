@@ -161,14 +161,19 @@ class RitualDictionary extends Dictionary {
   }
 
   @override
-  void loadAllToDatabase(Database database) async {
+  Future<void> loadAllToDatabase(Database database) async {
     for (var entry in entries.entries) {
       if (entry.value.disciplineId == null) {
         var response = await database.query('disciplines',
-            columns: ['id'],
+            columns: ['id', 'name'],
             where: 'txt_id = ?',
             whereArgs: [entry.value.schoolId]);
-        entry.value.disciplineId = response[0]['id']! as int;
+        if (response.length > 0) {
+          entry.value.disciplineId = response[0]['id'] as int? ?? -1;
+          entry.value.school = response[0]['name'] as String? ?? 'Undefined';
+        } else {
+          entry.value.school = 'Undefined';
+        }
       }
       await database.insert('rituals', entry.value.toDatabase(entry.key),
           conflictAlgorithm: ConflictAlgorithm.replace);

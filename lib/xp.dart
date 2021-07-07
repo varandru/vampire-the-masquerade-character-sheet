@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-class XPController extends GetxController {
+class XpController extends GetxController {
   var xpTotal = 0.obs;
   var xpSpent = 0.obs;
 
