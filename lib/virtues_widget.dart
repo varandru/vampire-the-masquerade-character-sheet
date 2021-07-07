@@ -20,45 +20,49 @@ class VirtuesColumnWidget extends StatelessWidget {
         style: Theme.of(context).textTheme.headline6,
       ),
     ];
-    column.add(Obx(() => ComplexAbilityWidget(
-          attribute: ComplexAbility(
-            id: 0,
-            txtId: 'consience',
-            name: "Conscience",
-            current: vc.conscience,
-            min: 1,
-            isDeletable: false,
-            isNameEditable: false,
-          ),
-          updateCallback: (ability, index) => vc.conscience = ability.current,
-          deleteCallback: (index) => null,
-        )));
-    column.add(Obx(() => ComplexAbilityWidget(
-          attribute: ComplexAbility(
-            id: 1,
-            txtId: 'selfcontrol',
-            name: "Self-Control",
-            current: vc.selfControl,
-            min: 1,
-            isDeletable: false,
-            isNameEditable: false,
-          ),
-          updateCallback: (ability, index) => vc.selfControl = ability.current,
-          deleteCallback: (index) => null,
-        )));
-    column.add(Obx(() => ComplexAbilityWidget(
-          attribute: ComplexAbility(
-            id: 2,
-            txtId: 'courage',
-            name: "Courage",
-            current: vc.courage,
-            min: 1,
-            isDeletable: false,
-            isNameEditable: false,
-          ),
-          updateCallback: (ability, index) => vc.courage = ability.current,
-          deleteCallback: (index) => null,
-        )));
+    // TODO: virtues require specific handling. Stop fighting the inevitable
+    // column.add(Obx(() => ComplexAbilityWidget(
+    //       attribute: ComplexAbility(
+    //         id: 0,
+    //         txtId: 'consience',
+    //         name: "Conscience",
+    //         current: vc.conscience,
+    //         min: 1,
+    //         isDeletable: false,
+    //         isNameEditable: false,
+    //       ),
+    //       updateCallback: (ability, index) => vc.conscience = ability.current,
+    //       deleteCallback: (index) => null,
+    //       description: null,
+    //     )));
+    // column.add(Obx(() => ComplexAbilityWidget(
+    //       attribute: ComplexAbility(
+    //         id: 1,
+    //         txtId: 'selfcontrol',
+    //         name: "Self-Control",
+    //         current: vc.selfControl,
+    //         min: 1,
+    //         isDeletable: false,
+    //         isNameEditable: false,
+    //       ),
+    //       updateCallback: (ability, index) => vc.selfControl = ability.current,
+    //       deleteCallback: (index) => null,
+    //       description: null,
+    //     )));
+    // column.add(Obx(() => ComplexAbilityWidget(
+    //       attribute: ComplexAbility(
+    //         id: 2,
+    //         txtId: 'courage',
+    //         name: "Courage",
+    //         current: vc.courage,
+    //         min: 1,
+    //         isDeletable: false,
+    //         isNameEditable: false,
+    //       ),
+    //       updateCallback: (ability, index) => vc.courage = ability.current,
+    //       deleteCallback: (index) => null,
+    //       description: null,
+    //     )));
 
     return Container(
       child: ListView(

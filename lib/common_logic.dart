@@ -158,10 +158,41 @@ class ComplexAbilityEntry {
                   });
 }
 
+class ComplexAbilityEntryDatabaseDescription {
+  ComplexAbilityEntryDatabaseDescription({
+    required this.tableName,
+    required this.fkName,
+    required this.playerLinkTable,
+    this.specializationsTable,
+    this.filter,
+  });
+
+  /// Table from which the main information is pulled
+  String tableName;
+
+  /// Table from which the specializations are pulled (if applicable)
+  String? specializationsTable;
+
+  /// Table, from which level descriptions will be pulled
+  /// When I get to them...
+  // String? levels
+
+  /// Foreign key name. E.x. attribute_id
+  String fkName;
+
+  /// Table that links entries to characters. E.x. player_attributes
+  String playerLinkTable;
+
+  /// Additional filter, if applicable. 0, 1, 2 for attribute type, for example
+  int? filter;
+}
+
 class ComplexAbilityColumn {
-  ComplexAbilityColumn(String name) {
+  ComplexAbilityColumn(String name, {required this.description}) {
     this.name.value = name;
   }
+
+  final ComplexAbilityEntryDatabaseDescription description;
 
   var name = "Name".obs;
   RxList<ComplexAbility> values = RxList();

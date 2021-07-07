@@ -29,7 +29,8 @@ create table abilities(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   txt_id TEXT UNIQUE,
   name TEXT,
-  description TEXT
+  description TEXT,
+  type INTEGER
 );
 
 create unique index idx_ability_txt_id on abilities(txt_id);

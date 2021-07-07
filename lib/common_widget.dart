@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:vampire_the_masquerade_character_sheet/vampite_character.dart';
 
 import 'common_logic.dart';
 
@@ -40,6 +41,7 @@ class ComplexAbilityWidget extends StatelessWidget {
   ComplexAbilityWidget({
     Key? key,
     required this.attribute,
+    required this.description,
     required this.updateCallback,
     required this.deleteCallback,
     this.index = 0,
@@ -47,6 +49,7 @@ class ComplexAbilityWidget extends StatelessWidget {
 
   final ComplexAbility attribute;
   final int index;
+  final ComplexAbilityEntryDatabaseDescription description;
   late final Function(ComplexAbility ability, ComplexAbility old)
       updateCallback;
   late final Function(ComplexAbility ability) deleteCallback;
@@ -68,10 +71,21 @@ class ComplexAbilityWidget extends StatelessWidget {
         children: row,
         mainAxisSize: MainAxisSize.min,
       ),
-      onTap: () {
+      onTap: () async {
+        // TODO: virtues require specific handling. Stop fighting the inevitable
+        var result = await Get.find<VampireCharacter>().database.query(
+            description.tableName,
+            where: 'id = ?',
+            whereArgs: [attribute.id]);
+
+        ComplexAbilityEntry entry = ComplexAbilityEntry(
+            name: result[0]['name'] as String,
+            description: result[0]['description'] as String?);
+
         Get.dialog<void>(ComplexAbilityPopup(attribute,
             updateCallback: updateCallback,
             deleteCallback: deleteCallback,
+            entry: entry,
             textTheme: Theme.of(context).textTheme));
       },
     );
@@ -83,6 +97,7 @@ class ComplexAbilityColumnWidget extends StatelessWidget {
 
   late final RxString name;
   late final RxList<ComplexAbility> values;
+  late final ComplexAbilityEntryDatabaseDescription description;
   late final Function(ComplexAbility ability, ComplexAbility old) editValue;
   late final Function(ComplexAbility ability) deleteValue;
 
@@ -102,6 +117,7 @@ class ComplexAbilityColumnWidget extends StatelessWidget {
             else
               return Obx(() => ComplexAbilityWidget(
                   attribute: values[i - 1],
+                  description: description,
                   index: i - 1,
                   updateCallback: editValue,
                   deleteCallback: deleteValue));
@@ -118,7 +134,7 @@ class ComplexAbilityColumnWidget extends StatelessWidget {
 class ComplexAbilityPopup extends Dialog {
   ComplexAbilityPopup(
     this._attribute, {
-    // required ComplexAbilityEntry entry,
+    required this.entry,
     required this.updateCallback,
     required this.deleteCallback,
     this.index = 0,
@@ -126,7 +142,8 @@ class ComplexAbilityPopup extends Dialog {
   });
 
   final ComplexAbility _attribute;
-  // final ComplexAbilityEntry _entry;
+  // final ComplexAbilityEntryDatabaseDescription description;
+  final ComplexAbilityEntry entry;
   final int index;
   late final Function(ComplexAbility ability, ComplexAbility old)
       updateCallback;
@@ -135,14 +152,16 @@ class ComplexAbilityPopup extends Dialog {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: Entry should go here. And in constructor. OnTap must be async...
+
     List<Widget> children = [];
 
     children.addIf(_attribute.specialization.isNotEmpty,
         Text(_attribute.specialization, style: textTheme.headline5));
 
-    // children.addIf(_entry.description != null,
-    //     Text("Description:", style: textTheme.headline6));
-    // children.addIf(_entry.description != null, Text(_entry.description!));
+    children.addIf(entry.description != null,
+        Text("Description:", style: textTheme.headline6));
+    children.addIf(entry.description != null, Text(entry.description!));
 
     if (_attribute.isDeletable) {
       children.add(Row(
@@ -192,6 +211,7 @@ class ComplexAbilityPopup extends Dialog {
         ),
       );
     }
+
     return SimpleDialog(
       title: Text(
         _attribute.name,
@@ -216,7 +236,6 @@ class ComplexAbilityDialog extends Dialog {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: edit dialog. Should load and possibly modify DB entry
     var ca = (ability != null)
         ? ability!.obs
         : ComplexAbility(

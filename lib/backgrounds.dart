@@ -3,9 +3,20 @@ import 'package:sqflite_common/sqlite_api.dart';
 import 'package:vampire_the_masquerade_character_sheet/vampite_character.dart';
 import 'common_logic.dart';
 
+class BackgroundDatabase extends ComplexAbilityEntryDatabaseDescription {
+  BackgroundDatabase()
+      : super(
+          tableName: 'backgrounds',
+          fkName: 'background_id',
+          playerLinkTable: 'player_backgrounds',
+        );
+}
+
 class BackgroundsController extends GetxController {
   late final Database _database;
-  var backgrounds = ComplexAbilityColumn('Backgrounds').obs;
+  var backgrounds =
+      ComplexAbilityColumn('Backgrounds', description: BackgroundDatabase())
+          .obs;
 
   void fromJson(Map<String, dynamic> json, BackgroundDictionary bd) {
     // 1. Category headers. Re-read mostly for localization, might kill later

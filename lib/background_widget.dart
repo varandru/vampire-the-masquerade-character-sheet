@@ -16,6 +16,7 @@ class BackgroundColumnWidget extends ComplexAbilityColumnWidget {
     super.name = bc.backgrounds.value.name;
     super.values = bc.backgrounds.value.values;
     super.editValue = bc.backgrounds.value.editValue;
+    super.description = bc.backgrounds.value.description;
     super.deleteValue = bc.backgrounds.value.deleteValue;
   }
 }

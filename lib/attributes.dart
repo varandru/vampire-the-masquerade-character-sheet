@@ -4,10 +4,36 @@ import 'common_logic.dart';
 
 enum AttributeColumnType { Physical, Mental, Social }
 
+class AttributeDatabase extends ComplexAbilityEntryDatabaseDescription {
+  AttributeDatabase(int filter)
+      : super(
+          tableName: 'attributes',
+          fkName: 'attribute_id',
+          playerLinkTable: 'player_attributes',
+          specializationsTable: 'attribute_specializations',
+          filter: filter,
+        );
+}
+
+class PhysicalDatabase extends AttributeDatabase {
+  PhysicalDatabase() : super(0);
+}
+
+class SocialDatabase extends AttributeDatabase {
+  SocialDatabase() : super(1);
+}
+
+class MentalDatabase extends AttributeDatabase {
+  MentalDatabase() : super(2);
+}
+
 class AttributesController extends GetxController {
-  ComplexAbilityColumn physicalAttributes = ComplexAbilityColumn('Physical');
-  ComplexAbilityColumn socialAttributes = ComplexAbilityColumn('Mental');
-  ComplexAbilityColumn mentalAttributes = ComplexAbilityColumn('Social');
+  ComplexAbilityColumn physicalAttributes =
+      ComplexAbilityColumn('Physical', description: PhysicalDatabase());
+  ComplexAbilityColumn socialAttributes =
+      ComplexAbilityColumn('Mental', description: MentalDatabase());
+  ComplexAbilityColumn mentalAttributes =
+      ComplexAbilityColumn('Social', description: SocialDatabase());
 
   ComplexAbilityColumn getColumnByType(AttributeColumnType type) {
     switch (type) {

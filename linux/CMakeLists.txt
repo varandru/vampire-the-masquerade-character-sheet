@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(runner LANGUAGES CXX)
 
 set(BINARY_NAME "vampire_the_masquerade_character_sheet")
-set(APPLICATION_ID "com.example.vampire_the_masquerade_character_sheet")
+set(APPLICATION_ID "com.github.varandru.vampire_the_masquerade_character_sheet")
 
 cmake_policy(SET CMP0063 NEW)
 

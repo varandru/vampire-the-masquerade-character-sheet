@@ -5,13 +5,37 @@ import 'common_logic.dart';
 
 enum AbilityColumnType { Talents, Skills, Knowledges }
 
+class SkillDatabase extends ComplexAbilityEntryDatabaseDescription {
+  SkillDatabase(int filter)
+      : super(
+          tableName: 'abilities',
+          fkName: 'ability_id',
+          playerLinkTable: 'player_abilities',
+          specializationsTable: 'ability_specializations',
+          filter: filter,
+        );
+}
+
+class TalentsDatabase extends SkillDatabase {
+  TalentsDatabase() : super(0);
+}
+
+class SkillsDatabase extends SkillDatabase {
+  SkillsDatabase() : super(1);
+}
+
+class KnowledgeDatabase extends SkillDatabase {
+  KnowledgeDatabase() : super(2);
+}
+
 class AbilitiesController extends GetxController {
   AbilitiesController(this.database);
   final Database database;
 
-  var talents = ComplexAbilityColumn('Talents');
-  var skills = ComplexAbilityColumn('Skills');
-  var knowledges = ComplexAbilityColumn('Knowledges');
+  var talents = ComplexAbilityColumn('Talents', description: TalentsDatabase());
+  var skills = ComplexAbilityColumn('Skills', description: SkillsDatabase());
+  var knowledges =
+      ComplexAbilityColumn('Knowledges', description: KnowledgeDatabase());
 
   ComplexAbilityColumn getColumnByType(AbilityColumnType type) {
     switch (type) {
