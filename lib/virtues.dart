@@ -1,11 +1,8 @@
 import 'package:get/get.dart';
 import 'package:sqflite/sqflite.dart';
-
-import 'vampite_character.dart';
+import 'database.dart';
 
 class VirtuesController extends GetxController {
-  late final Database _database;
-
   var _conscience = 1.obs;
   var _selfControl = 1.obs;
   var _courage = 5.obs;
@@ -26,46 +23,51 @@ class VirtuesController extends GetxController {
 
   set conscience(int conscience) {
     _conscience.value = conscience;
-    _database
+    Get.find<DatabaseController>()
+        .database
         .update('characters', {'conscience': conscience},
             where: 'id = ?',
-            whereArgs: [Get.find<VampireCharacter>().characterId.value])
+            whereArgs: [Get.find<DatabaseController>().characterId.value])
         .then((value) => print('Update conscience, value = $value'));
   }
 
   set selfControl(int selfControl) {
     _selfControl.value = selfControl;
-    _database
+    Get.find<DatabaseController>()
+        .database
         .update('characters', {'self_control': selfControl},
             where: 'id = ?',
-            whereArgs: [Get.find<VampireCharacter>().characterId.value])
+            whereArgs: [Get.find<DatabaseController>().characterId.value])
         .then((value) => print('Update selfControl, value = $value'));
   }
 
   set courage(int courage) {
     _courage.value = courage;
-    _database
+    Get.find<DatabaseController>()
+        .database
         .update('characters', {'courage': courage},
             where: 'id = ?',
-            whereArgs: [Get.find<VampireCharacter>().characterId.value])
+            whereArgs: [Get.find<DatabaseController>().characterId.value])
         .then((value) => print('Update courage, value = $value'));
   }
 
   set humanity(int additionalHumanity) {
     _additionalHumanity.value = additionalHumanity;
-    _database
+    Get.find<DatabaseController>()
+        .database
         .update('characters', {'additional_humanity': additionalHumanity},
             where: 'id = ?',
-            whereArgs: [Get.find<VampireCharacter>().characterId.value])
+            whereArgs: [Get.find<DatabaseController>().characterId.value])
         .then((value) => print('Update additionalHumanity, value = $value'));
   }
 
   set willpower(int additionalWillpower) {
     _additionalWillpower.value = additionalWillpower;
-    _database
+    Get.find<DatabaseController>()
+        .database
         .update('characters', {'additional_willpower': additionalWillpower},
             where: 'id = ?',
-            whereArgs: [Get.find<VampireCharacter>().characterId.value])
+            whereArgs: [Get.find<DatabaseController>().characterId.value])
         .then((value) => print('Update additionalWillpower, value = $value'));
   }
 
@@ -90,8 +92,7 @@ class VirtuesController extends GetxController {
   }
 
   Future<void> fromDatabase(Database database) async {
-    _database = database;
-    var response = await _database.query('characters',
+    var response = await database.query('characters',
         columns: [
           'conscience',
           'self_control',
@@ -100,7 +101,7 @@ class VirtuesController extends GetxController {
           'additional_willpower'
         ],
         where: 'id = ?',
-        whereArgs: [Get.find<VampireCharacter>().characterId.value]);
+        whereArgs: [Get.find<DatabaseController>().characterId.value]);
 
     if (response.length == 0) throw ('No character in database');
     _conscience.value = response[0]['conscience'] as int;

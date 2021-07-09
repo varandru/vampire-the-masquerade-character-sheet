@@ -10,7 +10,7 @@ class ComplexAbility {
   ComplexAbility({
     required this.id,
     required this.name,
-    this.txtId = '',
+    this.txtId,
     this.current = 1,
     this.min = 0,
     this.max = 5,

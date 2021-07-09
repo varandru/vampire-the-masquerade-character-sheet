@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:vampire_the_masquerade_character_sheet/vampite_character.dart';
 
+import 'database.dart';
 import 'common_logic.dart';
 
 List<Widget> makeIconRow(
@@ -17,12 +17,17 @@ List<Widget> makeIconRow(
 }
 
 class NoTitleCounterWidget extends StatelessWidget {
-  NoTitleCounterWidget({int current = 0, int max = 10})
+  NoTitleCounterWidget(
+      {int current = 0,
+      int max = 10,
+      MainAxisAlignment alignment = MainAxisAlignment.spaceEvenly})
       : _current = current,
-        _max = max;
+        _max = max,
+        _alignment = alignment;
 
   final _current;
   final _max;
+  final MainAxisAlignment _alignment;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +35,7 @@ class NoTitleCounterWidget extends StatelessWidget {
       children:
           makeIconRow(_current, _max, Icons.circle, Icons.circle_outlined),
       mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: _alignment,
     );
   }
 }
@@ -56,24 +61,17 @@ class ComplexAbilityWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> row = makeIconRow(
-        attribute.current, attribute.max, Icons.circle, Icons.circle_outlined);
-    final header = Text(
-      attribute.name,
-      overflow: TextOverflow.fade,
-      softWrap: false,
-    );
-
     return ListTile(
-      title: header,
-      subtitle: Text(attribute.specialization),
-      trailing: Row(
-        children: row,
-        mainAxisSize: MainAxisSize.min,
+      title: Text(
+        attribute.name,
+        overflow: TextOverflow.fade,
+        softWrap: false,
       ),
+      subtitle: Text(attribute.specialization),
+      trailing:
+          NoTitleCounterWidget(current: attribute.current, max: attribute.max),
       onTap: () async {
-        // TODO: virtues require specific handling. Stop fighting the inevitable
-        var result = await Get.find<VampireCharacter>().database.query(
+        var result = await Get.find<DatabaseController>().database.query(
             description.tableName,
             where: 'id = ?',
             whereArgs: [attribute.id]);
@@ -161,7 +159,7 @@ class ComplexAbilityPopup extends Dialog {
 
     children.addIf(entry.description != null,
         Text("Description:", style: textTheme.headline6));
-    children.addIf(entry.description != null, Text(entry.description!));
+    if (entry.description != null) children.add(Text(entry.description!));
 
     if (_attribute.isDeletable) {
       children.add(Row(

@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:sqflite_common/sqlite_api.dart';
-import 'package:vampire_the_masquerade_character_sheet/vampite_character.dart';
+import 'database.dart';
 import 'common_logic.dart';
 
 class BackgroundDatabase extends ComplexAbilityEntryDatabaseDescription {
@@ -13,7 +13,6 @@ class BackgroundDatabase extends ComplexAbilityEntryDatabaseDescription {
 }
 
 class BackgroundsController extends GetxController {
-  late final Database _database;
   var backgrounds =
       ComplexAbilityColumn('Backgrounds', description: BackgroundDatabase())
           .obs;
@@ -29,13 +28,12 @@ class BackgroundsController extends GetxController {
 
   void _fillBackgroundList(
       Map<String, dynamic> attributes, BackgroundDictionary bd) {
-    print("Filling background?");
     for (var id in attributes.keys) {
-      print("Adding $id from JSON");
       var entry = bd.backgrounds[id];
       if (attributes[id] != null && attributes[id] is Map<String, dynamic>) {
         ComplexAbility ca = ComplexAbility(
           id: entry?.databaseId,
+          txtId: id,
           name: entry?.name ?? id,
           current: attributes[id]["current"] ?? 1,
           min: 0,
@@ -62,13 +60,12 @@ class BackgroundsController extends GetxController {
   }
 
   void fromDatabase(Database database) async {
-    _database = database;
-
-    var r = await _database.query('player_backgrounds',
+    var r = await database.query('player_backgrounds',
         where: 'player_id = ?',
-        whereArgs: [Get.find<VampireCharacter>().characterId.value]);
+        whereArgs: [Get.find<DatabaseController>().characterId.value]);
+
     for (var response in r) {
-      var entry = (await _database.query(
+      var entry = (await database.query(
         'backgrounds',
         columns: ['name'],
         where: 'id = ?',
@@ -76,9 +73,9 @@ class BackgroundsController extends GetxController {
       ))[0];
 
       backgrounds.value.add(ComplexAbility(
-        id: Get.find<VampireCharacter>().characterId.value,
+        id: response['background_id'] as int,
         name: entry['name'] as String,
-        current: response['level'] as int,
+        current: response['current'] as int,
         hasSpecialization: false,
       ));
     }
@@ -142,6 +139,7 @@ class BackgroundDictionary extends Dictionary {
               conflictAlgorithm: ConflictAlgorithm.replace);
         }
       }
+      backgrounds[textId]!.databaseId = id;
     }
   }
 }

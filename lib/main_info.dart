@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:vampire_the_masquerade_character_sheet/vampite_character.dart';
+
+import 'database.dart';
 
 enum MainInfoFieldType {
   CharacterName,
@@ -16,8 +17,6 @@ enum MainInfoFieldType {
 
 // TODO: somehow, generation still isn't a dropdown
 class MainInfoController extends GetxController {
-  late final Database _database;
-
   var _characterName = "Character Name".obs;
   var _nature = "nature".obs;
   var _clan = "Clan".obs;
@@ -95,69 +94,76 @@ class MainInfoController extends GetxController {
 
   void setCharacterName(String name) {
     _characterName.value = name;
-    _database
+    Get.find<DatabaseController>()
+        .database
         .update('characters', {'name': name},
             where: 'id = ?',
-            whereArgs: [Get.find<VampireCharacter>().characterId.value])
+            whereArgs: [Get.find<DatabaseController>().characterId.value])
         .then((value) => print('Update name, value = $value'));
   }
 
   void setNature(String nature) {
     _nature.value = nature;
-    _database
+    Get.find<DatabaseController>()
+        .database
         .update('characters', {'nature': nature},
             where: 'id = ?',
-            whereArgs: [Get.find<VampireCharacter>().characterId.value])
+            whereArgs: [Get.find<DatabaseController>().characterId.value])
         .then((value) => print('Update player name, value = $value'));
   }
 
   void setClan(String clan) {
     _clan.value = clan;
-    _database.update('characters', {'clan': clan},
+    Get.find<DatabaseController>().database.update('characters', {'clan': clan},
         where: 'id = ?',
-        whereArgs: [Get.find<VampireCharacter>().characterId.value]);
+        whereArgs: [Get.find<DatabaseController>().characterId.value]);
   }
 
   void setPlayerName(String playerName) {
     _playerName.value = playerName;
-    _database.update('characters', {'player_name': playerName},
+    Get.find<DatabaseController>().database.update(
+        'characters', {'player_name': playerName},
         where: 'id = ?',
-        whereArgs: [Get.find<VampireCharacter>().characterId.value]);
+        whereArgs: [Get.find<DatabaseController>().characterId.value]);
   }
 
   void setDemeanor(String demeanor) {
     _demeanor.value = demeanor;
-    _database.update('characters', {'demeanor': demeanor},
+    Get.find<DatabaseController>().database.update(
+        'characters', {'demeanor': demeanor},
         where: 'id = ?',
-        whereArgs: [Get.find<VampireCharacter>().characterId.value]);
+        whereArgs: [Get.find<DatabaseController>().characterId.value]);
   }
 
   void setGeneration(int generation) {
     _generation.value = generation;
-    _database.update('characters', {'generation': generation},
+    Get.find<DatabaseController>().database.update(
+        'characters', {'generation': generation},
         where: 'id = ?',
-        whereArgs: [Get.find<VampireCharacter>().characterId.value]);
+        whereArgs: [Get.find<DatabaseController>().characterId.value]);
   }
 
   void setChronicle(String chronicle) {
     _chronicle.value = chronicle;
-    _database.update('characters', {'chronicle': chronicle},
+    Get.find<DatabaseController>().database.update(
+        'characters', {'chronicle': chronicle},
         where: 'id = ?',
-        whereArgs: [Get.find<VampireCharacter>().characterId.value]);
+        whereArgs: [Get.find<DatabaseController>().characterId.value]);
   }
 
   void setConcept(String concept) {
     _concept.value = concept;
-    _database.update('characters', {'concept': concept},
+    Get.find<DatabaseController>().database.update(
+        'characters', {'concept': concept},
         where: 'id = ?',
-        whereArgs: [Get.find<VampireCharacter>().characterId.value]);
+        whereArgs: [Get.find<DatabaseController>().characterId.value]);
   }
 
   void setSire(String sire) {
     _sire.value = sire;
-    _database.update('characters', {'sire': sire},
+    Get.find<DatabaseController>().database.update('characters', {'sire': sire},
         where: 'id = ?',
-        whereArgs: [Get.find<VampireCharacter>().characterId.value]);
+        whereArgs: [Get.find<DatabaseController>().characterId.value]);
   }
 
   void load(Map<String, dynamic> json) {
@@ -187,9 +193,7 @@ class MainInfoController extends GetxController {
   }
 
   Future<void> fromDatabase(Database database) async {
-    _database = database;
-
-    var r = await _database.query('characters',
+    var r = await database.query('characters',
         columns: [
           'name',
           'player_name',
@@ -202,7 +206,7 @@ class MainInfoController extends GetxController {
           'sire'
         ],
         where: 'id = ?',
-        whereArgs: [Get.find<VampireCharacter>().characterId.value]);
+        whereArgs: [Get.find<DatabaseController>().characterId.value]);
 
     var response = r[0];
     _characterName.value = response['name'] as String;
@@ -220,8 +224,6 @@ class MainInfoController extends GetxController {
 /// Blood, willpower, experience controller. I don't have a better name
 /// These values change a lot in play, so they are stored separately
 class MostVariedController extends GetxController {
-  late final Database _database;
-
   var _blood = 0.obs;
   var _bloodMax = 20.obs;
   var _will = 0.obs;
@@ -232,28 +234,31 @@ class MostVariedController extends GetxController {
 
   set blood(int blood) {
     _blood.value = blood;
-    _database
+    Get.find<DatabaseController>()
+        .database
         .update('characters', {'blood': blood},
             where: 'id = ?',
-            whereArgs: [Get.find<VampireCharacter>().characterId.value])
+            whereArgs: [Get.find<DatabaseController>().characterId.value])
         .then((value) => print('Update current blood, value = $value'));
   }
 
   set bloodMax(int bloodMax) {
     _bloodMax.value = bloodMax;
-    _database
+    Get.find<DatabaseController>()
+        .database
         .update('characters', {'blood_max': bloodMax},
             where: 'id = ?',
-            whereArgs: [Get.find<VampireCharacter>().characterId.value])
+            whereArgs: [Get.find<DatabaseController>().characterId.value])
         .then((value) => print('Update blood max, value = $value'));
   }
 
   set will(int will) {
     _will.value = will;
-    _database
+    Get.find<DatabaseController>()
+        .database
         .update('characters', {'will': will},
             where: 'id = ?',
-            whereArgs: [Get.find<VampireCharacter>().characterId.value])
+            whereArgs: [Get.find<DatabaseController>().characterId.value])
         .then((value) => print('Update current willpower, value = $value'));
   }
 
@@ -264,11 +269,10 @@ class MostVariedController extends GetxController {
   }
 
   void fromDatabase(Database database) async {
-    _database = database;
-    var response = await _database.query('characters',
+    var response = await database.query('characters',
         columns: ['will', 'blood', 'blood_max'],
         where: 'id = ?',
-        whereArgs: [Get.find<VampireCharacter>().characterId.value]);
+        whereArgs: [Get.find<DatabaseController>().characterId.value]);
 
     if (response.length == 0) throw ('No character in database');
     _blood.value = response[0]['will'] as int;

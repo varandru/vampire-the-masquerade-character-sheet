@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'background_widget.dart';
-import 'common_logic.dart';
 import 'common_widget.dart';
 import 'main_info.dart';
 import 'virtues.dart';
@@ -10,69 +9,233 @@ import 'virtues.dart';
 class VirtuesColumnWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final VirtuesController vc = Get.find();
     String header = "Virtues";
 
-    List<Widget> column = [
-      Text(
-        header,
-        textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.headline6,
-      ),
-    ];
-    // TODO: virtues require specific handling. Stop fighting the inevitable
-    // column.add(Obx(() => ComplexAbilityWidget(
-    //       attribute: ComplexAbility(
-    //         id: 0,
-    //         txtId: 'consience',
-    //         name: "Conscience",
-    //         current: vc.conscience,
-    //         min: 1,
-    //         isDeletable: false,
-    //         isNameEditable: false,
-    //       ),
-    //       updateCallback: (ability, index) => vc.conscience = ability.current,
-    //       deleteCallback: (index) => null,
-    //       description: null,
-    //     )));
-    // column.add(Obx(() => ComplexAbilityWidget(
-    //       attribute: ComplexAbility(
-    //         id: 1,
-    //         txtId: 'selfcontrol',
-    //         name: "Self-Control",
-    //         current: vc.selfControl,
-    //         min: 1,
-    //         isDeletable: false,
-    //         isNameEditable: false,
-    //       ),
-    //       updateCallback: (ability, index) => vc.selfControl = ability.current,
-    //       deleteCallback: (index) => null,
-    //       description: null,
-    //     )));
-    // column.add(Obx(() => ComplexAbilityWidget(
-    //       attribute: ComplexAbility(
-    //         id: 2,
-    //         txtId: 'courage',
-    //         name: "Courage",
-    //         current: vc.courage,
-    //         min: 1,
-    //         isDeletable: false,
-    //         isNameEditable: false,
-    //       ),
-    //       updateCallback: (ability, index) => vc.courage = ability.current,
-    //       deleteCallback: (index) => null,
-    //       description: null,
-    //     )));
+    // TODO: edit dialogues are temporarily removed
 
     return Container(
       child: ListView(
-        children: column,
+        children: [
+          Text(
+            header,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.headline6,
+          ),
+          Obx(() => ConscienceWidget()),
+          Obx(() => SelfControlWidget()),
+          Obx(() => CourageWidget()),
+        ],
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
       ),
       constraints: BoxConstraints(maxWidth: 500),
     );
   }
+}
+
+abstract class VirtueWidget extends StatelessWidget {
+  VirtueWidget({
+    required this.name,
+    required this.current,
+    required this.onTap,
+  });
+
+  final String name;
+  final int current;
+  final Function() onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(
+        name,
+        overflow: TextOverflow.fade,
+        softWrap: false,
+      ),
+      trailing: NoTitleCounterWidget(
+        current: current,
+        max: 5,
+      ),
+      onTap: onTap,
+    );
+  }
+}
+
+class ConscienceWidget extends VirtueWidget {
+  ConscienceWidget()
+      : super(
+          name: 'Conscience',
+          current: Get.find<VirtuesController>().conscience,
+          onTap: () => Get.dialog(ConsciencePopup()),
+        );
+}
+
+class SelfControlWidget extends VirtueWidget {
+  SelfControlWidget()
+      : super(
+          name: 'Self-control',
+          current: Get.find<VirtuesController>().selfControl,
+          onTap: () => Get.dialog(SelfControlPopup()),
+        );
+}
+
+class CourageWidget extends VirtueWidget {
+  CourageWidget()
+      : super(
+          name: 'Courage',
+          current: Get.find<VirtuesController>().courage,
+          onTap: () => Get.dialog(CouragePopup()),
+        );
+}
+
+/// Descriptions and alternative virtues are TBD. For now, let's just edit the
+/// value in edit dialogue
+abstract class VirtuePopup extends StatelessWidget {
+  VirtuePopup(
+      {required this.name, required this.level, required this.onEditClick});
+
+  final String name;
+  final int level;
+  final Function() onEditClick;
+
+  // Future<String> getDescription();
+
+  @override
+  Widget build(BuildContext context) => SimpleDialog(
+        title: Text(name,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.headline4),
+        children: [
+          NoTitleCounterWidget(
+            current: level,
+            max: 5,
+            alignment: MainAxisAlignment.center,
+          ),
+          IconButton(onPressed: onEditClick, icon: Icon(Icons.edit))
+        ],
+      );
+}
+
+class ConsciencePopup extends VirtuePopup {
+  ConsciencePopup()
+      : super(
+            name: 'Conscience',
+            level: Get.find<VirtuesController>().conscience,
+            onEditClick: () async {
+              var n = await Get.dialog<int>(ConscienceDialog());
+              if (n != null) {
+                Get.find<VirtuesController>().conscience = n;
+                Get.back();
+              }
+            });
+}
+
+class SelfControlPopup extends VirtuePopup {
+  SelfControlPopup()
+      : super(
+            name: 'Self-Control',
+            level: Get.find<VirtuesController>().selfControl,
+            onEditClick: () async {
+              var n = await Get.dialog<int>(SelfControlDialog());
+              if (n != null) {
+                Get.find<VirtuesController>().selfControl = n;
+                Get.back();
+              }
+            });
+}
+
+class CouragePopup extends VirtuePopup {
+  CouragePopup()
+      : super(
+            name: 'Courage',
+            level: Get.find<VirtuesController>().courage,
+            onEditClick: () async {
+              var n = await Get.dialog<int>(CourageDialog());
+              if (n != null) {
+                Get.find<VirtuesController>().courage = n;
+                Get.back();
+              }
+            });
+}
+
+abstract class VirtueEditWidget extends StatelessWidget {
+  VirtueEditWidget({required this.name, required this.level});
+
+  final String name;
+  final int level;
+
+  final int min = 0;
+  final int max = 5;
+
+  @override
+  Widget build(BuildContext context) {
+    var current = level.obs;
+
+    return SimpleDialog(
+      title: Text("Edit $name"),
+      children: [
+        Text(name),
+        Row(
+          children: [
+            Text('Current Value: '),
+            IconButton(
+                onPressed: () {
+                  if (current > min) current.value--;
+                },
+                icon: Icon(
+                  Icons.remove_circle_outline,
+                  color: Colors.red,
+                )),
+            Obx(() => Text("$current")),
+            IconButton(
+                onPressed: () {
+                  if (current < max) current++;
+                },
+                icon: Icon(
+                  Icons.add_circle_outline,
+                  color: Colors.green,
+                )),
+          ],
+        ),
+        Row(
+          children: [
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () => Get.back(result: null),
+            ),
+            TextButton(
+                child: Text('OK'),
+                onPressed: () => Get.back(result: current.value)),
+          ],
+          mainAxisAlignment: MainAxisAlignment.end,
+        ),
+      ],
+    );
+  }
+}
+
+class ConscienceDialog extends VirtueEditWidget {
+  ConscienceDialog()
+      : super(
+          name: 'Conscience',
+          level: Get.find<VirtuesController>().conscience,
+        );
+}
+
+class SelfControlDialog extends VirtueEditWidget {
+  SelfControlDialog()
+      : super(
+          name: 'Self-Control',
+          level: Get.find<VirtuesController>().selfControl,
+        );
+}
+
+class CourageDialog extends VirtueEditWidget {
+  CourageDialog()
+      : super(
+          name: 'Courage',
+          level: Get.find<VirtuesController>().courage,
+        );
 }
 
 class SummarizedInfoWidget extends StatelessWidget {
