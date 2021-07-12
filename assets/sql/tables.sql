@@ -171,7 +171,8 @@ create table if not exists player_attributes(
   attribute_id INTEGER,
   current INTEGER,
   FOREIGN KEY(player_id) REFERENCES characters(id),
-  FOREIGN KEY(attribute_id) REFERENCES attributes(id)
+  FOREIGN KEY(attribute_id) REFERENCES attributes(id),
+  UNIQUE(player_id, attribute_id)
 );
 
 -- Player's abilities
@@ -180,7 +181,8 @@ create table if not exists player_abilities(
   ability_id INTEGER,
   current INTEGER,
   FOREIGN KEY(player_id) REFERENCES characters(id),
-  FOREIGN KEY(ability_id) REFERENCES abilities(id)
+  FOREIGN KEY(ability_id) REFERENCES abilities(id),
+  UNIQUE(player_id, ability_id)
 );
 
 -- Player's backgrounds
@@ -189,7 +191,8 @@ create table if not exists player_backgrounds(
   background_id INTEGER,
   current INTEGER,
   FOREIGN KEY(player_id) REFERENCES characters(id),
-  FOREIGN KEY(background_id) REFERENCES backgrounds(id)
+  FOREIGN KEY(background_id) REFERENCES backgrounds(id),
+  UNIQUE(player_id, background_id)
 );
 
 create table if not exists player_disciplines(
@@ -197,14 +200,16 @@ create table if not exists player_disciplines(
   discipline_id INTEGER,
   level INTEGER,
   FOREIGN KEY(player_id) REFERENCES characters(id),
-  FOREIGN KEY(discipline_id) REFERENCES disciplines(id)
+  FOREIGN KEY(discipline_id) REFERENCES disciplines(id),
+  UNIQUE(player_id, discipline_id)
 );
 
 create table if not exists player_rituals(
   player_id INTEGER,
   ritual_id INTEGER,
   FOREIGN KEY(player_id) REFERENCES characters(id),
-  FOREIGN KEY(ritual_id) REFERENCES rituals(id)
+  FOREIGN KEY(ritual_id) REFERENCES rituals(id),
+  UNIQUE(player_id, ritual_id)
 );
 
 create table if not exists player_merits(
@@ -212,7 +217,8 @@ create table if not exists player_merits(
   merit_id INTEGER,
   cost INTEGER, 
   FOREIGN KEY(player_id) REFERENCES characters(id),
-  FOREIGN KEY(merit_id) REFERENCES merits(id)
+  FOREIGN KEY(merit_id) REFERENCES merits(id),
+  UNIQUE(player_id, merit_id)
 );
 
 create table if not exists player_flaws(
@@ -220,10 +226,12 @@ create table if not exists player_flaws(
   flaw_id INTEGER,
   cost INTEGER, 
   FOREIGN KEY(player_id) REFERENCES characters(id),
-  FOREIGN KEY(flaw_id) REFERENCES flaws(id)
+  FOREIGN KEY(flaw_id) REFERENCES flaws(id),
+  UNIQUE(player_id, flaw_id)
 );
 
 create table if not exists player_xp(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
   player_id INTEGER,
 
   cost INTEGER,

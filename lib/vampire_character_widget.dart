@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:vampire_the_masquerade_character_sheet/database_widget.dart';
 
 import 'vampite_character.dart';
 import 'drawer_menu.dart';
@@ -67,12 +66,6 @@ class MenuScaffold extends Scaffold {
                       vc.save();
                     },
                     icon: Icon(Icons.save),
-                  ),
-                  IconButton(
-                    onPressed: () async {
-                      await Get.dialog(CharacterSelectDialog());
-                    },
-                    icon: Icon(Icons.groups),
                   ),
                 ],
           ),

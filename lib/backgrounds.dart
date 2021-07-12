@@ -60,25 +60,20 @@ class BackgroundsController extends GetxController {
   }
 
   void fromDatabase(Database database) async {
-    var r = await database.query('player_backgrounds',
-        where: 'player_id = ?',
-        whereArgs: [Get.find<DatabaseController>().characterId.value]);
-
-    for (var response in r) {
-      var entry = (await database.query(
-        'backgrounds',
-        columns: ['name'],
-        where: 'id = ?',
-        whereArgs: [response['background_id'] as int],
-      ))[0];
-
-      backgrounds.value.add(ComplexAbility(
-        id: response['background_id'] as int,
-        name: entry['name'] as String,
-        current: response['current'] as int,
-        hasSpecialization: false,
-      ));
-    }
+    backgrounds.value.values.value = await database.rawQuery(
+        'select b.id, b.name, pb.current '
+        'from backgrounds b inner join player_backgrounds pb '
+        'on pb.background_id = b.id where pb.player_id = ?',
+        [
+          Get.find<DatabaseController>().characterId.value
+        ]).then((value) => List.generate(
+        value.length,
+        (index) => ComplexAbility(
+              id: value[0]['id'] as int,
+              name: value[0]['name'] as String,
+              current: value[0]['current'] as int,
+              hasSpecialization: false,
+            )));
   }
 }
 
