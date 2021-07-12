@@ -251,3 +251,10 @@ abstract class Dictionary {
   /// Legal dynamics map to TEXT, INTEGER, REAL, BLOB, NULL. How am I going to insert arrays? Great question
   Future<void> loadAllToDatabase(Database database);
 }
+
+class ComplexAbilityPair {
+  ComplexAbilityPair(this.ability, this.entry);
+
+  ComplexAbility ability;
+  ComplexAbilityEntry entry;
+}

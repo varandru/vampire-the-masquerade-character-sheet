@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sqflite/sqlite_api.dart';
 
 import 'database.dart';
 import 'common_logic.dart';
@@ -80,10 +81,43 @@ class ComplexAbilityWidget extends StatelessWidget {
             name: result[0]['name'] as String,
             description: result[0]['description'] as String?);
 
-        Get.dialog<void>(ComplexAbilityPopup(attribute,
-            updateCallback: updateCallback,
+        Get.dialog<void>(ComplexAbilityPopup(attribute, entry,
+            updateCallback: (a1, a2, e) {
+          updateCallback(a1, a2);
+
+          /// Database entry update
+          Get.find<DatabaseController>()
+              .database
+              .query(
+                description.tableName,
+                where: 'id = ?',
+                whereArgs: [e.databaseId],
+              )
+              .then((value) => Get.find<DatabaseController>().database.insert(
+                    description.tableName,
+                    {
+                      'id': e.databaseId,
+                      'name': e.name,
+                      'description': e.description ??
+                          (value.length > 0 ? value[0]['description'] : null),
+                    },
+                    conflictAlgorithm: ConflictAlgorithm.replace,
+                  ))
+
+              /// Current, possibly new id
+              /// TODO: this is hardcoded. Really shouldn't be
+              .then((value) => Get.find<DatabaseController>().database.insert(
+                    'player_backgrounds',
+                    {
+                      'player_id':
+                          Get.find<DatabaseController>().characterId.value,
+                      'background_id': value,
+                      'current': a1.current,
+                    },
+                    conflictAlgorithm: ConflictAlgorithm.replace,
+                  ));
+        },
             deleteCallback: deleteCallback,
-            entry: entry,
             textTheme: Theme.of(context).textTheme));
       },
     );
@@ -131,27 +165,25 @@ class ComplexAbilityColumnWidget extends StatelessWidget {
 
 class ComplexAbilityPopup extends Dialog {
   ComplexAbilityPopup(
-    this._attribute, {
-    required this.entry,
+    this._attribute,
+    this.entry, {
     required this.updateCallback,
     required this.deleteCallback,
-    this.index = 0,
     required this.textTheme,
   });
 
   final ComplexAbility _attribute;
-  // final ComplexAbilityEntryDatabaseDescription description;
   final ComplexAbilityEntry entry;
-  final int index;
-  late final Function(ComplexAbility ability, ComplexAbility old)
+
+  late final Function(
+          ComplexAbility ability, ComplexAbility old, ComplexAbilityEntry entry)
       updateCallback;
   late final Function(ComplexAbility ability) deleteCallback;
+
   final TextTheme textTheme;
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Entry should go here. And in constructor. OnTap must be async...
-
     List<Widget> children = [];
 
     children.addIf(_attribute.specialization.isNotEmpty,
@@ -168,12 +200,12 @@ class ComplexAbilityPopup extends Dialog {
           IconButton(
               onPressed: () async {
                 final ca =
-                    await Get.dialog<ComplexAbility>(ComplexAbilityDialog(
+                    await Get.dialog<ComplexAbilityPair>(ComplexAbilityDialog(
                   name: 'Edit ${_attribute.name}',
                   ability: _attribute,
                 ));
                 if (ca != null) {
-                  updateCallback(ca, _attribute);
+                  updateCallback(ca.ability, _attribute, ca.entry);
                   Get.back();
                 }
               },
@@ -196,12 +228,12 @@ class ComplexAbilityPopup extends Dialog {
           child: IconButton(
               onPressed: () async {
                 final ca =
-                    await Get.dialog<ComplexAbility>(ComplexAbilityDialog(
+                    await Get.dialog<ComplexAbilityPair>(ComplexAbilityDialog(
                   name: 'Edit ${_attribute.name}',
                   ability: _attribute,
                 ));
                 if (ca != null) {
-                  updateCallback(ca, _attribute);
+                  updateCallback(ca.ability, _attribute, ca.entry);
                   Get.back();
                 }
               },
@@ -224,12 +256,16 @@ class ComplexAbilityPopup extends Dialog {
 class ComplexAbilityDialog extends Dialog {
   ComplexAbilityDialog({
     this.ability,
+    this.entry,
     this.name = 'New Ability',
     this.hasSpecializations = true,
   });
 
   final String name;
+
   final ComplexAbility? ability;
+  final ComplexAbilityEntry? entry;
+
   final bool hasSpecializations;
 
   @override
@@ -243,13 +279,22 @@ class ComplexAbilityDialog extends Dialog {
                 hasSpecialization: hasSpecializations)
             .obs;
 
+    var e = (entry != null)
+        ? entry!.obs
+        : ComplexAbilityEntry(name: 'Undefined').obs;
+
     List<Widget> children = [];
     if (ca.value.isNameEditable) {
       children.add(TextField(
         controller: TextEditingController()..text = ca.value.name,
-        onChanged: (value) => ca.update(
-          (val) => val?.name = value,
-        ),
+        onChanged: (value) {
+          ca.update(
+            (val) => val?.name = value,
+          );
+          e.update(
+            (val) => val?.name = value,
+          );
+        },
         decoration: InputDecoration(labelText: "Name"),
       ));
     } else {
@@ -289,15 +334,15 @@ class ComplexAbilityDialog extends Dialog {
           decoration: InputDecoration(labelText: "Specialization"),
         ));
 
-    // children.add(TextField(
-    //   controller: TextEditingController()..text = ca.value.description,
-    //   onChanged: (value) => ca.update((val) {
-    //     val?.description = value;
-    //   }),
-    //   keyboardType: TextInputType.multiline,
-    //   maxLines: null,
-    //   decoration: InputDecoration(labelText: "Description"),
-    // ));
+    children.add(TextField(
+      controller: TextEditingController()..text = e.value.description ?? "",
+      onChanged: (value) => e.update((val) {
+        val?.description = value;
+      }),
+      keyboardType: TextInputType.multiline,
+      maxLines: null,
+      decoration: InputDecoration(labelText: "Description"),
+    ));
 
     children.add(Row(
       children: [
@@ -313,7 +358,13 @@ class ComplexAbilityDialog extends Dialog {
                 ca.value =
                     ComplexAbility.fromOther(identify(ca.value.name), ca.value);
               }
-              Get.back(result: ca.value);
+
+              if (e.value.description != null && e.value.description!.isEmpty)
+                e.value.description = null;
+
+              if (e.value.databaseId == null) e.value.databaseId = ca.value.id;
+
+              Get.back(result: ComplexAbilityPair(ca.value, e.value));
             } else {
               Get.back(result: null);
             }
