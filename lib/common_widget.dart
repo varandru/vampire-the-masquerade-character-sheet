@@ -86,36 +86,12 @@ class ComplexAbilityWidget extends StatelessWidget {
           updateCallback(a1, a2);
 
           /// Database entry update
-          Get.find<DatabaseController>()
-              .database
-              .query(
-                description.tableName,
-                where: 'id = ?',
-                whereArgs: [e.databaseId],
-              )
-              .then((value) => Get.find<DatabaseController>().database.insert(
-                    description.tableName,
-                    {
-                      'id': e.databaseId,
-                      'name': e.name,
-                      'description': e.description ??
-                          (value.length > 0 ? value[0]['description'] : null),
-                    },
-                    conflictAlgorithm: ConflictAlgorithm.replace,
-                  ))
-
-              /// Current, possibly new id
-              /// TODO: this is hardcoded. Really shouldn't be
-              .then((value) => Get.find<DatabaseController>().database.insert(
-                    'player_backgrounds',
-                    {
-                      'player_id':
-                          Get.find<DatabaseController>().characterId.value,
-                      'background_id': value,
-                      'current': a1.current,
-                    },
-                    conflictAlgorithm: ConflictAlgorithm.replace,
-                  ));
+          if (description.filter == null)
+            Get.find<DatabaseController>()
+                .updateComplexAbilityNoFilter(a1, e, description);
+          else
+            Get.find<DatabaseController>()
+                .updateComplexAbilityWithFilter(a1, e, description);
         },
             deleteCallback: deleteCallback,
             textTheme: Theme.of(context).textTheme));

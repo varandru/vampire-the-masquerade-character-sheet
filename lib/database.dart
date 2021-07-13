@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:vampire_the_masquerade_character_sheet/common_logic.dart';
 
 import 'abilities.dart';
 import 'attributes.dart';
@@ -189,5 +190,97 @@ class DatabaseController extends GetxController {
     });
   }
 
-  // Future<String> getConscience
+  /// This is basically backgrounds, lol
+  Future<int> updateComplexAbilityNoFilter(
+          ComplexAbility ability,
+          ComplexAbilityEntry entry,
+          ComplexAbilityEntryDatabaseDescription description) =>
+      database
+          .query(
+            description.tableName,
+            where: 'id = ?',
+            whereArgs: [entry.databaseId],
+          )
+          .then((value) => Get.find<DatabaseController>().database.insert(
+                description.tableName,
+                {
+                  'id': entry.databaseId,
+                  'name': entry.name,
+                  'description': entry.description ??
+                      (value.length > 0 ? value[0]['description'] : null),
+                },
+                conflictAlgorithm: ConflictAlgorithm.replace,
+              ))
+
+          /// Current, possibly new id
+          .then((value) => Get.find<DatabaseController>().database.insert(
+                description.playerLinkTable,
+                {
+                  'player_id': Get.find<DatabaseController>().characterId.value,
+                  description.fkName: value,
+                  'current': ability.current,
+                },
+                conflictAlgorithm: ConflictAlgorithm.replace,
+              ));
+
+  Future<int> updateComplexAbilityWithFilter(
+          ComplexAbility ability,
+          ComplexAbilityEntry entry,
+          ComplexAbilityEntryDatabaseDescription description) =>
+      database
+          .query(
+            description.tableName,
+            columns: ['description', 'txt_id'],
+            where: 'id = ?',
+            whereArgs: [entry.databaseId],
+          )
+          .then((value) => Get.find<DatabaseController>().database.insert(
+                description.tableName,
+                {
+                  'id': entry.databaseId,
+                  'txt_id':
+                      (value.length > 0 ? value[0]['txt_id'] : ability.txtId),
+                  'name': entry.name,
+                  'type': description.filter,
+                  'description': entry.description ??
+                      (value.length > 0 ? value[0]['description'] : null),
+                },
+                conflictAlgorithm: ConflictAlgorithm.replace,
+              ))
+
+          /// Current, possibly new id
+          .then((value) => Get.find<DatabaseController>().database.insert(
+                description.playerLinkTable,
+                {
+                  'player_id': Get.find<DatabaseController>().characterId.value,
+                  description.fkName: value,
+                  'current': ability.current,
+                  'specialization': ability.specialization.isNotEmpty
+                      ? ability.specialization
+                      : null
+                },
+                conflictAlgorithm: ConflictAlgorithm.replace,
+              ));
+
+  Future<int> insertComplexAbilityWithFilter(
+          ComplexAbility ability,
+          ComplexAbilityEntry entry,
+          ComplexAbilityEntryDatabaseDescription description) =>
+      database
+          .insert(
+              description.tableName,
+              {
+                'id': entry.databaseId,
+                'txt_id': ability.txtId,
+                'name': entry.name,
+                'description': entry.description,
+                'type': description.filter,
+              },
+              conflictAlgorithm: ConflictAlgorithm.replace)
+          .then((value) => database.insert(description.playerLinkTable, {
+                'player_id': characterId.value,
+                'background_id': value,
+                'current': ability.current,
+                'specialization': ability.specialization,
+              }));
 }

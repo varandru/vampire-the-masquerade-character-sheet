@@ -170,6 +170,7 @@ create table if not exists player_attributes(
   player_id INTEGER,
   attribute_id INTEGER,
   current INTEGER,
+  specialization TEXT,
   FOREIGN KEY(player_id) REFERENCES characters(id),
   FOREIGN KEY(attribute_id) REFERENCES attributes(id),
   UNIQUE(player_id, attribute_id)
@@ -180,6 +181,7 @@ create table if not exists player_abilities(
   player_id INTEGER,
   ability_id INTEGER,
   current INTEGER,
+  specialization TEXT,
   FOREIGN KEY(player_id) REFERENCES characters(id),
   FOREIGN KEY(ability_id) REFERENCES abilities(id),
   UNIQUE(player_id, ability_id)

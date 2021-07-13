@@ -75,7 +75,7 @@ class ComplexAbility {
         max = other.max,
         specialization = other.specialization,
         isIncremental = other.isIncremental,
-        hasSpecialization = other.isIncremental,
+        hasSpecialization = other.hasSpecialization,
         isDeletable = other.isDeletable,
         isNameEditable = other.isNameEditable;
 

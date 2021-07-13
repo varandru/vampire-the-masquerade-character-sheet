@@ -50,32 +50,32 @@ class AddBackgroundButton extends CommonSpeedDialChild {
           label: "Add custom background",
           // labelBackgroundColor: Theme.of(context).colorScheme.surface,
           onTap: () async {
-            final ca =
+            final cap =
                 await Get.dialog<ComplexAbilityPair>(ComplexAbilityDialog(
               name: 'New Background',
               hasSpecializations: false,
             ));
-            if (ca != null) {
+            if (cap != null) {
               BackgroundsController bc = Get.find();
-              bc.backgrounds.value.add(ca.ability);
+              bc.backgrounds.value.add(cap.ability);
 
               DatabaseController dc = Get.find();
 
-              dc.database.query('backgrounds', where: 'id = ?', whereArgs: [
-                ca.entry.databaseId
-              ], columns: [
-                'txt_id',
-                'description'
-              ]).then((value) => dc.database.insert(
-                  'backgrounds',
-                  {
-                    'id': ca.entry.databaseId,
-                    'txt_id': ca.ability.txtId ?? value[0]['txt_id'],
-                    'name': ca.entry.name,
-                    'description':
-                        ca.entry.description ?? value[0]['description'],
-                  },
-                  conflictAlgorithm: ConflictAlgorithm.replace));
+              dc.database
+                  .insert(
+                      'backgrounds',
+                      {
+                        'id': cap.entry.databaseId,
+                        'txt_id': cap.ability.txtId,
+                        'name': cap.entry.name,
+                        'description': cap.entry.description,
+                      },
+                      conflictAlgorithm: ConflictAlgorithm.replace)
+                  .then((value) => dc.database.insert('player_backgrounds', {
+                        'player_id': dc.characterId.value,
+                        'background_id': value,
+                        'current': cap.ability.current,
+                      }));
             }
           },
         );
