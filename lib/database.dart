@@ -190,6 +190,8 @@ class DatabaseController extends GetxController {
       Get.find<AttributesController>().fromDatabase(database);
       Get.put(AbilitiesController());
       Get.find<AbilitiesController>().fromDatabase(database);
+      Get.put(DisciplineController());
+      Get.find<DisciplineController>().fromDatabase(database);
     });
   }
 

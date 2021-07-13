@@ -182,6 +182,17 @@ class DisciplineController extends GetxController {
   void deleteAt(int index) {
     disciplines.removeAt(index);
   }
+
+  Future<void> fromDatabase(Database database) async {
+    // disciplines =;
+    database
+        .rawQuery(
+            'select d.id, d.name, pd.level, d.description, d.system, d.max '
+            'from disciplines d inner join player_disciplines pd '
+            'on pd.discipline_id = d.id where pd.player_id = ?')
+        .then((value) => List.generate(value.length, (index) => null));
+    // TODO: you stopped here
+  }
 }
 
 // String id is the map key
