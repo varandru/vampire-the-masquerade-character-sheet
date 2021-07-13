@@ -282,7 +282,7 @@ class DatabaseController extends GetxController {
               conflictAlgorithm: ConflictAlgorithm.replace)
           .then((value) => database.insert(description.playerLinkTable, {
                 'player_id': characterId.value,
-                'background_id': value,
+                description.fkName: value,
                 'current': ability.current,
                 'specialization': ability.specialization,
               }));
