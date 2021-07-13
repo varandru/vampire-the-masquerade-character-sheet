@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 import 'common_logic.dart';
+import 'database.dart';
 
 enum AttributeColumnType { Physical, Mental, Social }
 
@@ -112,6 +113,56 @@ class AttributesController extends GetxController {
       shortAttributes.add(attr);
     }
     return shortAttributes;
+  }
+
+  void fromDatabase(Database database) async {
+    physicalAttributes.values.value = await database.rawQuery(
+        'select a.id, a.name, pa.current, pa.specialization '
+        'from attributes a inner join player_attributes pa '
+        'on pa.attribute_id = a.id where pa.player_id = ? and a.type = 0',
+        [
+          Get.find<DatabaseController>().characterId.value
+        ]).then((value) => List.generate(
+        value.length,
+        (index) => ComplexAbility(
+              id: value[0]['id'] as int,
+              name: value[0]['name'] as String,
+              current: value[0]['current'] as int,
+              specialization: value[0]['specialization'] as String? ?? "",
+              hasSpecialization: true,
+            )));
+
+    socialAttributes.values.value = await database.rawQuery(
+        'select a.id, a.name, pa.current, pa.specialization '
+        'from attributes a inner join player_attributes pa '
+        'on pa.attribute_id = a.id where pa.player_id = ? and a.type = 1',
+        [
+          Get.find<DatabaseController>().characterId.value
+        ]).then((value) => List.generate(
+        value.length,
+        (index) => ComplexAbility(
+              id: value[0]['id'] as int,
+              name: value[0]['name'] as String,
+              current: value[0]['current'] as int,
+              specialization: value[0]['specialization'] as String? ?? "",
+              hasSpecialization: true,
+            )));
+
+    mentalAttributes.values.value = await database.rawQuery(
+        'select a.id, a.name, pa.current, pa.specialization '
+        'from attributes a inner join player_attributes pa '
+        'on pa.attribute_id = a.id where pa.player_id = ? and a.type = 2',
+        [
+          Get.find<DatabaseController>().characterId.value
+        ]).then((value) => List.generate(
+        value.length,
+        (index) => ComplexAbility(
+              id: value[0]['id'] as int,
+              name: value[0]['name'] as String,
+              current: value[0]['current'] as int,
+              specialization: value[0]['specialization'] as String? ?? "",
+              hasSpecialization: true,
+            )));
   }
 }
 

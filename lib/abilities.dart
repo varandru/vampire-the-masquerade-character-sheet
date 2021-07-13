@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 
 import 'common_logic.dart';
+import 'database.dart';
 
 enum AbilityColumnType { Talents, Skills, Knowledges }
 
@@ -29,9 +30,6 @@ class KnowledgeDatabase extends SkillDatabase {
 }
 
 class AbilitiesController extends GetxController {
-  AbilitiesController(this.database);
-  final Database database;
-
   var talents = ComplexAbilityColumn('Talents', description: TalentsDatabase());
   var skills = ComplexAbilityColumn('Skills', description: SkillsDatabase());
   var knowledges =
@@ -48,20 +46,22 @@ class AbilitiesController extends GetxController {
     }
   }
 
-  Future<void> fromJson(Map<String, dynamic> json) async {
-    await _fillAbilityListByType(AbilityColumnType.Talents, json["talents"]);
-    await _fillAbilityListByType(AbilityColumnType.Skills, json["skills"]);
-    await _fillAbilityListByType(
-        AbilityColumnType.Knowledges, json["knowledges"]);
+  void fromJson(Map<String, dynamic> json) {
+    _fillAbilityListByType(AbilityColumnType.Talents, json["talents"]);
+    _fillAbilityListByType(AbilityColumnType.Skills, json["skills"]);
+    _fillAbilityListByType(AbilityColumnType.Knowledges, json["knowledges"]);
   }
 
   // Fills abilities from JSON
-  Future<void> _fillAbilityListByType(
+  void _fillAbilityListByType(
       AbilityColumnType type, Map<String, dynamic> abilities) async {
     for (var id in abilities.keys) {
       if (abilities[id] != null && abilities[id] is Map<String, dynamic>) {
-        var response = await database.query('abilities',
-            columns: ['id', 'name'], where: 'txt_id = ?', whereArgs: [id]);
+        var response = await Get.find<DatabaseController>().database.query(
+            'abilities',
+            columns: ['id', 'name'],
+            where: 'txt_id = ?',
+            whereArgs: [id]);
 
         String name = 'Not found';
         if (response.length > 0) if (response[0]['name'] != null)
@@ -99,6 +99,54 @@ class AbilitiesController extends GetxController {
     json["knowledges"] = getColumnByType(AbilityColumnType.Knowledges);
     return json;
   }
+
+  void fromDatabase(Database database) async {
+    talents.values.value = await database.rawQuery(
+        'select a.id, a.name, pa.current, pa.specialization '
+        'from abilities a inner join player_abilities pa '
+        'on pa.ability_id = a.id where pa.player_id = ? and a.type = 0',
+        [
+          Get.find<DatabaseController>().characterId.value
+        ]).then((value) => List.generate(
+        value.length,
+        (index) => ComplexAbility(
+              id: value[0]['id'] as int,
+              name: value[0]['name'] as String,
+              current: value[0]['current'] as int,
+              specialization: value[0]['specialization'] as String? ?? "",
+              hasSpecialization: true,
+            )));
+    skills.values.value = await database.rawQuery(
+        'select a.id, a.name, pa.current, pa.specialization '
+        'from abilities a inner join player_abilities pa '
+        'on pa.ability_id = a.id where pa.player_id = ? and a.type = 1',
+        [
+          Get.find<DatabaseController>().characterId.value
+        ]).then((value) => List.generate(
+        value.length,
+        (index) => ComplexAbility(
+              id: value[0]['id'] as int,
+              name: value[0]['name'] as String,
+              current: value[0]['current'] as int,
+              specialization: value[0]['specialization'] as String? ?? "",
+              hasSpecialization: true,
+            )));
+    knowledges.values.value = await database.rawQuery(
+        'select a.id, a.name, pa.current, pa.specialization '
+        'from abilities a inner join player_abilities pa '
+        'on pa.ability_id = a.id where pa.player_id = ? and a.type = 2',
+        [
+          Get.find<DatabaseController>().characterId.value
+        ]).then((value) => List.generate(
+        value.length,
+        (index) => ComplexAbility(
+              id: value[0]['id'] as int,
+              name: value[0]['name'] as String,
+              current: value[0]['current'] as int,
+              specialization: value[0]['specialization'] as String? ?? "",
+              hasSpecialization: true,
+            )));
+  }
 }
 
 class AbilitiesDictionary extends Dictionary {
@@ -112,7 +160,7 @@ class AbilitiesDictionary extends Dictionary {
   String skillsAbilitiesName = "Skills";
   String knowledgeAbilitiesName = "Knowledges";
 
-  // Attributes will work in the same way, with the same schema
+  // abilities will work in the same way, with the same schema
   Map<int, String> levelPrefixes = Map();
 
   void load(Map<String, dynamic> json) {
@@ -124,11 +172,11 @@ class AbilitiesDictionary extends Dictionary {
         levelPrefixes[prefix["level"]] = prefix["prefix"];
       }
     }
-    // 3. Get attribute categories
-    if (json["attribute_names"] != null) {
-      talentAbilitiesName = json["attribute_names"]["talents"];
-      skillsAbilitiesName = json["attribute_names"]["skills"];
-      knowledgeAbilitiesName = json["attribute_names"]["knowledges"];
+    // 3. Get ability categories
+    if (json["ability_names"] != null) {
+      talentAbilitiesName = json["ability_names"]["talents"];
+      skillsAbilitiesName = json["ability_names"]["skills"];
+      knowledgeAbilitiesName = json["ability_names"]["knowledges"];
     }
 
     // 4. Get talents
@@ -162,7 +210,7 @@ class AbilitiesDictionary extends Dictionary {
     // CRUTCH until localization
     json["locale"] = "en-US";
 
-    json["attribute_names"] = <String, dynamic>{
+    json["ability_names"] = <String, dynamic>{
       "talents": talentAbilitiesName,
       "skills": skillsAbilitiesName,
       "knowledges": knowledgeAbilitiesName

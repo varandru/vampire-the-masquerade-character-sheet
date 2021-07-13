@@ -99,9 +99,8 @@ class DatabaseController extends GetxController {
       Get.put(AttributesController());
       Get.find<AttributesController>().load(characterFile['attributes']);
 
-      Get.put(AbilitiesController(database));
-      await Get.find<AbilitiesController>()
-          .fromJson(characterFile['abilities']);
+      Get.put(AbilitiesController());
+      Get.find<AbilitiesController>().fromJson(characterFile['abilities']);
 
       Get.put(BackgroundsController());
       Get.find<BackgroundsController>()
@@ -187,6 +186,10 @@ class DatabaseController extends GetxController {
       Get.find<VirtuesController>().fromDatabase(database);
       Get.put(BackgroundsController());
       Get.find<BackgroundsController>().fromDatabase(database);
+      Get.put(AttributesController());
+      Get.find<AttributesController>().fromDatabase(database);
+      Get.put(AbilitiesController());
+      Get.find<AbilitiesController>().fromDatabase(database);
     });
   }
 
