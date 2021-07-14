@@ -82,11 +82,11 @@ class RitualPopup extends StatelessWidget {
                   var index = rc.rituals.indexOf(ca);
                   if (index < 0) {
                     rc.rituals.add(ca);
-                    Get.find<DatabaseController>().insertOrUpdateRitual(ca);
+                    Get.find<DatabaseController>().addOrUpdateRitual(ca);
                     Get.back();
                   } else {
                     rc.rituals[index] = ca;
-                    Get.find<DatabaseController>().insertOrUpdateRitual(ca);
+                    Get.find<DatabaseController>().addOrUpdateRitual(ca);
                   }
                 }
               },
@@ -270,7 +270,7 @@ class AddRitualButton extends CommonSpeedDialChild {
             if (ca != null) {
               RitualController bc = Get.find();
               bc.rituals.add(ca);
-              Get.find<DatabaseController>().insertOrUpdateRitual(ca);
+              Get.find<DatabaseController>().addOrUpdateRitual(ca);
             }
           },
         );

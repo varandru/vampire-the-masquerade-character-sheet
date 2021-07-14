@@ -107,8 +107,10 @@ class DatabaseController extends GetxController {
           .fromJson(characterFile['backgrounds'], backd);
 
       Get.put(MeritsAndFlawsController());
-      Get.find<MeritsAndFlawsController>().loadMerits(characterFile['merits']);
-      Get.find<MeritsAndFlawsController>().loadFlaws(characterFile['flaws']);
+      Get.find<MeritsAndFlawsController>()
+          .loadMerits(characterFile['merits'], mfd);
+      Get.find<MeritsAndFlawsController>()
+          .loadFlaws(characterFile['flaws'], mfd);
 
       Get.put(DisciplineController());
       Get.find<DisciplineController>().load(characterFile['disciplines']);
@@ -194,6 +196,8 @@ class DatabaseController extends GetxController {
       Get.find<DisciplineController>().fromDatabase(database);
       Get.put(RitualController());
       Get.find<RitualController>().fromDatabase(database);
+      Get.put(MeritsAndFlawsController());
+      Get.find<MeritsAndFlawsController>().fromDatabase(database);
     });
   }
 
@@ -291,7 +295,7 @@ class DatabaseController extends GetxController {
                 'specialization': ability.specialization,
               }));
 
-  Future<void> insertOrUpdateRitual(Ritual ritual) async {
+  Future<void> addOrUpdateRitual(Ritual ritual) async {
     database.transaction((txn) async {
       int? ritualId;
 
@@ -356,4 +360,42 @@ class DatabaseController extends GetxController {
           conflictAlgorithm: ConflictAlgorithm.replace);
     });
   }
+
+  Future<int> addOrUpdateMeritOrFlaw(Merit merit, String table) async {
+    if (merit.id != 0) {
+      await database.update(
+        table,
+        {
+          'name': merit.name,
+          'type': intFromType(merit.type),
+          'description': merit.description
+        },
+      );
+    } else {
+      merit.id = await database.insert(
+        table,
+        {
+          'name': merit.name,
+          'txt_id': merit.txtId,
+          'type': intFromType(merit.type),
+          'description': merit.description
+        },
+      );
+    }
+    return database.insert('player_$table', {
+      'player_id': characterId.value,
+      '${table.substring(0, table.length - 1)}_id': merit.id,
+    });
+  }
+
+  Future<int> addOrUpdateMerit(Merit merit) =>
+      addOrUpdateMeritOrFlaw(merit, 'merits');
+
+  Future<int> addOrUpdateFlaw(Merit flaw) =>
+      addOrUpdateMeritOrFlaw(flaw, 'flaws');
+
+  Future<int> deleteMeritOrFlaw(Merit merit, bool isMerit) =>
+      database.delete(isMerit ? 'merits' : 'flaws',
+          where: 'player_id = ? and ${isMerit ? 'merit' : 'flaw'}_id = ?',
+          whereArgs: [characterId.value, merit.id]);
 }

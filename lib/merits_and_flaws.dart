@@ -1,7 +1,10 @@
+import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 import 'package:vampire_the_masquerade_character_sheet/common_logic.dart';
+
+import 'database.dart';
 
 enum MeritType { Physical, Mental, Social, Supernatural, Undefined }
 
@@ -60,11 +63,15 @@ MeritType typeFromInt(int type) {
 
 class Merit {
   Merit(
-      {required this.name,
+      {required this.id,
+      required this.name,
+      this.txtId,
       this.type = MeritType.Undefined,
       this.cost = 1,
       this.description = ""});
 
+  int id;
+  String? txtId;
   String name;
   MeritType type;
   int cost;
@@ -92,56 +99,57 @@ class MeritsAndFlawsController extends GetxController {
   var meritSum = 0.obs;
   var flawsSum = 0.obs;
 
-  void loadMerits(List<dynamic> json) {
+  void loadMerits(List<dynamic> json, MeritsAndFlawsDictionary dictionary) {
     // TODO: json contains ids. Basic merits should be loaded
-    // for (var merit in json) {
-    //   if (merit["name"] == null) continue;
-    //   if (!(merit["name"] is String)) continue;
-    //   String name = merit["name"];
-    //   if (dictionary.merits[name] == null) {
-    //     continue;
-    //   }
-    //   int cost = dictionary.merits[name]!.costs.length > 0
-    //       ? merit["cost"] ?? dictionary.merits[name]!.costs[0]
-    //       : 1;
-    //   Merit m = Merit(
-    //     name: merit["name"]!,
-    //     type: dictionary.merits[name]!.type,
-    //     cost: cost,
-    //     description: dictionary.merits[name]?.description ?? "",
-    //   );
+    for (var merit in json) {
+      if (merit["name"] == null) continue;
+      if (!(merit["name"] is String)) continue;
+      String name = merit["name"];
+      if (dictionary.merits[name] == null) {
+        continue;
+      }
+      int cost = dictionary.merits[name]!.costs.length > 0
+          ? merit["cost"] ?? dictionary.merits[name]!.costs[0]
+          : 1;
+      Merit m = Merit(
+        id: 0,
+        name: merit["name"]!,
+        type: dictionary.merits[name]!.type,
+        cost: cost,
+        description: dictionary.merits[name]?.description ?? "",
+      );
 
-    //   if (!merits.contains(m)) {
-    //     merits.add(m);
-    //     meritSum.value += m.cost;
-    //   }
-    // }
+      if (!merits.contains(m)) {
+        merits.add(m);
+        meritSum.value += m.cost;
+      }
+    }
   }
 
-  void loadFlaws(List<dynamic> json) {
-    // TODO: see loadMerits
-    // for (var flaw in json) {
-    //   if (flaw["name"] == null) continue;
-    //   if (!(flaw["name"] is String)) continue;
-    //   String name = flaw["name"];
-    //   if (dictionary.flaws[name] == null) {
-    //     continue;
-    //   }
-    //   int cost = dictionary.flaws[name]!.costs.length > 0
-    //       ? flaw["cost"] ?? dictionary.flaws[name]!.costs[0]
-    //       : 1;
-    //   Merit m = Merit(
-    //     name: flaw["name"]!,
-    //     type: dictionary.flaws[name]!.type,
-    //     cost: cost,
-    //     description: dictionary.flaws[name]?.description ?? "",
-    //   );
+  void loadFlaws(List<dynamic> json, MeritsAndFlawsDictionary dictionary) {
+    for (var flaw in json) {
+      if (flaw["name"] == null) continue;
+      if (!(flaw["name"] is String)) continue;
+      String name = flaw["name"];
+      if (dictionary.flaws[name] == null) {
+        continue;
+      }
+      int cost = dictionary.flaws[name]!.costs.length > 0
+          ? flaw["cost"] ?? dictionary.flaws[name]!.costs[0]
+          : 1;
+      Merit m = Merit(
+        id: 0,
+        name: flaw["name"]!,
+        type: dictionary.flaws[name]!.type,
+        cost: cost,
+        description: dictionary.flaws[name]?.description ?? "",
+      );
 
-    //   if (!flaws.contains(m)) {
-    //     flaws.add(m);
-    //     flawsSum.value += m.cost;
-    //   }
-    // }
+      if (!flaws.contains(m)) {
+        flaws.add(m);
+        flawsSum.value += m.cost;
+      }
+    }
   }
 
   List<dynamic> saveMerits() {
@@ -158,6 +166,41 @@ class MeritsAndFlawsController extends GetxController {
       flaws.add(f.toJson());
     }
     return flaws;
+  }
+
+  Future<void> fromDatabase(Database database) async {
+    merits.value = await database.rawQuery(
+        'select m.id, m.name, m.type, m.description, pm.cost '
+        'from merits m '
+        'inner join player_merits pm on pm.merit_id = m.id '
+        'where pm.player_id = ?',
+        [
+          Get.find<DatabaseController>().characterId.value
+        ]).then((value) => List.generate(
+        value.length,
+        (index) => Merit(
+              id: value[0]['id'] as int,
+              name: value[0]['name'] as String,
+              cost: value[0]['cost'] as int,
+              type: typeFromInt(value[0]['type'] as int),
+              description: value[0]['description'] as String,
+            )));
+    flaws.value = await database.rawQuery(
+        'select f.id, f.name, f.type, f.description, pf.cost '
+        'from flaws f '
+        'inner join player_flaws pm on pf.merit_id = f.id '
+        'where pf.player_id = ?',
+        [
+          Get.find<DatabaseController>().characterId.value
+        ]).then((value) => List.generate(
+        value.length,
+        (index) => Merit(
+              id: value[0]['id'] as int,
+              name: value[0]['name'] as String,
+              cost: value[0]['cost'] as int,
+              type: typeFromInt(value[0]['type'] as int),
+              description: value[0]['description'] as String,
+            )));
   }
 }
 
