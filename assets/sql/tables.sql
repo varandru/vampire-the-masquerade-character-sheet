@@ -118,12 +118,19 @@ create unique index if not exists idx_discipline_txt_id on disciplines(txt_id);
 
 create table if not exists discipline_levels(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT,
   discipline_id INTEGER, 
   level INTEGER,
   system TEXT, 
   maximum INTEGER, 
   description TEXT,
   FOREIGN KEY(discipline_id) REFERENCES disciplines(id)
+);
+
+create table ritual_schools (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  txt_id TEXT UNIQUE,
+  name TEXT  
 );
 
 -- Rituals description
@@ -135,7 +142,7 @@ create table if not exists rituals (
   level INTEGER, 
   description TEXT,
   system TEXT,
-  FOREIGN KEY(discipline_id) REFERENCES disciplines(id)
+  FOREIGN KEY(discipline_id) REFERENCES ritual_schools(id)
 );
 
 create table if not exists characters (

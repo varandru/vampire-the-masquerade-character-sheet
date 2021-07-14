@@ -192,6 +192,8 @@ class DatabaseController extends GetxController {
       Get.find<AbilitiesController>().fromDatabase(database);
       Get.put(DisciplineController());
       Get.find<DisciplineController>().fromDatabase(database);
+      Get.put(RitualController());
+      Get.find<RitualController>().fromDatabase(database);
     });
   }
 
@@ -288,4 +290,70 @@ class DatabaseController extends GetxController {
                 'current': ability.current,
                 'specialization': ability.specialization,
               }));
+
+  Future<void> insertOrUpdateRitual(Ritual ritual) async {
+    database.transaction((txn) async {
+      int? ritualId;
+
+      /// 1. Let's handle school id
+      /// 1.1 If it isn't in ritual itself, try from DB
+      if (ritual.schoolId == null && ritual.school.isNotEmpty) {
+        ritual.schoolId = await database
+            .query(
+              'ritual_schools',
+              columns: ['id'],
+              where: 'name = ?',
+              whereArgs: [ritual.school],
+            )
+            .then((value) => value.length > 0 ? value[0]['id'] as int : null);
+      }
+
+      /// 2. Let's handle entry.
+      /// Does it even have a database id?
+      if (ritual.dbId != null) {
+        /// Then is there a corresponding ritual?
+        var response = await txn.query('rituals', where: 'id = ?');
+        if (response.length > 0) {
+          /// Fine, update it. Inserting will break foreign keys
+          Map<String, Object> arguments = {
+            'level': ritual.level,
+            'name': ritual.name,
+            'system': ritual.system,
+          };
+          if (ritual.id != null) arguments['txt_id'] = ritual.id!;
+          if (ritual.description != null)
+            arguments['description'] = ritual.description!;
+          if (ritual.schoolId != null)
+            arguments['discipline_id'] = ritual.schoolId!;
+          await txn.update('rituals', arguments,
+              where: 'id = ?', whereArgs: [ritual.dbId!]);
+          ritualId = ritual.dbId;
+        } else {
+          /// There isn't a corresponding ritual. Let's add it.
+          ritualId = await database.insert('rituals', {
+            'level': ritual.level,
+            'name': ritual.name,
+            'system': ritual.system,
+            'txt_id': ritual.id,
+            'description': ritual.description!,
+            'discipline_id': ritual.schoolId!
+          });
+        }
+      } else {
+        /// There is no database ritual id. Let's just add a new one,
+        /// and if there are duplicates, look here
+        ritualId = await database.insert('rituals', {
+          'level': ritual.level,
+          'name': ritual.name,
+          'system': ritual.system,
+          'txt_id': ritual.id,
+          'description': ritual.description!,
+          'discipline_id': ritual.schoolId!
+        });
+      }
+      return database.insert('player_rituals',
+          {'player_id': characterId.value, 'ritual_id': ritualId},
+          conflictAlgorithm: ConflictAlgorithm.replace);
+    });
+  }
 }

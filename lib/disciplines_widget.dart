@@ -170,7 +170,8 @@ class DisciplineDotWidget extends StatelessWidget {
 class DisciplineDialog extends Dialog {
   DisciplineDialog(Discipline? disc, {required this.index})
       : this.disc = new Discipline(
-            id: disc?.id ?? 'undefined',
+            id: disc?.id,
+            txtId: disc?.txtId ?? 'undefined',
             name: disc?.name ?? "New casting discipline",
             level: disc?.level ?? 1,
             levels: disc?.levels ?? [],
@@ -289,9 +290,12 @@ class DisciplineDialog extends Dialog {
             child: Text('OK'),
             onPressed: () {
               if (discipline.value.name.isNotEmpty) {
-                if (discipline.value.id == 'undefined') {
+                if (discipline.value.txtId == 'undefined') {
                   discipline.value = Discipline.fromOther(
-                      identify(discipline.value.name), discipline.value);
+                    null,
+                    discipline.value,
+                    txtId: identify(discipline.value.name),
+                  );
                 }
                 Get.back(result: discipline.value);
               } else {

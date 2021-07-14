@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:vampire_the_masquerade_character_sheet/common_logic.dart';
+import 'common_logic.dart';
+import 'database.dart';
 
 import 'common_widget.dart';
 import 'drawer_menu.dart';
@@ -81,10 +82,11 @@ class RitualPopup extends StatelessWidget {
                   var index = rc.rituals.indexOf(ca);
                   if (index < 0) {
                     rc.rituals.add(ca);
-                    rc.rituals.remove(ritual.value);
+                    Get.find<DatabaseController>().insertOrUpdateRitual(ca);
                     Get.back();
                   } else {
                     rc.rituals[index] = ca;
+                    Get.find<DatabaseController>().insertOrUpdateRitual(ca);
                   }
                 }
               },
@@ -97,6 +99,14 @@ class RitualPopup extends StatelessWidget {
                 if (delete != null && delete == true) {
                   final RitualController rc = Get.find();
                   rc.rituals.remove(ritual.value);
+
+                  Get.find<DatabaseController>().database.delete(
+                      'player_rituals',
+                      where: 'player_id = ? and discipline_id = ?',
+                      whereArgs: [
+                        Get.find<DatabaseController>().characterId.value,
+                        ritual.value.dbId
+                      ]);
 
                   Get.back();
                 }
@@ -115,7 +125,13 @@ class RitualDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _ritual = (ritual ?? Ritual(id: "new_id", name: "New ritual")).obs;
+    final _ritual = (ritual ??
+            Ritual(
+              dbId: null,
+              id: "new_id",
+              name: "New ritual",
+            ))
+        .obs;
     final bool replaceId = ritual == null;
 
     return SimpleDialog(
@@ -158,11 +174,12 @@ class RitualDialog extends StatelessWidget {
                 )),
           ],
         ),
+        // TODO: this should pick schools from a dropdown
         TextField(
-          controller: TextEditingController()..text = _ritual.value.schoolId,
+          controller: TextEditingController()..text = _ritual.value.school,
           onChanged: (value) => _ritual.update(
             (val) {
-              val?.schoolId = value;
+              val?.school = value;
             },
           ),
           decoration: InputDecoration(hintText: "Ritual's school"),
@@ -201,7 +218,8 @@ class RitualDialog extends StatelessWidget {
               onPressed: () {
                 if (_ritual.value.name.isNotEmpty) {
                   if (replaceId) {
-                    Ritual result = Ritual(id: identify(_ritual.value.name));
+                    Ritual result =
+                        Ritual(id: identify(_ritual.value.name), dbId: null);
                     result.copy(_ritual.value);
                     Get.back(result: result);
                   } else
@@ -252,6 +270,7 @@ class AddRitualButton extends CommonSpeedDialChild {
             if (ca != null) {
               RitualController bc = Get.find();
               bc.rituals.add(ca);
+              Get.find<DatabaseController>().insertOrUpdateRitual(ca);
             }
           },
         );

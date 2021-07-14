@@ -10,9 +10,6 @@ class VirtuesColumnWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String header = "Virtues";
-
-    // TODO: edit dialogues are temporarily removed
-
     return Container(
       child: ListView(
         children: [
