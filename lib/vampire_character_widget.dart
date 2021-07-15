@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:vampire_the_masquerade_character_sheet/settings_widget.dart';
 
 import 'vampite_character.dart';
 import 'drawer_menu.dart';
@@ -9,6 +10,8 @@ import 'drawer_menu.dart';
 class VampireWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     var vc = Get.put(VampireCharacter());
+
+    Get.put(Settings());
 
     WidgetsFlutterBinding.ensureInitialized();
 
@@ -51,23 +54,7 @@ class MenuScaffold extends Scaffold {
       : super(
           appBar: AppBar(
             title: Text(name),
-            actions: actions +
-                [
-                  IconButton(
-                    onPressed: () {
-                      final VampireCharacter vc = Get.find();
-                      vc.load();
-                    },
-                    icon: Icon(Icons.file_download),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      final VampireCharacter vc = Get.find();
-                      vc.save();
-                    },
-                    icon: Icon(Icons.save),
-                  ),
-                ],
+            actions: actions,
           ),
           body: body,
           drawer: Drawer(
