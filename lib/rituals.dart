@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:sqflite_common/sqlite_api.dart';
+import 'package:vampire_the_masquerade_character_sheet/database.dart';
 
 import 'disciplines.dart';
 import 'common_logic.dart';
@@ -10,18 +12,20 @@ import 'common_logic.dart';
 class Ritual {
   Ritual({
     required this.id,
+    required this.dbId,
     this.name = "",
-    this.schoolId = "undefined",
+    this.schoolId,
     this.school = "",
     this.level = 1,
     this.description = "",
     this.system = "",
   });
-  final String id;
+  final String? id;
+  final int? dbId;
   int level;
   String name;
   String school;
-  String schoolId;
+  int? schoolId;
   String? description;
   String system;
 
@@ -59,7 +63,7 @@ class Ritual {
   void fromEntry(RitualEntry entry) {
     level = entry.level;
     name = entry.name;
-    schoolId = entry.schoolId.isEmpty ? entry.schoolId : "undefined";
+    schoolId = entry.disciplineId;
     description = entry.description;
     system = entry.system;
   }
@@ -93,13 +97,36 @@ class RitualController extends GetxController {
   void load(
       List<dynamic> ids, RitualDictionary dictionary, DisciplineDictionary dd) {
     for (var id in ids) {
-      var ritual = Ritual(id: id);
+      var ritual = Ritual(id: id, dbId: null);
       if (dictionary.entries[ritual.id] != null) {
         ritual.fromEntry(dictionary.entries[id]!);
         ritual.school = dd.entries[ritual.schoolId]?.name ?? "Undefined";
         if (!rituals.contains(ritual)) rituals.add(ritual);
       }
     }
+  }
+
+  Future<void> fromDatabase(Database database) async {
+    rituals.value = await database.rawQuery(
+        'select r.id, r.name, r.level, r.system, r.description, '
+        'rl.name as discipline_name '
+        'from rituals r '
+        'inner join player_rituals pr on pr.ritual_id = r.id '
+        'left join ritual_schools rl on rl.id = r.discipline_id '
+        'where pr.player_id = ?',
+        [
+          Get.find<DatabaseController>().characterId.value
+        ]).then((value) => List.generate(
+        value.length,
+        (index) => Ritual(
+              id: null,
+              dbId: value[0]['id'] as int,
+              name: value[0]['name'] as String,
+              level: value[0]['level'] as int,
+              school: value[0]['discipline_name'] as String? ?? 'Undefined',
+              system: value[0]['system'] as String,
+              description: value[0]['description'] as String,
+            )));
   }
 }
 
@@ -123,10 +150,20 @@ class RitualEntry {
     return json;
   }
 
+  Map<String, Object?> toDatabase(String id) => {
+        'txt_id': id,
+        'name': name,
+        'discipline_id': disciplineId,
+        'level': level,
+        'description': description,
+        'system': system,
+      };
+
   int level;
   String name;
   String school = 'Undefined';
-  String schoolId;
+  String? schoolId;
+  int? disciplineId;
   String? description;
   String system;
 }
@@ -147,5 +184,25 @@ class RitualDictionary extends Dictionary {
   @override
   Map<String, dynamic> save() {
     return Map.fromEntries(entries.entries);
+  }
+
+  @override
+  Future<void> loadAllToDatabase(Database database) async {
+    for (var entry in entries.entries) {
+      if (entry.value.disciplineId == null) {
+        var response = await database.query('disciplines',
+            columns: ['id', 'name'],
+            where: 'txt_id = ?',
+            whereArgs: [entry.value.schoolId]);
+        if (response.length > 0) {
+          entry.value.disciplineId = response[0]['id'] as int? ?? -1;
+          entry.value.school = response[0]['name'] as String? ?? 'Undefined';
+        } else {
+          entry.value.school = 'Undefined';
+        }
+      }
+      await database.insert('rituals', entry.value.toDatabase(entry.key),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+    }
   }
 }

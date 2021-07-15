@@ -8,7 +8,7 @@ import 'drawer_menu.dart';
 class XpSectionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final XPController xpc = Get.find();
+    final XpController xpc = Get.find();
 
     final deleteCallback = (int index) => xpc.log.removeAt(index);
 
@@ -73,7 +73,7 @@ class XpEntryNewAbilityWidget extends StatelessWidget {
             entryNewAbility: ability.value,
           ));
           if (ca != null) {
-            final XPController xpc = Get.find();
+            final XpController xpc = Get.find();
             xpc.xpSpent.value += ca.cost - ability.value.cost;
             ability.update((val) => val?.copy(ca));
           }
@@ -168,7 +168,7 @@ class XpEntryNewAbilityButton extends CommonSpeedDialChild {
             final ca =
                 await Get.dialog<XpEntryNewAbility>(XpEntryNewAbilityDialog());
             if (ca != null) {
-              XPController xpc = Get.find();
+              XpController xpc = Get.find();
               xpc.xpSpent.value += ca.cost;
               xpc.log.add(ca);
             }
@@ -207,7 +207,7 @@ class XpEntryUpgradedAbilityWidget extends StatelessWidget {
             entryUpgradedAbility: entry.value,
           ));
           if (ca != null) {
-            final XPController xpc = Get.find();
+            final XpController xpc = Get.find();
             xpc.xpSpent.value += ca.cost - entry.value.cost;
             entry.update((val) => val?.copy(ca));
           }
@@ -346,7 +346,7 @@ class XpEntryUpgradedAbilityButton extends CommonSpeedDialChild {
             final ca = await Get.dialog<XpEntryUpgradedAbility>(
                 XpEntryUpgradedAbilityDialog());
             if (ca != null) {
-              XPController xpc = Get.find();
+              XpController xpc = Get.find();
               xpc.xpSpent.value += ca.cost;
               xpc.log.add(ca);
             }
@@ -382,7 +382,7 @@ class XpEntryGainedWidget extends StatelessWidget {
             entryGained: entry.value,
           ));
           if (ca != null) {
-            final XPController xpc = Get.find();
+            final XpController xpc = Get.find();
             xpc.xpTotal.value += ca.gained - entry.value.gained;
             entry.update((val) => val?.copy(ca));
           }
@@ -456,6 +456,31 @@ class XpEntryGainedDialog extends Dialog {
   }
 }
 
+class XpEntryFailedWidget extends StatelessWidget {
+  XpEntryFailedWidget(this.ability, this.deleteCallback, this.index);
+
+  final XpEntryGained ability;
+  final Function(int) deleteCallback;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    final entry = ability.obs;
+    return Dismissible(
+      key: ValueKey<XpEntryGained>(entry.value),
+      child: ListTile(
+        title: Text(
+          entry.value.description,
+          style: TextStyle(color: Colors.red),
+        ),
+      ),
+      onDismissed: (direction) => deleteCallback(index),
+      confirmDismiss: (direction) =>
+          Get.dialog<bool>(DeleteDialog(name: "log entry")),
+    );
+  }
+}
+
 class AddXpEntryGainedButton extends CommonSpeedDialChild {
   AddXpEntryGainedButton()
       : super(
@@ -465,7 +490,7 @@ class AddXpEntryGainedButton extends CommonSpeedDialChild {
           onTap: () async {
             final ca = await Get.dialog<XpEntryGained>(XpEntryGainedDialog());
             if (ca != null) {
-              XPController xpc = Get.find();
+              XpController xpc = Get.find();
               xpc.xpTotal.value += ca.gained;
               xpc.log.add(ca);
             }
@@ -477,8 +502,5 @@ class RecalculateXpButton extends IconButton {
   RecalculateXpButton()
       : super(
             icon: Icon(Icons.refresh),
-            onPressed: () {
-              final XPController xpc = Get.find();
-              xpc.calculateXp();
-            });
+            onPressed: () => Get.find<XpController>().calculateXp());
 }

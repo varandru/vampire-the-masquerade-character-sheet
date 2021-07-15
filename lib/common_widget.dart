@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import 'database.dart';
 import 'common_logic.dart';
 
 List<Widget> makeIconRow(
@@ -16,12 +17,17 @@ List<Widget> makeIconRow(
 }
 
 class NoTitleCounterWidget extends StatelessWidget {
-  NoTitleCounterWidget({int current = 0, int max = 10})
+  NoTitleCounterWidget(
+      {int current = 0,
+      int max = 10,
+      MainAxisAlignment alignment = MainAxisAlignment.spaceEvenly})
       : _current = current,
-        _max = max;
+        _max = max,
+        _alignment = alignment;
 
   final _current;
   final _max;
+  final MainAxisAlignment _alignment;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +35,7 @@ class NoTitleCounterWidget extends StatelessWidget {
       children:
           makeIconRow(_current, _max, Icons.circle, Icons.circle_outlined),
       mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: _alignment,
     );
   }
 }
@@ -40,6 +46,7 @@ class ComplexAbilityWidget extends StatelessWidget {
   ComplexAbilityWidget({
     Key? key,
     required this.attribute,
+    required this.description,
     required this.updateCallback,
     required this.deleteCallback,
     this.index = 0,
@@ -47,30 +54,44 @@ class ComplexAbilityWidget extends StatelessWidget {
 
   final ComplexAbility attribute;
   final int index;
+  final ComplexAbilityEntryDatabaseDescription description;
   late final Function(ComplexAbility ability, ComplexAbility old)
       updateCallback;
   late final Function(ComplexAbility ability) deleteCallback;
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> row = makeIconRow(
-        attribute.current, attribute.max, Icons.circle, Icons.circle_outlined);
-    final header = Text(
-      attribute.name,
-      overflow: TextOverflow.fade,
-      softWrap: false,
-    );
-
     return ListTile(
-      title: header,
-      subtitle: Text(attribute.specialization),
-      trailing: Row(
-        children: row,
-        mainAxisSize: MainAxisSize.min,
+      title: Text(
+        attribute.name,
+        overflow: TextOverflow.fade,
+        softWrap: false,
       ),
-      onTap: () {
-        Get.dialog<void>(ComplexAbilityPopup(attribute,
-            updateCallback: updateCallback,
+      subtitle: Text(attribute.specialization),
+      trailing:
+          NoTitleCounterWidget(current: attribute.current, max: attribute.max),
+      onTap: () async {
+        var result = await Get.find<DatabaseController>().database.query(
+            description.tableName,
+            where: 'id = ?',
+            whereArgs: [attribute.id]);
+
+        ComplexAbilityEntry entry = ComplexAbilityEntry(
+            name: result[0]['name'] as String,
+            description: result[0]['description'] as String?);
+
+        Get.dialog<void>(ComplexAbilityPopup(attribute, entry,
+            updateCallback: (a1, a2, e) {
+          updateCallback(a1, a2);
+
+          /// Database entry update
+          if (description.filter == null)
+            Get.find<DatabaseController>()
+                .updateComplexAbilityNoFilter(a1, e, description);
+          else
+            Get.find<DatabaseController>()
+                .updateComplexAbilityWithFilter(a1, e, description);
+        },
             deleteCallback: deleteCallback,
             textTheme: Theme.of(context).textTheme));
       },
@@ -83,6 +104,7 @@ class ComplexAbilityColumnWidget extends StatelessWidget {
 
   late final RxString name;
   late final RxList<ComplexAbility> values;
+  late final ComplexAbilityEntryDatabaseDescription description;
   late final Function(ComplexAbility ability, ComplexAbility old) editValue;
   late final Function(ComplexAbility ability) deleteValue;
 
@@ -102,6 +124,7 @@ class ComplexAbilityColumnWidget extends StatelessWidget {
             else
               return Obx(() => ComplexAbilityWidget(
                   attribute: values[i - 1],
+                  description: description,
                   index: i - 1,
                   updateCallback: editValue,
                   deleteCallback: deleteValue));
@@ -116,44 +139,48 @@ class ComplexAbilityColumnWidget extends StatelessWidget {
 }
 
 class ComplexAbilityPopup extends Dialog {
-  ComplexAbilityPopup(this.attribute,
-      {required this.updateCallback,
-      required this.deleteCallback,
-      this.index = 0,
-      required this.textTheme});
+  ComplexAbilityPopup(
+    this._attribute,
+    this.entry, {
+    required this.updateCallback,
+    required this.deleteCallback,
+    required this.textTheme,
+  });
 
-  final ComplexAbility attribute;
-  final int index;
-  late final Function(ComplexAbility ability, ComplexAbility old)
+  final ComplexAbility _attribute;
+  final ComplexAbilityEntry entry;
+
+  late final Function(
+          ComplexAbility ability, ComplexAbility old, ComplexAbilityEntry entry)
       updateCallback;
   late final Function(ComplexAbility ability) deleteCallback;
+
   final TextTheme textTheme;
 
   @override
   Widget build(BuildContext context) {
     List<Widget> children = [];
 
-    children.addIf(attribute.specialization.isNotEmpty,
-        Text(attribute.specialization, style: textTheme.headline5));
+    children.addIf(_attribute.specialization.isNotEmpty,
+        Text(_attribute.specialization, style: textTheme.headline5));
 
-    children.addIf(attribute.description.isNotEmpty,
+    children.addIf(entry.description != null,
         Text("Description:", style: textTheme.headline6));
-    children.addIf(
-        attribute.description.isNotEmpty, Text(attribute.description));
+    if (entry.description != null) children.add(Text(entry.description!));
 
-    if (attribute.isDeletable) {
+    if (_attribute.isDeletable) {
       children.add(Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           IconButton(
               onPressed: () async {
                 final ca =
-                    await Get.dialog<ComplexAbility>(ComplexAbilityDialog(
-                  name: 'Edit ${attribute.name}',
-                  ability: attribute,
+                    await Get.dialog<ComplexAbilityPair>(ComplexAbilityDialog(
+                  name: 'Edit ${_attribute.name}',
+                  ability: _attribute,
                 ));
                 if (ca != null) {
-                  updateCallback(ca, attribute);
+                  updateCallback(ca.ability, _attribute, ca.entry);
                   Get.back();
                 }
               },
@@ -161,9 +188,9 @@ class ComplexAbilityPopup extends Dialog {
           IconButton(
               onPressed: () async {
                 bool? delete =
-                    await Get.dialog<bool>(DeleteDialog(name: attribute.name));
+                    await Get.dialog<bool>(DeleteDialog(name: _attribute.name));
                 if (delete != null && delete == true) {
-                  deleteCallback(attribute);
+                  deleteCallback(_attribute);
                   Get.back();
                 }
               },
@@ -176,12 +203,12 @@ class ComplexAbilityPopup extends Dialog {
           child: IconButton(
               onPressed: () async {
                 final ca =
-                    await Get.dialog<ComplexAbility>(ComplexAbilityDialog(
-                  name: 'Edit ${attribute.name}',
-                  ability: attribute,
+                    await Get.dialog<ComplexAbilityPair>(ComplexAbilityDialog(
+                  name: 'Edit ${_attribute.name}',
+                  ability: _attribute,
                 ));
                 if (ca != null) {
-                  updateCallback(ca, attribute);
+                  updateCallback(ca.ability, _attribute, ca.entry);
                   Get.back();
                 }
               },
@@ -189,9 +216,10 @@ class ComplexAbilityPopup extends Dialog {
         ),
       );
     }
+
     return SimpleDialog(
       title: Text(
-        attribute.name,
+        _attribute.name,
         textAlign: TextAlign.center,
         style: textTheme.headline4,
       ),
@@ -203,12 +231,16 @@ class ComplexAbilityPopup extends Dialog {
 class ComplexAbilityDialog extends Dialog {
   ComplexAbilityDialog({
     this.ability,
+    this.entry,
     this.name = 'New Ability',
     this.hasSpecializations = true,
   });
 
   final String name;
+
   final ComplexAbility? ability;
+  final ComplexAbilityEntry? entry;
+
   final bool hasSpecializations;
 
   @override
@@ -216,18 +248,28 @@ class ComplexAbilityDialog extends Dialog {
     var ca = (ability != null)
         ? ability!.obs
         : ComplexAbility(
-                id: "undefined",
+                id: null,
+                txtId: "undefined",
                 name: name,
                 hasSpecialization: hasSpecializations)
             .obs;
+
+    var e = (entry != null)
+        ? entry!.obs
+        : ComplexAbilityEntry(name: 'Undefined').obs;
 
     List<Widget> children = [];
     if (ca.value.isNameEditable) {
       children.add(TextField(
         controller: TextEditingController()..text = ca.value.name,
-        onChanged: (value) => ca.update(
-          (val) => val?.name = value,
-        ),
+        onChanged: (value) {
+          ca.update(
+            (val) => val?.name = value,
+          );
+          e.update(
+            (val) => val?.name = value,
+          );
+        },
         decoration: InputDecoration(labelText: "Name"),
       ));
     } else {
@@ -268,8 +310,8 @@ class ComplexAbilityDialog extends Dialog {
         ));
 
     children.add(TextField(
-      controller: TextEditingController()..text = ca.value.description,
-      onChanged: (value) => ca.update((val) {
+      controller: TextEditingController()..text = e.value.description ?? "",
+      onChanged: (value) => e.update((val) {
         val?.description = value;
       }),
       keyboardType: TextInputType.multiline,
@@ -287,11 +329,17 @@ class ComplexAbilityDialog extends Dialog {
           child: Text('OK'),
           onPressed: () {
             if (ca.value.name.isNotEmpty) {
-              if (ca.value.id == 'undefined') {
+              if (ca.value.txtId == 'undefined') {
                 ca.value =
                     ComplexAbility.fromOther(identify(ca.value.name), ca.value);
               }
-              Get.back(result: ca.value);
+
+              if (e.value.description != null && e.value.description!.isEmpty)
+                e.value.description = null;
+
+              if (e.value.databaseId == null) e.value.databaseId = ca.value.id;
+
+              Get.back(result: ComplexAbilityPair(ca.value, e.value));
             } else {
               Get.back(result: null);
             }

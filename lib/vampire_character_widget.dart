@@ -10,6 +10,8 @@ class VampireWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     var vc = Get.put(VampireCharacter());
 
+    WidgetsFlutterBinding.ensureInitialized();
+
     return FutureBuilder(
       future: vc.init(),
       builder: (context, snapshot) {
@@ -64,14 +66,6 @@ class MenuScaffold extends Scaffold {
                       vc.save();
                     },
                     icon: Icon(Icons.save),
-                  ),
-                  IconButton(
-                    onPressed: () async {
-                      final VampireCharacter vc = Get.find();
-                      await vc.install();
-                      await vc.load();
-                    },
-                    icon: Icon(Icons.restart_alt_outlined),
                   ),
                 ],
           ),

@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
+import 'package:sqflite/sqlite_api.dart';
+import 'package:vampire_the_masquerade_character_sheet/database.dart';
 
-class XPController extends GetxController {
+class XpController extends GetxController {
   var xpTotal = 0.obs;
   var xpSpent = 0.obs;
 
@@ -54,9 +56,29 @@ class XPController extends GetxController {
 
     return json;
   }
+
+  Future<void> fromDatabase(Database database) async {
+    log.value = await database.query('player_xp',
+        where: 'player_id = ?',
+        whereArgs: [
+          Get.find<DatabaseController>().characterId.value
+        ]).then((value) => List<XpEntry>.generate(value.length, (index) {
+          if (value[index]['old_level'] != null &&
+              value[index]['new_level'] != null) {
+            return XpEntryUpgradedAbility.fromDatabase(value[index]);
+          } else if (value[index]['cost'] != null) {
+            return XpEntryNewAbility.fromDatabase(value[index]);
+          } else if (value[index]['gained'] != null) {
+            return XpEntryGained.fromDatabase(value[index]);
+          } else {
+            return XpEntryFailedLoad(value[index]);
+          }
+        }));
+    calculateXp();
+  }
 }
 
-class XpEntry {
+abstract class XpEntry {
   XpEntry(this.description);
 
   String description;
@@ -106,6 +128,14 @@ class XpEntryNewAbility extends XpEntry {
     }
     super.copy(other);
   }
+
+  XpEntryNewAbility.fromDatabase(Map<String, Object?> entry)
+      : name = entry['name'] as String,
+        cost = entry['cost'] as int,
+        super(entry['description'] as String? ?? '');
+
+  Map<String, Object?> toDatabase() =>
+      {'name': name, 'cost': cost, 'description': description};
 }
 
 class XpEntryUpgradedAbility extends XpEntry {
@@ -140,6 +170,21 @@ class XpEntryUpgradedAbility extends XpEntry {
 
     return json;
   }
+
+  XpEntryUpgradedAbility.fromDatabase(Map<String, Object?> entry)
+      : name = entry['name'] as String,
+        cost = entry['cost'] as int,
+        newLevel = entry['new_level'] as int,
+        oldLevel = entry['old_level'] as int,
+        super(entry['description'] as String? ?? '');
+
+  Map<String, Object?> toDatabase() => {
+        'name': name,
+        'cost': cost,
+        'description': description,
+        'old_level': oldLevel,
+        'new_level': newLevel
+      };
 }
 
 class XpEntryGained extends XpEntry {
@@ -161,4 +206,15 @@ class XpEntryGained extends XpEntry {
 
     return json;
   }
+
+  XpEntryGained.fromDatabase(Map<String, Object?> entry)
+      : gained = entry['cost'] as int,
+        super(entry['description'] as String? ?? '');
+
+  Map<String, Object?> toDatabase() =>
+      {'gained': gained, 'description': description};
+}
+
+class XpEntryFailedLoad extends XpEntry {
+  XpEntryFailedLoad(Map<String, Object?> dbEntry) : super(dbEntry.toString());
 }

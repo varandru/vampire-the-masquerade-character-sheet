@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:vampire_the_masquerade_character_sheet/database.dart';
 
 import 'common_widget.dart';
 import 'drawer_menu.dart';
@@ -113,9 +114,11 @@ class MeritPopUp extends Dialog {
                     if (isMerit) {
                       cmaf.meritSum.value += merit.cost - ca.cost;
                       cmaf.merits[index] = ca;
+                      Get.find<DatabaseController>().addOrUpdateMerit(merit);
                     } else {
                       cmaf.flawsSum.value += merit.cost - ca.cost;
                       cmaf.flaws[index] = ca;
+                      Get.find<DatabaseController>().addOrUpdateMerit(merit);
                     }
                   }
                 },
@@ -133,6 +136,8 @@ class MeritPopUp extends Dialog {
                       cmaf.flawsSum -= cmaf.flaws[index].cost;
                       cmaf.flaws.removeAt(index);
                     }
+                    Get.find<DatabaseController>()
+                        .deleteMeritOrFlaw(merit, isMerit);
                     Get.back();
                   }
                 },
@@ -155,7 +160,7 @@ class MeritDialog extends Dialog {
   Widget build(BuildContext context) {
     var m = (merit != null)
         ? merit!.obs
-        : Merit(name: name, type: MeritType.Physical).obs;
+        : Merit(id: 0, name: name, type: MeritType.Physical).obs;
 
     return SimpleDialog(
       title: Text(name),

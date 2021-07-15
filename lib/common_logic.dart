@@ -1,7 +1,7 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:get/get.dart';
+import 'package:sqflite/sqflite.dart';
 
 String identify(String name) =>
     name.toLowerCase().replaceAll(' ', '_').replaceAll('[\\W0-9]', '');
@@ -10,24 +10,24 @@ class ComplexAbility {
   ComplexAbility({
     required this.id,
     required this.name,
+    this.txtId,
     this.current = 1,
     this.min = 0,
     this.max = 5,
     this.specialization = "",
-    this.description = "",
     this.isIncremental = true,
     this.hasSpecialization = true,
     this.isDeletable = true,
     this.isNameEditable = true,
   });
 
-  final String id;
+  final int? id;
+  final String? txtId;
   String name;
   int current;
   int min;
   int max;
   String specialization;
-  String description;
 
   /// Does this ability get directly better at higher levels?
   /// If there is variety, this is false
@@ -57,32 +57,27 @@ class ComplexAbility {
     Map<String, dynamic> json, {
     this.hasSpecialization = true,
     this.isDeletable = true,
-  })  : id = json["id"],
+  })  : txtId = json["id"],
+        id = null,
         name = "",
         current = json['current'],
         specialization = json['specialization'] ?? "",
-        description = "",
         min = 1,
         max = 5,
         isIncremental = true,
         isNameEditable = true;
 
-  ComplexAbility.fromOther(this.id, ComplexAbility other)
+  ComplexAbility.fromOther(this.txtId, ComplexAbility other)
       : name = other.name,
+        id = other.id,
         current = other.current,
         min = other.min,
         max = other.max,
         specialization = other.specialization,
-        description = other.description,
         isIncremental = other.isIncremental,
-        hasSpecialization = other.isIncremental,
+        hasSpecialization = other.hasSpecialization,
         isDeletable = other.isDeletable,
         isNameEditable = other.isNameEditable;
-
-  void fillFromDictionary(ComplexAbilityEntry entry) {
-    // levelDescriptions = entry.levels;
-    if (entry.description != null) description = entry.description!;
-  }
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = Map();
@@ -99,6 +94,7 @@ class ComplexAbilityEntry {
   List<String> specializations = [];
   List<String> levels = [];
   String? description;
+  int? databaseId;
 
   ComplexAbilityEntry.fromJson(Map<String, dynamic> json) {
     name = json["name"];
@@ -136,18 +132,82 @@ class ComplexAbilityEntry {
 
     return json;
   }
+
+  Map<String, Object?> toDatabaseMap(String id) =>
+      {"txt_id": id, "name": name, "description": description};
+
+  List<Map<String, Object?>>? specializationsToDatabase(
+          int foreignKey, String foreignKeyName) =>
+      specializations.isEmpty
+          ? null
+          : List.generate(
+              specializations.length,
+              (index) =>
+                  {foreignKeyName: foreignKey, "name": specializations[index]});
+
+  List<Map<String, Object?>>? levelsToDatabase(
+          int foreignKey, String foreignKeyName) =>
+      levels.isEmpty
+          ? null
+          : List.generate(
+              levels.length,
+              (index) => {
+                    foreignKeyName: foreignKey,
+                    'description': levels[index],
+                    'level': index + 1
+                  });
+}
+
+class ComplexAbilityEntryDatabaseDescription {
+  ComplexAbilityEntryDatabaseDescription({
+    required this.tableName,
+    required this.fkName,
+    required this.playerLinkTable,
+    this.specializationsTable,
+    this.filter,
+  });
+
+  /// Table from which the main information is pulled
+  String tableName;
+
+  /// Table from which the specializations are pulled (if applicable)
+  String? specializationsTable;
+
+  /// Table, from which level descriptions will be pulled
+  /// When I get to them...
+  // String? levels
+
+  /// Foreign key name. E.x. attribute_id
+  String fkName;
+
+  /// Table that links entries to characters. E.x. player_attributes
+  String playerLinkTable;
+
+  /// Additional filter, if applicable. 0, 1, 2 for attribute type, for example
+  int? filter;
 }
 
 class ComplexAbilityColumn {
-  ComplexAbilityColumn(String name) {
+  ComplexAbilityColumn(String name, {required this.description}) {
     this.name.value = name;
   }
+
+  final ComplexAbilityEntryDatabaseDescription description;
 
   var name = "Name".obs;
   RxList<ComplexAbility> values = RxList();
 
   void sortById() {
-    values.sort((a1, a2) => a1.id.compareTo(a2.id));
+    values.sort((a1, a2) {
+      if (a1.id == null && a2.id == null)
+        return a1.txtId?.compareTo(a2.txtId ?? '') ?? 0;
+      else if (a1.id == null)
+        return -1;
+      else if (a2.id == null)
+        return 1;
+      else
+        return a1.id!.compareTo(a2.id!);
+    });
   }
 
   void editValue(ComplexAbility value, ComplexAbility old) {
@@ -179,30 +239,22 @@ class ComplexAbilityColumn {
 }
 
 abstract class Dictionary {
-  Dictionary(this.fileName) {
-    File dictionaryFile = File(this.fileName);
-    if (dictionaryFile.existsSync()) {
-      load(jsonDecode(dictionaryFile.readAsStringSync()));
-    } else {
-      throw ("Attribute dictionary $dictionaryFile does not exist");
-    }
+  Dictionary(final String json) {
+    load(jsonDecode(json));
   }
 
   bool changed = false;
-  final String fileName;
-
   void load(Map<String, dynamic> json);
 
   Map<String, dynamic> save();
 
-  onDispose() async {
-    if (changed) {
-      File dictionaryFile = File(fileName);
-      if (await dictionaryFile.exists()) {
-        dictionaryFile.writeAsStringSync(jsonEncode(save()));
-      } else {
-        throw ("Dictionary file $dictionaryFile does not exist");
-      }
-    }
-  }
+  /// Legal dynamics map to TEXT, INTEGER, REAL, BLOB, NULL. How am I going to insert arrays? Great question
+  Future<void> loadAllToDatabase(Database database);
+}
+
+class ComplexAbilityPair {
+  ComplexAbilityPair(this.ability, this.entry);
+
+  ComplexAbility ability;
+  ComplexAbilityEntry entry;
 }

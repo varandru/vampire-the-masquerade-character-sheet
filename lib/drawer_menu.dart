@@ -6,7 +6,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:vampire_the_masquerade_character_sheet/ritual_widget.dart';
 import 'package:vampire_the_masquerade_character_sheet/xp_widget.dart';
 import 'abilities_widget.dart';
-import 'advanatages_widget.dart';
+import 'background_widget.dart';
 import 'attributes_widget.dart';
 import 'combat.dart';
 import 'disciplines_widget.dart';

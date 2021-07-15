@@ -1,9 +1,11 @@
 import 'package:get/get.dart';
+import 'package:sqflite_common/sqlite_api.dart';
 import 'package:vampire_the_masquerade_character_sheet/common_logic.dart';
 
 class Discipline {
   Discipline(
       {required this.id,
+      required this.txtId,
       this.name = "",
       required this.level,
       this.description,
@@ -14,6 +16,7 @@ class Discipline {
   Discipline.fromDictionary(
       {required Discipline base, required DisciplineEntry entry})
       : id = base.id,
+        txtId = base.txtId,
         level = base.level,
         description = base.description ?? entry.description,
         name = entry.name,
@@ -33,8 +36,9 @@ class Discipline {
     print("Added discipline $name");
   }
 
-  Discipline.fromOther(String id, Discipline other)
+  Discipline.fromOther(int? id, Discipline other, {String? txtId})
       : this.id = id,
+        this.txtId = txtId ?? other.txtId,
         name = other.name,
         description = other.description,
         level = other.level,
@@ -43,7 +47,8 @@ class Discipline {
         system = other.system,
         levels = other.levels;
 
-  final String id;
+  final String? txtId;
+  final int? id;
   String name;
   String? description;
 
@@ -98,6 +103,8 @@ class DisciplineDot {
   String system;
 
   int level;
+
+  /// Is max even used?
   int max;
 
   DisciplineDot.fromJson(Map<String, dynamic> json)
@@ -126,35 +133,48 @@ class DisciplineDot {
     level = other.level;
     max = other.max;
   }
+
+  Map<String, Object?> toDatabase(int foreignKey) => {
+        'discipline_id': foreignKey,
+        'level': level,
+        'system': system,
+        'maximum': max,
+        'description': description,
+      };
 }
 
 class DisciplineController extends GetxController {
   RxList<Discipline> disciplines = RxList();
 
-  void load(Map<String, dynamic> json, DisciplineDictionary dictionary) {
+  void load(Map<String, dynamic> json) {
+    // TODO: some fields must load from database
     for (var id in json.keys) {
       if (json[id] == null) throw ("Invalid JSON $json");
       if (json[id]["current"] == null)
         throw ("${json["id"]} lacks neccessary fields");
 
-      var entry = dictionary.entries[id];
+      // var entry = dictionary.entries[id];
 
-      if (entry != null) {
-        Discipline base = Discipline(
-          id: id,
-          level: json[id]["current"],
-        );
-        if (!disciplines.contains(base)) {
-          try {
-            disciplines.add(Discipline.fromDictionary(
-              base: base,
-              entry: entry,
-            ));
-          } catch (e) {
-            continue;
-          }
-        }
-      }
+      // if (entry != null) {
+      Discipline base = Discipline(
+        id: null,
+        txtId: id,
+        name: id,
+        level: json[id]["current"],
+      );
+
+      if (!disciplines.contains(base)) disciplines.add(base);
+      // if (!disciplines.contains(base)) {
+      //   try {
+      //     disciplines.add(Discipline.fromDictionary(
+      //       base: base,
+      //       entry: entry,
+      //     ));
+      //   } catch (e) {
+      //     continue;
+      //   }
+      // }
+      // }
     }
   }
 
@@ -167,12 +187,58 @@ class DisciplineController extends GetxController {
   void deleteAt(int index) {
     disciplines.removeAt(index);
   }
+
+  Future<void> fromDatabase(Database database) async {
+    disciplines.value = await database
+        .rawQuery(
+            'select d.id, d.name, pd.level, d.description, d.system, d.maximum '
+            'from disciplines d inner join player_disciplines pd '
+            'on pd.discipline_id = d.id where pd.player_id = ?')
+        .then((value) => List.generate(
+            value.length,
+            (index) => Discipline(
+                  id: value[index]['id'] as int,
+                  txtId: value[index]['txt_id'] as String?,
+                  level: value[index]['level'] as int,
+                  system: value[index]['system'] as String?,
+                  description: value[index]['description'] as String?,
+                  max: value[index]['maximum'] as int? ?? 5,
+                )));
+
+    for (var discipline in disciplines) {
+      discipline.levels = await database
+          .query('discipline_levels',
+              columns: [
+                'name',
+                'level',
+                'system',
+                'description'
+                    'maximum',
+              ],
+              where: 'discipline_id = ?',
+              whereArgs: [discipline.id])
+          .then((dbDots) => List.generate(
+              dbDots.length,
+              (index) => DisciplineDot(
+                    name: dbDots[index]['name'] as String,
+                    level: dbDots[index]['level'] as int,
+                    system: dbDots[index]['system'] as String? ?? "",
+                    description: dbDots[index]['description'] as String?,
+                    max: dbDots[index]['max'] as int? ?? discipline.max,
+                  )));
+
+      if (discipline.levels != null && discipline.levels!.length == 0)
+        discipline.levels = null;
+    }
+  }
 }
 
 // String id is the map key
 class DisciplineEntry {
   late String name;
   String? description;
+
+  /// Is max even used?
   int max = 5;
 
   String? system;
@@ -200,6 +266,13 @@ class DisciplineEntry {
     if (levels != null) json["levels"] = levels;
     return json;
   }
+
+  Map<String, Object?> toDatabase(String id) => {
+        'txt_id': id,
+        'description': description,
+        'maximum': max,
+        'system': system
+      };
 }
 
 class DisciplineDictionary extends Dictionary {
@@ -228,6 +301,21 @@ class DisciplineDictionary extends Dictionary {
       Map<String, dynamic> disciplineEntries = json["disciplines"];
       for (var id in disciplineEntries.keys) {
         entries[id] = DisciplineEntry.fromJson(disciplineEntries[id]);
+      }
+    }
+  }
+
+  @override
+  Future<void> loadAllToDatabase(Database database) async {
+    for (var entry in entries.entries) {
+      int id = await database.insert(
+          'disciplines', entry.value.toDatabase(entry.key),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+      if (entry.value.levels != null) {
+        for (var dot in entry.value.levels!.values) {
+          await database.insert('discipline_levels', dot.toDatabase(id),
+              conflictAlgorithm: ConflictAlgorithm.replace);
+        }
       }
     }
   }

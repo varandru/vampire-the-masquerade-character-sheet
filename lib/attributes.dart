@@ -1,12 +1,40 @@
 import 'package:get/get.dart';
+import 'package:sqflite_common/sqlite_api.dart';
 import 'common_logic.dart';
+import 'database.dart';
 
 enum AttributeColumnType { Physical, Mental, Social }
 
+class AttributeDatabase extends ComplexAbilityEntryDatabaseDescription {
+  AttributeDatabase(int filter)
+      : super(
+          tableName: 'attributes',
+          fkName: 'attribute_id',
+          playerLinkTable: 'player_attributes',
+          specializationsTable: 'attribute_specializations',
+          filter: filter,
+        );
+}
+
+class PhysicalDatabase extends AttributeDatabase {
+  PhysicalDatabase() : super(0);
+}
+
+class SocialDatabase extends AttributeDatabase {
+  SocialDatabase() : super(1);
+}
+
+class MentalDatabase extends AttributeDatabase {
+  MentalDatabase() : super(2);
+}
+
 class AttributesController extends GetxController {
-  ComplexAbilityColumn physicalAttributes = ComplexAbilityColumn('Physical');
-  ComplexAbilityColumn socialAttributes = ComplexAbilityColumn('Mental');
-  ComplexAbilityColumn mentalAttributes = ComplexAbilityColumn('Social');
+  ComplexAbilityColumn physicalAttributes =
+      ComplexAbilityColumn('Physical', description: PhysicalDatabase());
+  ComplexAbilityColumn socialAttributes =
+      ComplexAbilityColumn('Mental', description: MentalDatabase());
+  ComplexAbilityColumn mentalAttributes =
+      ComplexAbilityColumn('Social', description: SocialDatabase());
 
   ComplexAbilityColumn getColumnByType(AttributeColumnType type) {
     switch (type) {
@@ -19,75 +47,35 @@ class AttributesController extends GetxController {
     }
   }
 
-  void load(Map<String, dynamic> json, AttributeDictionary dictionary) {
-    // 1. Category headers. Re-read mostly for localization, might kill later
-    if (dictionary.physicalAttributesName.isNotEmpty) {
-      physicalAttributes.name.value = dictionary.physicalAttributesName;
-    }
-    if (dictionary.socialAttributesName.isNotEmpty) {
-      socialAttributes.name.value = dictionary.socialAttributesName;
-    }
-    if (dictionary.mentalAttributesName.isNotEmpty) {
-      mentalAttributes.name.value = dictionary.mentalAttributesName;
-    }
+  List<ComplexAbility> get attributes =>
+      physicalAttributes.values +
+      mentalAttributes.values +
+      socialAttributes.values;
 
-    _fillAttributeListByType(
-        AttributeColumnType.Physical, json["physical"], dictionary);
-    _fillAttributeListByType(
-        AttributeColumnType.Mental, json["mental"], dictionary);
-    _fillAttributeListByType(
-        AttributeColumnType.Social, json["social"], dictionary);
+  void load(Map<String, dynamic> json) {
+    _fillAttributeListByType(AttributeColumnType.Physical, json["physical"]);
+    _fillAttributeListByType(AttributeColumnType.Mental, json["mental"]);
+    _fillAttributeListByType(AttributeColumnType.Social, json["social"]);
   }
 
-  void _fillAttributeListByType(AttributeColumnType type,
-      Map<String, dynamic> attributes, AttributeDictionary dictionary) {
+  void _fillAttributeListByType(
+      AttributeColumnType type, Map<String, dynamic> attributes) {
     for (var id in attributes.keys) {
       if (attributes[id] != null && attributes[id] is Map<String, dynamic>) {
-        ComplexAbilityEntry? entry;
-
-        switch (type) {
-          case AttributeColumnType.Physical:
-            entry = dictionary.physical[id];
-            break;
-          case AttributeColumnType.Mental:
-            entry = dictionary.mental[id];
-            break;
-          case AttributeColumnType.Social:
-            entry = dictionary.social[id];
-            break;
-        }
-
-        if (entry == null) {
-          // If a stat is not found, add an empty one
-          entry = ComplexAbilityEntry(name: id);
-          switch (type) {
-            case AttributeColumnType.Physical:
-              dictionary.physical[id] = entry;
-              break;
-            case AttributeColumnType.Mental:
-              dictionary.mental[id] = entry;
-              break;
-            case AttributeColumnType.Social:
-              dictionary.social[id] = entry;
-              break;
-          }
-
-          dictionary.changed = true;
-        }
+        // ComplexAbilityEntry? entry;
+        // TODO: load entry here, it needs a name
 
         // CRUTCH This doesn't allow attributes to go above 5
         ComplexAbility ca = ComplexAbility(
-            id: id,
-            name: entry.name,
+            txtId: id,
+            id: null,
+            name: "WIP Attribute",
             current: attributes[id]["current"] ?? 1,
+            specialization: attributes[id]["specialization"] ?? "",
             min: 0,
             max: 5,
-            specialization: attributes[id]["specialization"] ?? "",
-            description: entry.description ?? "",
             isIncremental: true, // Attributes are incremental, AFAIK
             isDeletable: false);
-
-        print("Attribute: ${ca.name}, $id");
 
         switch (type) {
           case AttributeColumnType.Physical:
@@ -106,7 +94,7 @@ class AttributesController extends GetxController {
     }
   }
 
-  Map<String, dynamic> save() {
+  Map<String, dynamic> toJson() {
     Map<String, dynamic> json = Map();
     json["physical"] = _getAttributeListByType(AttributeColumnType.Physical);
     json["mental"] = _getAttributeListByType(AttributeColumnType.Mental);
@@ -125,6 +113,56 @@ class AttributesController extends GetxController {
       shortAttributes.add(attr);
     }
     return shortAttributes;
+  }
+
+  void fromDatabase(Database database) async {
+    physicalAttributes.values.value = await database.rawQuery(
+        'select a.id, a.name, pa.current, pa.specialization '
+        'from attributes a inner join player_attributes pa '
+        'on pa.attribute_id = a.id where pa.player_id = ? and a.type = 0',
+        [
+          Get.find<DatabaseController>().characterId.value
+        ]).then((value) => List.generate(
+        value.length,
+        (index) => ComplexAbility(
+              id: value[0]['id'] as int,
+              name: value[0]['name'] as String,
+              current: value[0]['current'] as int,
+              specialization: value[0]['specialization'] as String? ?? "",
+              hasSpecialization: true,
+            )));
+
+    socialAttributes.values.value = await database.rawQuery(
+        'select a.id, a.name, pa.current, pa.specialization '
+        'from attributes a inner join player_attributes pa '
+        'on pa.attribute_id = a.id where pa.player_id = ? and a.type = 1',
+        [
+          Get.find<DatabaseController>().characterId.value
+        ]).then((value) => List.generate(
+        value.length,
+        (index) => ComplexAbility(
+              id: value[0]['id'] as int,
+              name: value[0]['name'] as String,
+              current: value[0]['current'] as int,
+              specialization: value[0]['specialization'] as String? ?? "",
+              hasSpecialization: true,
+            )));
+
+    mentalAttributes.values.value = await database.rawQuery(
+        'select a.id, a.name, pa.current, pa.specialization '
+        'from attributes a inner join player_attributes pa '
+        'on pa.attribute_id = a.id where pa.player_id = ? and a.type = 2',
+        [
+          Get.find<DatabaseController>().characterId.value
+        ]).then((value) => List.generate(
+        value.length,
+        (index) => ComplexAbility(
+              id: value[0]['id'] as int,
+              name: value[0]['name'] as String,
+              current: value[0]['current'] as int,
+              specialization: value[0]['specialization'] as String? ?? "",
+              hasSpecialization: true,
+            )));
   }
 }
 
@@ -201,5 +239,66 @@ class AttributeDictionary extends Dictionary {
     json["mental"] = mental;
 
     return json;
+  }
+
+  @override
+  Future<void> loadAllToDatabase(Database database) async {
+    for (var textId in physical.keys) {
+      int id = await database.insert(
+          'attributes', physical[textId]!.toDatabaseMap(textId),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+      if (physical[textId]!.specializations.isNotEmpty) {
+        for (var entry in physical[textId]!
+            .specializationsToDatabase(id, 'attribute_id')!) {
+          await database.insert('attribute_specializations', entry,
+              conflictAlgorithm: ConflictAlgorithm.replace);
+        }
+      }
+      if (physical[textId]!.levels.isNotEmpty) {
+        for (var entry
+            in physical[textId]!.levelsToDatabase(id, 'attribute_id')!) {
+          await database.insert('attribute_levels', entry,
+              conflictAlgorithm: ConflictAlgorithm.replace);
+        }
+      }
+    }
+    for (var textId in social.keys) {
+      int id = await database.insert(
+          'attributes', social[textId]!.toDatabaseMap(textId),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+      if (social[textId]!.specializations.isNotEmpty) {
+        for (var entry
+            in social[textId]!.specializationsToDatabase(id, 'attribute_id')!) {
+          await database.insert('attribute_specializations', entry,
+              conflictAlgorithm: ConflictAlgorithm.replace);
+        }
+      }
+      if (social[textId]!.levels.isNotEmpty) {
+        for (var entry
+            in social[textId]!.levelsToDatabase(id, 'attribute_id')!) {
+          await database.insert('attribute_levels', entry,
+              conflictAlgorithm: ConflictAlgorithm.replace);
+        }
+      }
+    }
+    for (var textId in mental.keys) {
+      int id = await database.insert(
+          'attributes', mental[textId]!.toDatabaseMap(textId),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+      if (mental[textId]!.specializations.isNotEmpty) {
+        for (var entry
+            in mental[textId]!.specializationsToDatabase(id, 'attribute_id')!) {
+          await database.insert('attribute_specializations', entry,
+              conflictAlgorithm: ConflictAlgorithm.replace);
+        }
+      }
+      if (mental[textId]!.levels.isNotEmpty) {
+        for (var entry
+            in mental[textId]!.levelsToDatabase(id, 'attribute_id')!) {
+          await database.insert('attribute_levels', entry,
+              conflictAlgorithm: ConflictAlgorithm.replace);
+        }
+      }
+    }
   }
 }
