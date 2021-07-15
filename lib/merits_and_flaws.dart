@@ -188,7 +188,7 @@ class MeritsAndFlawsController extends GetxController {
     flaws.value = await database.rawQuery(
         'select f.id, f.name, f.type, f.description, pf.cost '
         'from flaws f '
-        'inner join player_flaws pm on pf.merit_id = f.id '
+        'inner join player_flaws pf on pf.flaw_id = f.id '
         'where pf.player_id = ?',
         [
           Get.find<DatabaseController>().characterId.value

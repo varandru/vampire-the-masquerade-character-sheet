@@ -112,7 +112,7 @@ class RitualController extends GetxController {
         'rl.name as discipline_name '
         'from rituals r '
         'inner join player_rituals pr on pr.ritual_id = r.id '
-        'left join ritual_levels rl on rl.id = r.discipline_id '
+        'left join ritual_schools rl on rl.id = r.discipline_id '
         'where pr.player_id = ?',
         [
           Get.find<DatabaseController>().characterId.value
