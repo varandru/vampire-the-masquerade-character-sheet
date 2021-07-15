@@ -162,8 +162,8 @@ create table if not exists characters (
   self_control INTEGER,
   courage INTEGER,
 
-  additional_humanity INTEGER,
-  additional_willpower INTEGER,
+  humanity INTEGER,
+  willpower INTEGER,
   blood_max INTEGER,
 
   will INTEGER,
