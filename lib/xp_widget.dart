@@ -456,6 +456,31 @@ class XpEntryGainedDialog extends Dialog {
   }
 }
 
+class XpEntryFailedWidget extends StatelessWidget {
+  XpEntryFailedWidget(this.ability, this.deleteCallback, this.index);
+
+  final XpEntryGained ability;
+  final Function(int) deleteCallback;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    final entry = ability.obs;
+    return Dismissible(
+      key: ValueKey<XpEntryGained>(entry.value),
+      child: ListTile(
+        title: Text(
+          entry.value.description,
+          style: TextStyle(color: Colors.red),
+        ),
+      ),
+      onDismissed: (direction) => deleteCallback(index),
+      confirmDismiss: (direction) =>
+          Get.dialog<bool>(DeleteDialog(name: "log entry")),
+    );
+  }
+}
+
 class AddXpEntryGainedButton extends CommonSpeedDialChild {
   AddXpEntryGainedButton()
       : super(
@@ -477,8 +502,5 @@ class RecalculateXpButton extends IconButton {
   RecalculateXpButton()
       : super(
             icon: Icon(Icons.refresh),
-            onPressed: () {
-              final XpController xpc = Get.find();
-              xpc.calculateXp();
-            });
+            onPressed: () => Get.find<XpController>().calculateXp());
 }

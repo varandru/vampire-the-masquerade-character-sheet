@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:vampire_the_masquerade_character_sheet/common_logic.dart';
+import 'package:vampire_the_masquerade_character_sheet/xp.dart';
 
 import 'abilities.dart';
 import 'attributes.dart';
@@ -198,6 +199,8 @@ class DatabaseController extends GetxController {
       Get.find<RitualController>().fromDatabase(database);
       Get.put(MeritsAndFlawsController());
       Get.find<MeritsAndFlawsController>().fromDatabase(database);
+      Get.put(XpController());
+      Get.find<XpController>().fromDatabase(database);
     });
   }
 
@@ -398,4 +401,30 @@ class DatabaseController extends GetxController {
       database.delete(isMerit ? 'merits' : 'flaws',
           where: 'player_id = ? and ${isMerit ? 'merit' : 'flaw'}_id = ?',
           whereArgs: [characterId.value, merit.id]);
+
+  Future<void> addXpEntry(XpEntry entry) async {
+    if (entry is XpEntryGained) {
+      database.insert('player_xp', {
+        'player_id': characterId.value,
+        'cost': entry.gained,
+        'description': entry.description
+      });
+    } else if (entry is XpEntryNewAbility) {
+      database.insert('player_xp', {
+        'player_id': characterId.value,
+        'description': entry.description,
+        'cost': entry.cost,
+        'name': entry.name
+      });
+    } else if (entry is XpEntryUpgradedAbility) {
+      database.insert('player_xp', {
+        'player_id': characterId.value,
+        'description': entry.description,
+        'cost': entry.cost,
+        'name': entry.name,
+        'old_level': entry.oldLevel,
+        'new_level': entry.newLevel,
+      });
+    }
+  }
 }
