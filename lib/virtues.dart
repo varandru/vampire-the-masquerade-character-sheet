@@ -7,19 +7,15 @@ class VirtuesController extends GetxController {
   var _selfControl = 1.obs;
   var _courage = 5.obs;
 
-  var _additionalHumanity = 0.obs;
-  var _additionalWillpower = 0.obs;
+  var _humanity = 0.obs;
+  var _willpower = 0.obs;
 
   int get conscience => _conscience.value;
   int get selfControl => _selfControl.value;
   int get courage => _courage.value;
 
-  int get humanity => _additionalHumanity.value;
-  int get willpower => _additionalWillpower.value;
-
-  // int get humanity =>
-  //     _conscience.value + _selfControl.value + _additionalHumanity.value;
-  // int get willpower => _courage.value + _additionalWillpower.value;
+  int get humanity => _humanity.value;
+  int get willpower => _willpower.value;
 
   set conscience(int conscience) {
     _conscience.value = conscience;
@@ -51,24 +47,24 @@ class VirtuesController extends GetxController {
         .then((value) => print('Update courage, value = $value'));
   }
 
-  set humanity(int additionalHumanity) {
-    _additionalHumanity.value = additionalHumanity;
+  set humanity(int humanity) {
+    _humanity.value = humanity;
     Get.find<DatabaseController>()
         .database
-        .update('characters', {'additional_humanity': additionalHumanity},
+        .update('characters', {'humanity': humanity},
             where: 'id = ?',
             whereArgs: [Get.find<DatabaseController>().characterId.value])
-        .then((value) => print('Update additionalHumanity, value = $value'));
+        .then((value) => print('Update humanity, value = $value'));
   }
 
-  set willpower(int additionalWillpower) {
-    _additionalWillpower.value = additionalWillpower;
+  set willpower(int willpower) {
+    _willpower.value = willpower;
     Get.find<DatabaseController>()
         .database
-        .update('characters', {'additional_willpower': additionalWillpower},
+        .update('characters', {'willpower': willpower},
             where: 'id = ?',
             whereArgs: [Get.find<DatabaseController>().characterId.value])
-        .then((value) => print('Update additionalWillpower, value = $value'));
+        .then((value) => print('Update willpower, value = $value'));
   }
 
   void load(Map<String, dynamic> json) {
@@ -76,8 +72,8 @@ class VirtuesController extends GetxController {
     _selfControl.value = json["self_control"] ?? 0;
     _courage.value = json["courage"] ?? 0;
 
-    _additionalHumanity.value = json["additional_humanity"] ?? 0;
-    _additionalWillpower.value = json["additional_willpower"] ?? 0;
+    _humanity.value = json["humanity"] ?? 0;
+    _willpower.value = json["willpower"] ?? 0;
   }
 
   Map<String, dynamic> save() {
@@ -86,8 +82,8 @@ class VirtuesController extends GetxController {
     json["self_control"] = _selfControl.value;
     json["courage"] = _courage.value;
 
-    json["additional_humanity"] = _additionalHumanity.value;
-    json["additional_willpower"] = _additionalWillpower.value;
+    json["humanity"] = _humanity.value;
+    json["willpower"] = _willpower.value;
     return json;
   }
 
@@ -97,8 +93,8 @@ class VirtuesController extends GetxController {
           'conscience',
           'self_control',
           'courage',
-          'additional_humanity',
-          'additional_willpower'
+          'humanity',
+          'willpower'
         ],
         where: 'id = ?',
         whereArgs: [Get.find<DatabaseController>().characterId.value]);
@@ -108,7 +104,7 @@ class VirtuesController extends GetxController {
     _selfControl.value = response[0]['self_control'] as int;
     _courage.value = response[0]['courage'] as int;
 
-    _additionalHumanity.value = response[0]['additional_humanity'] as int;
-    _additionalWillpower.value = response[0]['additional_willpower'] as int;
+    _humanity.value = response[0]['humanity'] as int;
+    _willpower.value = response[0]['willpower'] as int;
   }
 }
