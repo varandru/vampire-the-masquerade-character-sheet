@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:vampire_the_masquerade_character_sheet/ritual_widget.dart';
+import 'package:vampire_the_masquerade_character_sheet/settings_widget.dart';
 import 'package:vampire_the_masquerade_character_sheet/xp_widget.dart';
 import 'abilities_widget.dart';
 import 'background_widget.dart';
@@ -20,7 +21,8 @@ enum SelectedMenuItem {
   Disciplines,
   MeritsFlaws,
   WeaponsArmor,
-  XP
+  XP,
+  Settings
 }
 
 class DrawerMenu extends Drawer {
@@ -70,24 +72,11 @@ class DrawerMenu extends Drawer {
                 selected: item == SelectedMenuItem.XP,
                 onTap: () => Get.offAll(() => XpScaffold()),
               ),
-              Obx(
-                () => SwitchListTile(
-                  value: Get.isDarkMode.obs.value,
-                  onChanged: (isDark) {
-                    Get.changeTheme(
-                      isDark
-                          ? ThemeData.dark().copyWith(
-                              primaryColor: Colors.red,
-                              accentColor: Colors.redAccent,
-                              toggleableActiveColor: Colors.redAccent)
-                          : ThemeData.light().copyWith(
-                              primaryColor: Colors.red,
-                              accentColor: Colors.redAccent,
-                              toggleableActiveColor: Colors.redAccent),
-                    );
-                  },
-                  title: Text("Dark theme"),
-                ),
+              ListTile(
+                title: Text('Settings'),
+                trailing: Icon(Icons.settings),
+                selected: item == SelectedMenuItem.Settings,
+                onTap: () => Get.offAll(() => SettingsScaffold()),
               ),
             ],
           ),
@@ -178,6 +167,16 @@ class XpScaffold extends MenuScaffold {
             AddXpEntryGainedButton()
           ]),
           actions: [RecalculateXpButton()],
+        );
+}
+
+// Settings Menu
+class SettingsScaffold extends MenuScaffold {
+  SettingsScaffold()
+      : super(
+          name: "Settings",
+          body: SettingsSection(),
+          selectedItem: SelectedMenuItem.Settings,
         );
 }
 
