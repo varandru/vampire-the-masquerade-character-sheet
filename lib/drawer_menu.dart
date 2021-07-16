@@ -1,19 +1,22 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:get/get.dart';
 import 'package:vampire_the_masquerade_character_sheet/ritual_widget.dart';
 import 'package:vampire_the_masquerade_character_sheet/settings_widget.dart';
+import 'package:vampire_the_masquerade_character_sheet/vampire_character.dart';
 import 'package:vampire_the_masquerade_character_sheet/xp_widget.dart';
+
 import 'abilities_widget.dart';
-import 'background_widget.dart';
 import 'attributes_widget.dart';
+import 'background_widget.dart';
 import 'combat.dart';
 import 'disciplines_widget.dart';
+import 'main_info_widget.dart';
 import 'merits_and_flaws_widget.dart';
 import 'vampire_character_widget.dart';
-import 'main_info_widget.dart';
 
 enum SelectedMenuItem {
   PrimaryInfo,
@@ -35,7 +38,18 @@ class DrawerMenu extends Drawer {
             // Important: Remove any padding from the ListView.
             padding: EdgeInsets.zero,
             children: <Widget>[
-              DrawerHeader(child: Container()),
+              DrawerHeader(
+                  child: Obx(() => Get.find<VampireCharacter>()
+                          .characterImageFileName
+                          .isEmpty
+                      ? Container()
+                      : Image.file(
+                          File(
+                            Get.find<VampireCharacter>()
+                                .characterImageFileName
+                                .value,
+                          ),
+                          fit: BoxFit.cover))),
               ListTile(
                 title: Text('Primary information'),
                 trailing: Icon(Icons.face),
