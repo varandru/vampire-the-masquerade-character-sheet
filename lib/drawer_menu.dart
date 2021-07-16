@@ -78,25 +78,6 @@ class DrawerMenu extends Drawer {
                 selected: item == SelectedMenuItem.Settings,
                 onTap: () => Get.offAll(() => SettingsScaffold()),
               ),
-              Obx(
-                () => SwitchListTile(
-                  value: Get.isDarkMode.obs.value,
-                  onChanged: (isDark) {
-                    Get.changeTheme(
-                      isDark
-                          ? ThemeData.dark().copyWith(
-                              primaryColor: Colors.red,
-                              accentColor: Colors.redAccent,
-                              toggleableActiveColor: Colors.redAccent)
-                          : ThemeData.light().copyWith(
-                              primaryColor: Colors.red,
-                              accentColor: Colors.redAccent,
-                              toggleableActiveColor: Colors.redAccent),
-                    );
-                  },
-                  title: Text("Dark theme"),
-                ),
-              ),
             ],
           ),
         );
