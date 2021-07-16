@@ -1,9 +1,11 @@
 // A widget for a single discipline, ExpansionTile
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sqflite/sqlite_api.dart';
 import 'package:vampire_the_masquerade_character_sheet/common_logic.dart';
 
 import 'common_widget.dart';
+import 'database.dart';
 import 'disciplines.dart';
 import 'drawer_menu.dart';
 
@@ -62,6 +64,14 @@ class DisciplineWidget extends StatelessWidget {
               if (ca != null) {
                 final DisciplineController dc = Get.find();
                 dc.disciplines[index] = ca;
+                // TODO: discipline does not get edited. Right now only level is done
+                Get.find<DatabaseController>().database.update(
+                    'player_disciplines', {'level': ca.level},
+                    where: 'player_id = ? and discipline_id = ?',
+                    whereArgs: [
+                      Get.find<DatabaseController>().characterId.value,
+                      ca.id
+                    ]);
               }
             },
             icon: Icon(Icons.edit)),
@@ -99,25 +109,32 @@ class DisciplinesSectionWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final DisciplineController dc = Get.find();
 
-    return Obx(
-      () => ListView.builder(
-        itemBuilder: (context, i) {
-          if (i == 0)
-            return Text("Disciplines",
-                style: Theme.of(context).textTheme.headline4);
-          else if (dc.disciplines[i - 1] is Discipline)
-            return Obx(() => DisciplineWidget(
-                  dc.disciplines[i - 1],
-                  index: i - 1,
-                ));
+    return FutureBuilder(
+        future: dc.fromDatabase(Get.find<DatabaseController>().database),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done)
+            return CircularProgressIndicator();
           else
-            return Placeholder();
-        },
-        itemCount: dc.disciplines.length + 1,
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-      ),
-    );
+            return Obx(
+              () => ListView.builder(
+                itemBuilder: (context, i) {
+                  if (i == 0)
+                    return Text("Disciplines",
+                        style: Theme.of(context).textTheme.headline4);
+                  else if (dc.disciplines[i - 1] is Discipline)
+                    return Obx(() => DisciplineWidget(
+                          dc.disciplines[i - 1],
+                          index: i - 1,
+                        ));
+                  else
+                    return Placeholder();
+                },
+                itemCount: dc.disciplines.length + 1,
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+              ),
+            );
+        });
   }
 }
 
@@ -292,7 +309,7 @@ class DisciplineDialog extends Dialog {
               if (discipline.value.name.isNotEmpty) {
                 if (discipline.value.txtId == 'undefined') {
                   discipline.value = Discipline.fromOther(
-                    null,
+                    disc.id,
                     discipline.value,
                     txtId: identify(discipline.value.name),
                   );
@@ -349,6 +366,7 @@ class DisciplineDotPopup extends Dialog {
                   DisciplineDotDialog(dot.value));
               if (ca != null) {
                 dot.update((val) => val?.copy(ca));
+                // TODO: dots aren't updated in DB at all
               }
             },
             icon: Icon(Icons.edit)),
@@ -448,6 +466,59 @@ class DisciplineDotDialog extends Dialog {
   }
 }
 
+class AddExistingDisciplineDialog extends Dialog {
+  AddExistingDisciplineDialog()
+      : super(
+          child: FutureBuilder(
+            builder: (context, snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                case ConnectionState.waiting:
+                case ConnectionState.active:
+                  return CircularProgressIndicator(
+                    color: Theme.of(context).accentColor,
+                  );
+                case ConnectionState.done:
+                  if (snapshot.data == null) {
+                    Get.back(result: null);
+                    return Container();
+                  }
+                  Map<int, String> disciplineMap =
+                      snapshot.data! as Map<int, String>;
+                  return ListView.builder(
+                      itemCount: disciplineMap.length,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) => ListTile(
+                            title: Text(
+                                "${disciplineMap.values.elementAt(index)}"),
+                            onTap: () => Get.back(
+                                result: disciplineMap.keys.elementAt(index)),
+                          ));
+              }
+            },
+            future: Get.find<DatabaseController>().database.rawQuery(
+                'select id from disciplines except '
+                'select discipline_id from player_disciplines '
+                'where player_id = ?',
+                [
+                  Get.find<DatabaseController>().characterId.value
+                ]).then((value) => Get.find<DatabaseController>()
+                    .database
+                    .query(
+                      'disciplines',
+                      columns: ['id', 'name'],
+                      where:
+                          'id in (${List.generate(value.length, (index) => value[index]['id'] as int).join(", ")})',
+                    )
+                    .then((value) {
+                  return Map<int, String>.fromIterable(value,
+                      key: (iterator) => iterator['id'] as int,
+                      value: (iterator) => iterator['name'] as String);
+                })),
+          ),
+        );
+}
+
 class AddDisciplineButton extends CommonSpeedDialChild {
   AddDisciplineButton()
       : super(
@@ -461,6 +532,35 @@ class AddDisciplineButton extends CommonSpeedDialChild {
               if (ca.system == null && ca.levels == null) return;
               DisciplineController bc = Get.find();
               bc.disciplines.add(ca);
+              Get.find<DatabaseController>().addDiscipline(ca);
+            }
+          },
+        );
+}
+
+class AddExistingDisciplineButton extends CommonSpeedDialChild {
+  AddExistingDisciplineButton()
+      : super(
+          child: Icon(Icons.auto_fix_high),
+          backgroundColor: Colors.blueAccent,
+          label: "Add an existing discipline",
+          onTap: () async {
+            final id = await Get.dialog<int>(AddExistingDisciplineDialog());
+            if (id != null) {
+              DisciplineController bc = Get.find();
+              Discipline newDisc = Discipline(id: id, txtId: null, level: 1);
+              newDisc.fromDatabase(Get.find<DatabaseController>().database);
+              bc.disciplines.add(newDisc);
+
+              Get.find<DatabaseController>().database.insert(
+                  'player_disciplines',
+                  {
+                    'player_id':
+                        Get.find<DatabaseController>().characterId.value,
+                    'discipline_id': id,
+                    'level': 1,
+                  },
+                  conflictAlgorithm: ConflictAlgorithm.replace);
             }
           },
         );

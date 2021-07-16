@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 import 'package:vampire_the_masquerade_character_sheet/common_logic.dart';
+import 'package:vampire_the_masquerade_character_sheet/database.dart';
 
 class Discipline {
   Discipline(
@@ -88,6 +89,34 @@ class Discipline {
   void removeDot(int index) {
     if (index < levels!.length) levels!.removeAt(index);
   }
+
+  /// Discipline should already have a database id and level
+  Future<void> fromDatabase(Database database) async {
+    var general = await database.query('disciplines',
+        where: 'id = ?',
+        whereArgs: [Get.find<DatabaseController>().characterId.value]);
+
+    var levels = await database
+        .query('discipline_levels', where: 'discipline_id = ?', whereArgs: [
+      id
+    ]).then((value) => List.generate(
+            value.length,
+            (index) => DisciplineDot(
+                  name: value[index]['name'] as String,
+                  level: value[index]['level'] as int,
+                  system: value[index]['system'] as String? ?? "",
+                  description: value[index]['system'] as String?,
+                  max: max,
+                )));
+
+    if (general.isEmpty) return;
+
+    name = general[0]['name'] as String;
+    description = general[0]['description'] as String?;
+    system = general[0]['system'] as String?;
+    max = general[0]['maximum'] as int? ?? 5;
+    this.levels = levels;
+  }
 }
 
 class DisciplineDot {
@@ -134,8 +163,10 @@ class DisciplineDot {
     max = other.max;
   }
 
-  Map<String, Object?> toDatabase(int foreignKey) => {
+  Map<String, Object?> toDatabase(int foreignKey) =>
+      {
         'discipline_id': foreignKey,
+        'name': name,
         'level': level,
         'system': system,
         'maximum': max,
@@ -189,21 +220,24 @@ class DisciplineController extends GetxController {
   }
 
   Future<void> fromDatabase(Database database) async {
-    disciplines.value = await database
-        .rawQuery(
-            'select d.id, d.name, pd.level, d.description, d.system, d.maximum '
-            'from disciplines d inner join player_disciplines pd '
-            'on pd.discipline_id = d.id where pd.player_id = ?')
-        .then((value) => List.generate(
-            value.length,
-            (index) => Discipline(
-                  id: value[index]['id'] as int,
-                  txtId: value[index]['txt_id'] as String?,
-                  level: value[index]['level'] as int,
-                  system: value[index]['system'] as String?,
-                  description: value[index]['description'] as String?,
-                  max: value[index]['maximum'] as int? ?? 5,
-                )));
+    disciplines.value = await database.rawQuery(
+        'select d.id, d.name, pd.level, d.description, d.system, d.maximum '
+        'from disciplines d inner join player_disciplines pd '
+        'on pd.discipline_id = d.id where pd.player_id = ?',
+        [Get.find<DatabaseController>().characterId.value]).then(
+      (value) => List.generate(
+        value.length,
+        (index) => Discipline(
+          id: value[index]['id'] as int,
+          name: value[index]['name'] as String,
+          txtId: value[index]['txt_id'] as String?,
+          level: value[index]['level'] as int,
+          system: value[index]['system'] as String?,
+          description: value[index]['description'] as String?,
+          max: value[index]['maximum'] as int? ?? 5,
+        ),
+      ),
+    );
 
     for (var discipline in disciplines) {
       discipline.levels = await database
@@ -212,8 +246,8 @@ class DisciplineController extends GetxController {
                 'name',
                 'level',
                 'system',
-                'description'
-                    'maximum',
+                'description',
+                'maximum',
               ],
               where: 'discipline_id = ?',
               whereArgs: [discipline.id])
@@ -267,8 +301,10 @@ class DisciplineEntry {
     return json;
   }
 
-  Map<String, Object?> toDatabase(String id) => {
+  Map<String, Object?> toDatabase(String id) =>
+      {
         'txt_id': id,
+        'name': name,
         'description': description,
         'maximum': max,
         'system': system
