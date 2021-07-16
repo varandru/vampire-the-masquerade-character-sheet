@@ -163,8 +163,7 @@ class DisciplineDot {
     max = other.max;
   }
 
-  Map<String, Object?> toDatabase(int foreignKey) =>
-      {
+  Map<String, Object?> toDatabase(int foreignKey) => {
         'discipline_id': foreignKey,
         'name': name,
         'level': level,
@@ -301,8 +300,7 @@ class DisciplineEntry {
     return json;
   }
 
-  Map<String, Object?> toDatabase(String id) =>
-      {
+  Map<String, Object?> toDatabase(String id) => {
         'txt_id': id,
         'name': name,
         'description': description,
