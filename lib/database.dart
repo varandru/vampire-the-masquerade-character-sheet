@@ -101,7 +101,7 @@ class DatabaseController extends GetxController {
       Get.find<AttributesController>().load(characterFile['attributes'], atrd);
 
       Get.put(AbilitiesController());
-      Get.find<AbilitiesController>().fromJson(characterFile['abilities']);
+      Get.find<AbilitiesController>().fromJson(characterFile['abilities'], abd);
 
       Get.put(BackgroundsController());
       Get.find<BackgroundsController>()
@@ -114,7 +114,7 @@ class DatabaseController extends GetxController {
           .loadFlaws(characterFile['flaws'], mfd);
 
       Get.put(DisciplineController());
-      Get.find<DisciplineController>().load(characterFile['disciplines']);
+      Get.find<DisciplineController>().load(characterFile['disciplines'], dd);
 
       Get.put(RitualController());
       Get.find<RitualController>().load(characterFile['rituals'], rd, dd);
@@ -154,6 +154,21 @@ class DatabaseController extends GetxController {
               'player_id': id,
               'attribute_id': response[0]['id'] as int,
               'current': attribute.current,
+            },
+            conflictAlgorithm: ConflictAlgorithm.rollback);
+      }
+
+      for (var ability in Get.find<AbilitiesController>().abilities) {
+        var response = await database.query('abilities',
+            columns: ['id'], where: 'txt_id = ?', whereArgs: [ability.txtId]);
+        print('Adding ability ${ability.txtId}');
+
+        await database.insert(
+            'player_abilities',
+            {
+              'player_id': id,
+              'ability_id': response[0]['id'] as int,
+              'current': ability.current,
             },
             conflictAlgorithm: ConflictAlgorithm.rollback);
       }

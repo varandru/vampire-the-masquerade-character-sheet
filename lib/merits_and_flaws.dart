@@ -100,7 +100,6 @@ class MeritsAndFlawsController extends GetxController {
   var flawsSum = 0.obs;
 
   void loadMerits(List<dynamic> json, MeritsAndFlawsDictionary dictionary) {
-    // TODO: json contains ids. Basic merits should be loaded
     for (var merit in json) {
       if (merit["name"] == null) continue;
       if (!(merit["name"] is String)) continue;

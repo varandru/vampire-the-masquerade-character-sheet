@@ -37,6 +37,7 @@ class AttributesColumnWidget extends ComplexAbilityColumnWidget {
     super.values = ac.getColumnByType(type).values;
     super.editValue = ac.getColumnByType(type).editValue;
     super.deleteValue = ac.getColumnByType(type).deleteValue;
+    super.description = ac.getColumnByType(type).description;
   }
   final type;
 }

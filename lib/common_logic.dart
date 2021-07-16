@@ -21,8 +21,8 @@ class ComplexAbility {
     this.isNameEditable = true,
   });
 
-  final int? id;
-  final String? txtId;
+  int? id;
+  String? txtId;
   String name;
   int current;
   int min;
@@ -223,13 +223,14 @@ class ComplexAbilityColumn {
     if (value.isDeletable) sortById();
   }
 
-  void add(ComplexAbility ca) {
+  int add(ComplexAbility ca) {
     if (!values.contains(ca)) {
       values.add(ca);
     } else {
       values[values.indexOf(ca)] = ca;
     }
     if (ca.isDeletable) sortById();
+    return values.indexOf(ca);
   }
 
   Map<String, dynamic> toJson() {

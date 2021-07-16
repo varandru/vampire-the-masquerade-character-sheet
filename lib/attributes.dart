@@ -129,10 +129,10 @@ class AttributesController extends GetxController {
         ]).then((value) => List.generate(
         value.length,
         (index) => ComplexAbility(
-              id: value[0]['id'] as int,
-              name: value[0]['name'] as String,
-              current: value[0]['current'] as int,
-              specialization: value[0]['specialization'] as String? ?? "",
+              id: value[index]['id'] as int,
+              name: value[index]['name'] as String,
+              current: value[index]['current'] as int,
+              specialization: value[index]['specialization'] as String? ?? "",
               hasSpecialization: true,
             )));
 
@@ -145,10 +145,10 @@ class AttributesController extends GetxController {
         ]).then((value) => List.generate(
         value.length,
         (index) => ComplexAbility(
-              id: value[0]['id'] as int,
-              name: value[0]['name'] as String,
-              current: value[0]['current'] as int,
-              specialization: value[0]['specialization'] as String? ?? "",
+              id: value[index]['id'] as int,
+              name: value[index]['name'] as String,
+              current: value[index]['current'] as int,
+              specialization: value[index]['specialization'] as String? ?? "",
               hasSpecialization: true,
             )));
 
@@ -161,10 +161,10 @@ class AttributesController extends GetxController {
         ]).then((value) => List.generate(
         value.length,
         (index) => ComplexAbility(
-              id: value[0]['id'] as int,
-              name: value[0]['name'] as String,
-              current: value[0]['current'] as int,
-              specialization: value[0]['specialization'] as String? ?? "",
+              id: value[index]['id'] as int,
+              name: value[index]['name'] as String,
+              current: value[index]['current'] as int,
+              specialization: value[index]['specialization'] as String? ?? "",
               hasSpecialization: true,
             )));
   }
