@@ -310,11 +310,11 @@ class DisciplineDictionary extends Dictionary {
     for (var entry in entries.entries) {
       int id = await database.insert(
           'disciplines', entry.value.toDatabase(entry.key),
-          conflictAlgorithm: ConflictAlgorithm.replace);
+          conflictAlgorithm: ConflictAlgorithm.rollback);
       if (entry.value.levels != null) {
         for (var dot in entry.value.levels!.values) {
           await database.insert('discipline_levels', dot.toDatabase(id),
-              conflictAlgorithm: ConflictAlgorithm.replace);
+              conflictAlgorithm: ConflictAlgorithm.rollback);
         }
       }
     }

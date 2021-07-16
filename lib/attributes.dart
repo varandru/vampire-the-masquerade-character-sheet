@@ -52,24 +52,28 @@ class AttributesController extends GetxController {
       mentalAttributes.values +
       socialAttributes.values;
 
-  void load(Map<String, dynamic> json) {
-    _fillAttributeListByType(AttributeColumnType.Physical, json["physical"]);
-    _fillAttributeListByType(AttributeColumnType.Mental, json["mental"]);
-    _fillAttributeListByType(AttributeColumnType.Social, json["social"]);
+  void load(Map<String, dynamic> json, AttributeDictionary dictionary) {
+    _fillAttributeListByType(
+        AttributeColumnType.Physical, json["physical"], dictionary.physical);
+    _fillAttributeListByType(
+        AttributeColumnType.Mental, json["mental"], dictionary.mental);
+    _fillAttributeListByType(
+        AttributeColumnType.Social, json["social"], dictionary.social);
   }
 
   void _fillAttributeListByType(
-      AttributeColumnType type, Map<String, dynamic> attributes) {
+      AttributeColumnType type,
+      Map<String, dynamic> attributes,
+      Map<String, ComplexAbilityEntry> dictionary) {
     for (var id in attributes.keys) {
       if (attributes[id] != null && attributes[id] is Map<String, dynamic>) {
-        // ComplexAbilityEntry? entry;
-        // TODO: load entry here, it needs a name
+        ComplexAbilityEntry? entry = dictionary[id];
 
         // CRUTCH This doesn't allow attributes to go above 5
         ComplexAbility ca = ComplexAbility(
             txtId: id,
             id: null,
-            name: "WIP Attribute",
+            name: entry?.name ?? "WIP Attribute",
             current: attributes[id]["current"] ?? 1,
             specialization: attributes[id]["specialization"] ?? "",
             min: 0,
@@ -245,58 +249,58 @@ class AttributeDictionary extends Dictionary {
   Future<void> loadAllToDatabase(Database database) async {
     for (var textId in physical.keys) {
       int id = await database.insert(
-          'attributes', physical[textId]!.toDatabaseMap(textId),
-          conflictAlgorithm: ConflictAlgorithm.replace);
+          'attributes', physical[textId]!.toDatabaseMap(textId, 0),
+          conflictAlgorithm: ConflictAlgorithm.rollback);
       if (physical[textId]!.specializations.isNotEmpty) {
         for (var entry in physical[textId]!
             .specializationsToDatabase(id, 'attribute_id')!) {
           await database.insert('attribute_specializations', entry,
-              conflictAlgorithm: ConflictAlgorithm.replace);
+              conflictAlgorithm: ConflictAlgorithm.rollback);
         }
       }
       if (physical[textId]!.levels.isNotEmpty) {
         for (var entry
             in physical[textId]!.levelsToDatabase(id, 'attribute_id')!) {
           await database.insert('attribute_levels', entry,
-              conflictAlgorithm: ConflictAlgorithm.replace);
+              conflictAlgorithm: ConflictAlgorithm.rollback);
         }
       }
     }
     for (var textId in social.keys) {
       int id = await database.insert(
-          'attributes', social[textId]!.toDatabaseMap(textId),
-          conflictAlgorithm: ConflictAlgorithm.replace);
+          'attributes', social[textId]!.toDatabaseMap(textId, 1),
+          conflictAlgorithm: ConflictAlgorithm.rollback);
       if (social[textId]!.specializations.isNotEmpty) {
         for (var entry
             in social[textId]!.specializationsToDatabase(id, 'attribute_id')!) {
           await database.insert('attribute_specializations', entry,
-              conflictAlgorithm: ConflictAlgorithm.replace);
+              conflictAlgorithm: ConflictAlgorithm.rollback);
         }
       }
       if (social[textId]!.levels.isNotEmpty) {
         for (var entry
             in social[textId]!.levelsToDatabase(id, 'attribute_id')!) {
           await database.insert('attribute_levels', entry,
-              conflictAlgorithm: ConflictAlgorithm.replace);
+              conflictAlgorithm: ConflictAlgorithm.rollback);
         }
       }
     }
     for (var textId in mental.keys) {
       int id = await database.insert(
-          'attributes', mental[textId]!.toDatabaseMap(textId),
-          conflictAlgorithm: ConflictAlgorithm.replace);
+          'attributes', mental[textId]!.toDatabaseMap(textId, 2),
+          conflictAlgorithm: ConflictAlgorithm.rollback);
       if (mental[textId]!.specializations.isNotEmpty) {
         for (var entry
             in mental[textId]!.specializationsToDatabase(id, 'attribute_id')!) {
           await database.insert('attribute_specializations', entry,
-              conflictAlgorithm: ConflictAlgorithm.replace);
+              conflictAlgorithm: ConflictAlgorithm.rollback);
         }
       }
       if (mental[textId]!.levels.isNotEmpty) {
         for (var entry
             in mental[textId]!.levelsToDatabase(id, 'attribute_id')!) {
           await database.insert('attribute_levels', entry,
-              conflictAlgorithm: ConflictAlgorithm.replace);
+              conflictAlgorithm: ConflictAlgorithm.rollback);
         }
       }
     }

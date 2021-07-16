@@ -125,13 +125,13 @@ class BackgroundDictionary extends Dictionary {
   Future<void> loadAllToDatabase(Database database) async {
     for (var textId in backgrounds.keys) {
       int id = await database.insert(
-          'backgrounds', backgrounds[textId]!.toDatabaseMap(textId),
-          conflictAlgorithm: ConflictAlgorithm.replace);
+          'backgrounds', backgrounds[textId]!.toDatabaseMapNoType(textId),
+          conflictAlgorithm: ConflictAlgorithm.rollback);
       if (backgrounds[textId]!.levels.isNotEmpty) {
         for (var entry
             in backgrounds[textId]!.levelsToDatabase(id, 'background_id')!) {
           await database.insert('background_levels', entry,
-              conflictAlgorithm: ConflictAlgorithm.replace);
+              conflictAlgorithm: ConflictAlgorithm.rollback);
         }
       }
       backgrounds[textId]!.databaseId = id;

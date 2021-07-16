@@ -70,7 +70,7 @@ class AddBackgroundButton extends CommonSpeedDialChild {
                         'name': cap.entry.name,
                         'description': cap.entry.description,
                       },
-                      conflictAlgorithm: ConflictAlgorithm.replace)
+                      conflictAlgorithm: ConflictAlgorithm.rollback)
                   .then((value) => dc.database.insert('player_backgrounds', {
                         'player_id': dc.characterId.value,
                         'background_id': value,

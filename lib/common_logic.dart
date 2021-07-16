@@ -133,7 +133,10 @@ class ComplexAbilityEntry {
     return json;
   }
 
-  Map<String, Object?> toDatabaseMap(String id) =>
+  Map<String, Object?> toDatabaseMap(String id, int type) =>
+      {"txt_id": id, "name": name, "description": description, 'type': type};
+
+  Map<String, Object?> toDatabaseMapNoType(String id) =>
       {"txt_id": id, "name": name, "description": description};
 
   List<Map<String, Object?>>? specializationsToDatabase(

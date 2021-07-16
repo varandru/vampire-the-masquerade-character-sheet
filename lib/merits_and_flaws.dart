@@ -281,7 +281,7 @@ class MeritsAndFlawsDictionary extends Dictionary {
     for (var merit in merits.entries) {
       int id = await database.insert(
           'merits', merit.value.toDatabase(merit.key),
-          conflictAlgorithm: ConflictAlgorithm.replace);
+          conflictAlgorithm: ConflictAlgorithm.rollback);
       for (var cost in merit.value.costs) {
         await database.insert('merit_costs', {'merit_id': id, 'cost': cost});
       }
@@ -289,7 +289,7 @@ class MeritsAndFlawsDictionary extends Dictionary {
     }
     for (var flaw in flaws.entries) {
       int id = await database.insert('flaws', flaw.value.toDatabase(flaw.key),
-          conflictAlgorithm: ConflictAlgorithm.replace);
+          conflictAlgorithm: ConflictAlgorithm.rollback);
       for (var cost in flaw.value.costs) {
         await database.insert('flaw_costs', {'flaw_id': id, 'cost': cost});
       }

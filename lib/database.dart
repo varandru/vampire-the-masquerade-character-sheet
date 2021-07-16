@@ -98,7 +98,7 @@ class DatabaseController extends GetxController {
       Get.find<MainInfoController>().load(characterFile['main_info']);
 
       Get.put(AttributesController());
-      Get.find<AttributesController>().load(characterFile['attributes']);
+      Get.find<AttributesController>().load(characterFile['attributes'], atrd);
 
       Get.put(AbilitiesController());
       Get.find<AbilitiesController>().fromJson(characterFile['abilities']);
@@ -142,7 +142,7 @@ class DatabaseController extends GetxController {
             'will': Get.find<MostVariedController>().will,
             'blood': Get.find<MostVariedController>().blood,
           },
-          conflictAlgorithm: ConflictAlgorithm.replace);
+          conflictAlgorithm: ConflictAlgorithm.rollback);
 
       for (var attribute in Get.find<AttributesController>().attributes) {
         var response = await database.query('attributes',
@@ -155,7 +155,7 @@ class DatabaseController extends GetxController {
               'attribute_id': response[0]['id'] as int,
               'current': attribute.current,
             },
-            conflictAlgorithm: ConflictAlgorithm.replace);
+            conflictAlgorithm: ConflictAlgorithm.rollback);
       }
 
       for (var attribute
@@ -170,7 +170,7 @@ class DatabaseController extends GetxController {
               'background_id': response[0]['id'] as int,
               'current': attribute.current,
             },
-            conflictAlgorithm: ConflictAlgorithm.replace);
+            conflictAlgorithm: ConflictAlgorithm.rollback);
       }
 
       print("Default database initialized");
@@ -223,7 +223,7 @@ class DatabaseController extends GetxController {
                   'description': entry.description ??
                       (value.length > 0 ? value[0]['description'] : null),
                 },
-                conflictAlgorithm: ConflictAlgorithm.replace,
+                conflictAlgorithm: ConflictAlgorithm.rollback,
               ))
 
           /// Current, possibly new id
@@ -234,7 +234,7 @@ class DatabaseController extends GetxController {
                   description.fkName: value,
                   'current': ability.current,
                 },
-                conflictAlgorithm: ConflictAlgorithm.replace,
+                conflictAlgorithm: ConflictAlgorithm.rollback,
               ));
 
   Future<int> updateComplexAbilityWithFilter(
@@ -259,7 +259,7 @@ class DatabaseController extends GetxController {
                   'description': entry.description ??
                       (value.length > 0 ? value[0]['description'] : null),
                 },
-                conflictAlgorithm: ConflictAlgorithm.replace,
+                conflictAlgorithm: ConflictAlgorithm.rollback,
               ))
 
           /// Current, possibly new id
@@ -273,7 +273,7 @@ class DatabaseController extends GetxController {
                       ? ability.specialization
                       : null
                 },
-                conflictAlgorithm: ConflictAlgorithm.replace,
+                conflictAlgorithm: ConflictAlgorithm.rollback,
               ));
 
   Future<int> insertComplexAbilityWithFilter(
@@ -290,7 +290,7 @@ class DatabaseController extends GetxController {
                 'description': entry.description,
                 'type': description.filter,
               },
-              conflictAlgorithm: ConflictAlgorithm.replace)
+              conflictAlgorithm: ConflictAlgorithm.rollback)
           .then((value) => database.insert(description.playerLinkTable, {
                 'player_id': characterId.value,
                 description.fkName: value,
@@ -360,7 +360,7 @@ class DatabaseController extends GetxController {
       }
       return database.insert('player_rituals',
           {'player_id': characterId.value, 'ritual_id': ritualId},
-          conflictAlgorithm: ConflictAlgorithm.replace);
+          conflictAlgorithm: ConflictAlgorithm.rollback);
     });
   }
 
