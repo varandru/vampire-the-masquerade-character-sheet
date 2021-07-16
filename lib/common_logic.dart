@@ -21,8 +21,8 @@ class ComplexAbility {
     this.isNameEditable = true,
   });
 
-  final int? id;
-  final String? txtId;
+  int? id;
+  String? txtId;
   String name;
   int current;
   int min;
@@ -133,7 +133,10 @@ class ComplexAbilityEntry {
     return json;
   }
 
-  Map<String, Object?> toDatabaseMap(String id) =>
+  Map<String, Object?> toDatabaseMap(String id, int type) =>
+      {"txt_id": id, "name": name, "description": description, 'type': type};
+
+  Map<String, Object?> toDatabaseMapNoType(String id) =>
       {"txt_id": id, "name": name, "description": description};
 
   List<Map<String, Object?>>? specializationsToDatabase(
@@ -220,13 +223,14 @@ class ComplexAbilityColumn {
     if (value.isDeletable) sortById();
   }
 
-  void add(ComplexAbility ca) {
+  int add(ComplexAbility ca) {
     if (!values.contains(ca)) {
       values.add(ca);
     } else {
       values[values.indexOf(ca)] = ca;
     }
     if (ca.isDeletable) sortById();
+    return values.indexOf(ca);
   }
 
   Map<String, dynamic> toJson() {

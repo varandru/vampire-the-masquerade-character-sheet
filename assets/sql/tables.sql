@@ -4,7 +4,7 @@ create table if not exists attributes(
   txt_id TEXT UNIQUE,
   name TEXT,
   description TEXT,
-  type INTEGER -- 0 - physical, 1 - social, 2 - mental
+  type INTEGER NOT NULL -- 0 - physical, 1 - social, 2 - mental
 );
 
 create unique index if not exists idx_attribute_txt_id on attributes(txt_id);
@@ -30,7 +30,7 @@ create table if not exists abilities(
   txt_id TEXT UNIQUE,
   name TEXT,
   description TEXT,
-  type INTEGER
+  type INTEGER NOT NULL 
 );
 
 create unique index if not exists idx_ability_txt_id on abilities(txt_id);
@@ -73,7 +73,7 @@ create table if not exists merits (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   txt_id TEXT UNIQUE,
   name TEXT,
-  type INTEGER, -- 1 - physical, 2 - mental, 3 - social, 4 - supernatural, 0 - undefined
+  type INTEGER NOT NULL, -- 1 - physical, 2 - mental, 3 - social, 4 - supernatural, 0 - undefined
   description TEXT
 );
 
@@ -91,7 +91,7 @@ create table if not exists flaws (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   txt_id TEXT UNIQUE,
   name TEXT,
-  type INTEGER, -- 1 - physical, 2 - mental, 3 - social, 4 - supernatural, 0 - undefined
+  type INTEGER NOT NULL, -- 1 - physical, 2 - mental, 3 - social, 4 - supernatural, 0 - undefined
   description TEXT
 );
 

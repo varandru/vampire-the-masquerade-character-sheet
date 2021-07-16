@@ -61,10 +61,10 @@ class AddTalentButton extends CommonSpeedDialChild {
                 ComplexAbilityDialog(name: 'New talent'));
             if (ca != null) {
               AbilitiesController ac = Get.find();
-              ac.talents.add(ca.ability);
-
-              Get.find<DatabaseController>().insertComplexAbilityWithFilter(
-                  ca.ability, ca.entry, KnowledgeDatabase());
+              var index = ac.talents.add(ca.ability);
+              ac.talents.values[index].id = await Get.find<DatabaseController>()
+                  .insertComplexAbilityWithFilter(
+                      ca.ability, ca.entry, TalentsDatabase());
             }
           },
         );
@@ -82,9 +82,10 @@ class AddSkillsButton extends CommonSpeedDialChild {
             if (ca != null) {
               AbilitiesController ac = Get.find();
               ac.skills.add(ca.ability);
-
-              Get.find<DatabaseController>().insertComplexAbilityWithFilter(
-                  ca.ability, ca.entry, KnowledgeDatabase());
+              var index = ac.skills.add(ca.ability);
+              ac.skills.values[index].id = await Get.find<DatabaseController>()
+                  .insertComplexAbilityWithFilter(
+                      ca.ability, ca.entry, SkillsDatabase());
             }
           },
         );
@@ -102,9 +103,11 @@ class AddKnowledgeButton extends CommonSpeedDialChild {
             if (ca != null) {
               AbilitiesController ac = Get.find();
               ac.knowledges.add(ca.ability);
-
-              Get.find<DatabaseController>().insertComplexAbilityWithFilter(
-                  ca.ability, ca.entry, KnowledgeDatabase());
+              var index = ac.knowledges.add(ca.ability);
+              ac.knowledges.values[index].id =
+                  await Get.find<DatabaseController>()
+                      .insertComplexAbilityWithFilter(
+                          ca.ability, ca.entry, KnowledgeDatabase());
             }
           },
         );

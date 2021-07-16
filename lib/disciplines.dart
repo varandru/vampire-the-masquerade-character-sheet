@@ -146,35 +146,35 @@ class DisciplineDot {
 class DisciplineController extends GetxController {
   RxList<Discipline> disciplines = RxList();
 
-  void load(Map<String, dynamic> json) {
+  void load(Map<String, dynamic> json, DisciplineDictionary dd) {
     // TODO: some fields must load from database
     for (var id in json.keys) {
       if (json[id] == null) throw ("Invalid JSON $json");
       if (json[id]["current"] == null)
         throw ("${json["id"]} lacks neccessary fields");
 
-      // var entry = dictionary.entries[id];
+      var entry = dd.entries[id];
 
-      // if (entry != null) {
-      Discipline base = Discipline(
-        id: null,
-        txtId: id,
-        name: id,
-        level: json[id]["current"],
-      );
+      if (entry != null) {
+        Discipline base = Discipline(
+          id: null,
+          txtId: id,
+          name: id,
+          level: json[id]["current"],
+        );
 
-      if (!disciplines.contains(base)) disciplines.add(base);
-      // if (!disciplines.contains(base)) {
-      //   try {
-      //     disciplines.add(Discipline.fromDictionary(
-      //       base: base,
-      //       entry: entry,
-      //     ));
-      //   } catch (e) {
-      //     continue;
-      //   }
-      // }
-      // }
+        if (!disciplines.contains(base)) disciplines.add(base);
+        if (!disciplines.contains(base)) {
+          try {
+            disciplines.add(Discipline.fromDictionary(
+              base: base,
+              entry: entry,
+            ));
+          } catch (e) {
+            continue;
+          }
+        }
+      }
     }
   }
 
@@ -310,11 +310,11 @@ class DisciplineDictionary extends Dictionary {
     for (var entry in entries.entries) {
       int id = await database.insert(
           'disciplines', entry.value.toDatabase(entry.key),
-          conflictAlgorithm: ConflictAlgorithm.replace);
+          conflictAlgorithm: ConflictAlgorithm.rollback);
       if (entry.value.levels != null) {
         for (var dot in entry.value.levels!.values) {
           await database.insert('discipline_levels', dot.toDatabase(id),
-              conflictAlgorithm: ConflictAlgorithm.replace);
+              conflictAlgorithm: ConflictAlgorithm.rollback);
         }
       }
     }

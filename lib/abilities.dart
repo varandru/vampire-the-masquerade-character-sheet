@@ -35,6 +35,8 @@ class AbilitiesController extends GetxController {
   var knowledges =
       ComplexAbilityColumn('Knowledges', description: KnowledgeDatabase());
 
+  get abilities => talents.values + skills.values + knowledges.values;
+
   ComplexAbilityColumn getColumnByType(AbilityColumnType type) {
     switch (type) {
       case AbilityColumnType.Talents:
@@ -46,30 +48,26 @@ class AbilitiesController extends GetxController {
     }
   }
 
-  void fromJson(Map<String, dynamic> json) {
-    _fillAbilityListByType(AbilityColumnType.Talents, json["talents"]);
-    _fillAbilityListByType(AbilityColumnType.Skills, json["skills"]);
-    _fillAbilityListByType(AbilityColumnType.Knowledges, json["knowledges"]);
+  void fromJson(Map<String, dynamic> json, AbilitiesDictionary abd) {
+    _fillAbilityListByType(
+        AbilityColumnType.Talents, json["talents"], abd.talents);
+    _fillAbilityListByType(
+        AbilityColumnType.Skills, json["skills"], abd.skills);
+    _fillAbilityListByType(
+        AbilityColumnType.Knowledges, json["knowledges"], abd.knowledges);
   }
 
   // Fills abilities from JSON
   void _fillAbilityListByType(
-      AbilityColumnType type, Map<String, dynamic> abilities) async {
+      AbilityColumnType type,
+      Map<String, dynamic> abilities,
+      Map<String, ComplexAbilityEntry> entries) {
     for (var id in abilities.keys) {
       if (abilities[id] != null && abilities[id] is Map<String, dynamic>) {
-        var response = await Get.find<DatabaseController>().database.query(
-            'abilities',
-            columns: ['id', 'name'],
-            where: 'txt_id = ?',
-            whereArgs: [id]);
-
-        String name = 'Not found';
-        if (response.length > 0) if (response[0]['name'] != null)
-          name = response[0]['name'] as String;
         ComplexAbility ca = ComplexAbility(
-          id: response[0]['id'] as int,
+          id: null,
           txtId: id,
-          name: name,
+          name: entries[id]?.name ?? "Not found",
           current: abilities[id]["current"] ?? 0,
           min: 0,
           max: 5,
@@ -110,10 +108,10 @@ class AbilitiesController extends GetxController {
         ]).then((value) => List.generate(
         value.length,
         (index) => ComplexAbility(
-              id: value[0]['id'] as int,
-              name: value[0]['name'] as String,
-              current: value[0]['current'] as int,
-              specialization: value[0]['specialization'] as String? ?? "",
+              id: value[index]['id'] as int,
+              name: value[index]['name'] as String,
+              current: value[index]['current'] as int,
+              specialization: value[index]['specialization'] as String? ?? "",
               hasSpecialization: true,
             )));
     skills.values.value = await database.rawQuery(
@@ -125,10 +123,10 @@ class AbilitiesController extends GetxController {
         ]).then((value) => List.generate(
         value.length,
         (index) => ComplexAbility(
-              id: value[0]['id'] as int,
-              name: value[0]['name'] as String,
-              current: value[0]['current'] as int,
-              specialization: value[0]['specialization'] as String? ?? "",
+              id: value[index]['id'] as int,
+              name: value[index]['name'] as String,
+              current: value[index]['current'] as int,
+              specialization: value[index]['specialization'] as String? ?? "",
               hasSpecialization: true,
             )));
     knowledges.values.value = await database.rawQuery(
@@ -140,10 +138,10 @@ class AbilitiesController extends GetxController {
         ]).then((value) => List.generate(
         value.length,
         (index) => ComplexAbility(
-              id: value[0]['id'] as int,
-              name: value[0]['name'] as String,
-              current: value[0]['current'] as int,
-              specialization: value[0]['specialization'] as String? ?? "",
+              id: value[index]['id'] as int,
+              name: value[index]['name'] as String,
+              current: value[index]['current'] as int,
+              specialization: value[index]['specialization'] as String? ?? "",
               hasSpecialization: true,
             )));
   }
@@ -229,57 +227,57 @@ class AbilitiesDictionary extends Dictionary {
   Future<void> loadAllToDatabase(Database database) async {
     for (var textId in talents.keys) {
       int id = await database.insert(
-          'abilities', talents[textId]!.toDatabaseMap(textId),
-          conflictAlgorithm: ConflictAlgorithm.replace);
+          'abilities', talents[textId]!.toDatabaseMap(textId, 0),
+          conflictAlgorithm: ConflictAlgorithm.rollback);
       if (talents[textId]!.specializations.isNotEmpty) {
         for (var entry
             in talents[textId]!.specializationsToDatabase(id, 'ability_id')!) {
           await database.insert('ability_specializations', entry,
-              conflictAlgorithm: ConflictAlgorithm.replace);
+              conflictAlgorithm: ConflictAlgorithm.rollback);
         }
       }
       if (talents[textId]!.levels.isNotEmpty) {
         for (var entry
             in talents[textId]!.levelsToDatabase(id, 'ability_id')!) {
           await database.insert('ability_levels', entry,
-              conflictAlgorithm: ConflictAlgorithm.replace);
+              conflictAlgorithm: ConflictAlgorithm.rollback);
         }
       }
     }
     for (var textId in skills.keys) {
       int id = await database.insert(
-          'abilities', skills[textId]!.toDatabaseMap(textId),
-          conflictAlgorithm: ConflictAlgorithm.replace);
+          'abilities', skills[textId]!.toDatabaseMap(textId, 1),
+          conflictAlgorithm: ConflictAlgorithm.rollback);
       if (skills[textId]!.specializations.isNotEmpty) {
         for (var entry
             in skills[textId]!.specializationsToDatabase(id, 'ability_id')!) {
           await database.insert('ability_specializations', entry,
-              conflictAlgorithm: ConflictAlgorithm.replace);
+              conflictAlgorithm: ConflictAlgorithm.rollback);
         }
       }
       if (skills[textId]!.levels.isNotEmpty) {
         for (var entry in skills[textId]!.levelsToDatabase(id, 'ability_id')!) {
           await database.insert('ability_specializations', entry,
-              conflictAlgorithm: ConflictAlgorithm.replace);
+              conflictAlgorithm: ConflictAlgorithm.rollback);
         }
       }
     }
     for (var textId in knowledges.keys) {
       int id = await database.insert(
-          'abilities', knowledges[textId]!.toDatabaseMap(textId),
-          conflictAlgorithm: ConflictAlgorithm.replace);
+          'abilities', knowledges[textId]!.toDatabaseMap(textId, 2),
+          conflictAlgorithm: ConflictAlgorithm.rollback);
       if (knowledges[textId]!.specializations.isNotEmpty) {
         for (var entry in knowledges[textId]!
             .specializationsToDatabase(id, 'ability_id')!) {
           await database.insert('ability_specializations', entry,
-              conflictAlgorithm: ConflictAlgorithm.replace);
+              conflictAlgorithm: ConflictAlgorithm.rollback);
         }
       }
       if (knowledges[textId]!.levels.isNotEmpty) {
         for (var entry
             in knowledges[textId]!.levelsToDatabase(id, 'ability_id')!) {
           await database.insert('ability_specializations', entry,
-              conflictAlgorithm: ConflictAlgorithm.replace);
+              conflictAlgorithm: ConflictAlgorithm.rollback);
         }
       }
     }
