@@ -30,6 +30,7 @@ dependencies:
   sqflite:
   path:
   url_launcher: ^6.0.9
+  image_picker: ^0.8.2
 
 dev_dependencies:
   flutter_test:

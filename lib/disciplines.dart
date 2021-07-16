@@ -151,7 +151,7 @@ class DisciplineController extends GetxController {
     for (var id in json.keys) {
       if (json[id] == null) throw ("Invalid JSON $json");
       if (json[id]["current"] == null)
-        throw ("${json["id"]} lacks neccessary fields");
+        throw ("${json["id"]} lacks necessary fields");
 
       var entry = dd.entries[id];
 

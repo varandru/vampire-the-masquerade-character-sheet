@@ -1,8 +1,11 @@
 import 'package:flutter/gestures.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import 'database.dart';
+import 'vampire_character.dart';
 
 class Settings extends GetxController {
   var query = 'db query here'.obs;
@@ -35,7 +38,7 @@ class SettingsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: 2,
+      itemCount: 3,
       itemBuilder: (context, index) {
         switch (index) {
           case 0:
