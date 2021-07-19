@@ -42,32 +42,48 @@ class MeritsAndFlawsSectionWidget extends StatelessWidget {
               style: Theme.of(context).textTheme.headline4,
             )),
         Flexible(
-          child: Obx(() => ListView.builder(
-                itemBuilder: (context, i) => Obx(() => MeritWidget(
-                      mafc.merits[i],
-                      index: i,
-                      isMerit: true,
-                    )),
-                itemCount: mafc.merits.length,
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-              )),
+          child: FutureBuilder(
+            future: mafc.fromDatabase(Get.find<DatabaseController>().database),
+            builder: (context, snapshot) =>
+                (snapshot.connectionState == ConnectionState.done)
+                    ? Obx(
+                        () => ListView.builder(
+                          itemBuilder: (context, i) => Obx(() => MeritWidget(
+                                mafc.merits[i],
+                                index: i,
+                                isMerit: true,
+                              )),
+                          itemCount: mafc.merits.length,
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                        ),
+                      )
+                    : CircularProgressIndicator(),
+          ),
         ),
         Obx(() => Text(
               "Flaws (${mafc.flawsSum})",
               style: Theme.of(context).textTheme.headline4,
             )),
         Flexible(
-          child: Obx(() => ListView.builder(
-                itemBuilder: (context, i) => Obx(() => MeritWidget(
-                      mafc.flaws[i],
-                      index: i,
-                      isMerit: false,
-                    )),
-                itemCount: mafc.flaws.length,
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-              )),
+          child: FutureBuilder(
+            future: mafc.fromDatabase(Get.find<DatabaseController>().database),
+            builder: (context, snapshot) =>
+                (snapshot.connectionState == ConnectionState.done)
+                    ? Obx(
+                        () => ListView.builder(
+                          itemBuilder: (context, i) => Obx(() => MeritWidget(
+                                mafc.flaws[i],
+                                index: i,
+                                isMerit: false,
+                              )),
+                          itemCount: mafc.flaws.length,
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                        ),
+                      )
+                    : CircularProgressIndicator(),
+          ),
         ),
       ],
       mainAxisSize: MainAxisSize.min,
@@ -114,11 +130,11 @@ class MeritPopUp extends Dialog {
                     if (isMerit) {
                       cmaf.meritSum.value += merit.cost - ca.cost;
                       cmaf.merits[index] = ca;
-                      Get.find<DatabaseController>().addOrUpdateMerit(merit);
+                      Get.find<DatabaseController>().addOrUpdateMerit(ca);
                     } else {
                       cmaf.flawsSum.value += merit.cost - ca.cost;
                       cmaf.flaws[index] = ca;
-                      Get.find<DatabaseController>().addOrUpdateMerit(merit);
+                      Get.find<DatabaseController>().addOrUpdateFlaw(ca);
                     }
                   }
                 },
@@ -257,6 +273,7 @@ class AddMeritButton extends CommonSpeedDialChild {
               MeritsAndFlawsController mfac = Get.find();
               mfac.meritSum += ca.cost;
               mfac.merits.add(ca);
+              Get.find<DatabaseController>().addOrUpdateMerit(ca);
             }
           },
         );
@@ -274,6 +291,7 @@ class AddFlawButton extends CommonSpeedDialChild {
               MeritsAndFlawsController mfac = Get.find();
               mfac.flawsSum += ca.cost;
               mfac.flaws.add(ca);
+              Get.find<DatabaseController>().addOrUpdateFlaw(ca);
             }
           },
         );

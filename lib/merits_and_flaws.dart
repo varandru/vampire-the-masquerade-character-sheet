@@ -200,6 +200,19 @@ class MeritsAndFlawsController extends GetxController {
               type: typeFromInt(value[0]['type'] as int),
               description: value[0]['description'] as String,
             )));
+
+    _recalculateCosts();
+  }
+
+  void _recalculateCosts() {
+    meritSum.value = 0;
+    for (var merit in merits) {
+      meritSum.value += merit.cost;
+    }
+    flawsSum.value = 0;
+    for (var flaw in flaws) {
+      flawsSum.value += flaw.cost;
+    }
   }
 }
 
