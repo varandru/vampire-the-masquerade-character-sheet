@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vampire_the_masquerade_character_sheet/settings_widget.dart';
 
-import 'vampite_character.dart';
+import 'vampire_character.dart';
 import 'drawer_menu.dart';
 
 // Основной виджет, пока что. На самом деле их несколько, но этот организует все

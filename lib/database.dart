@@ -291,6 +291,26 @@ class DatabaseController extends GetxController {
                 conflictAlgorithm: ConflictAlgorithm.rollback,
               ));
 
+  Future<int> addDiscipline(Discipline discipline) => database
+      .insert(
+          'disciplines',
+          {
+            'txt_id': discipline.txtId,
+            'name': discipline.name,
+            'description': discipline.description,
+            'system': discipline.system,
+            'maximum': discipline.max,
+          },
+          conflictAlgorithm: ConflictAlgorithm.rollback)
+      .then((value) => database.insert(
+          'player_disciplines',
+          {
+            'player_id': characterId.value,
+            'discipline_id': value,
+            'level': discipline.level,
+          },
+          conflictAlgorithm: ConflictAlgorithm.replace));
+
   Future<int> insertComplexAbilityWithFilter(
           ComplexAbility ability,
           ComplexAbilityEntry entry,

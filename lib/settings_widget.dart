@@ -1,8 +1,11 @@
 import 'package:flutter/gestures.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import 'database.dart';
+import 'vampire_character.dart';
 
 class Settings extends GetxController {
   var query = 'db query here'.obs;
@@ -35,7 +38,7 @@ class SettingsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: 2,
+      itemCount: 3,
       itemBuilder: (context, index) {
         switch (index) {
           case 0:
@@ -60,14 +63,25 @@ class SettingsSection extends StatelessWidget {
             );
           case 1:
             return ListTile(
+              title: Text('Pick a character portrait'),
+              trailing: Icon(Icons.navigate_next),
+              onTap: () => Get.to(() => Scaffold(
+                    appBar: AppBar(
+                      title: Text('Pick a character portrait'),
+                    ),
+                    body: CharacterImagePicker(),
+                  )),
+            );
+          case 2:
+            return ListTile(
               title: Text('Check the database directly'),
               trailing: Icon(Icons.navigate_next),
-              onTap: () => Get.to(Scaffold(
-                appBar: AppBar(
-                  title: Text('Settings'),
-                ),
-                body: CheckDatabaseWidget(),
-              )),
+              onTap: () => Get.to(() => Scaffold(
+                    appBar: AppBar(
+                      title: Text('Settings'),
+                    ),
+                    body: CheckDatabaseWidget(),
+                  )),
             );
           default:
             return PlaceholderWithIssue();
@@ -148,5 +162,32 @@ class CheckDatabaseWidget extends StatelessWidget {
             );
           return PlaceholderWithIssue();
         });
+  }
+}
+
+class CharacterImagePicker extends StatelessWidget {
+  const CharacterImagePicker({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        children: [
+          TextButton(
+              onPressed: () async {
+                final ImagePicker _picker = ImagePicker();
+                final XFile? image =
+                    await _picker.pickImage(source: ImageSource.gallery);
+                if (image != null) {
+                  Get.find<VampireCharacter>().characterImageFileName.value =
+                      image.path;
+                }
+              },
+              child: Text("Pick an image")),
+          Obx(() => Text(
+              'Current: ${Get.find<VampireCharacter>().characterImageFileName}')),
+        ],
+      ),
+    );
   }
 }

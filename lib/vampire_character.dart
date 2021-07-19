@@ -18,7 +18,7 @@ import 'virtues.dart';
 /// Controller for the whole character. Handles saving and loading data from files, and, possibly, any other character-wide operations
 class VampireCharacter extends GetxController {
   late String _characterFileName;
-  // late Database database;
+  var characterImageFileName = "".obs;
   late bool installed;
 
   // var characterId = 0.obs;
