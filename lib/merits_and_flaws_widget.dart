@@ -168,9 +168,11 @@ class MeritDialog extends Dialog {
         Row(children: [
           Text("Name: "),
           Expanded(
-              child: TextField(
-            controller: TextEditingController()..text = m.value.name,
-          ))
+            child: TextField(
+              controller: TextEditingController()..text = m.value.name,
+              onChanged: (value) => m.update((val) => val?.name = value),
+            ),
+          ),
         ]),
         Row(children: [
           Text("Type: "),
@@ -228,9 +230,10 @@ class MeritDialog extends Dialog {
             TextButton(
               child: Text('OK'),
               onPressed: () {
-                if (m.value.name.isNotEmpty)
+                if (m.value.name.isNotEmpty) {
                   Get.back(result: m.value);
-                else
+                  Get.back();
+                } else
                   Get.back(result: null);
               },
             ),
