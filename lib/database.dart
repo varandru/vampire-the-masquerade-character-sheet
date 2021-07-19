@@ -399,10 +399,10 @@ class DatabaseController extends GetxController {
     });
   }
 
-  Future<int> addOrUpdateMeritOrFlaw(Merit merit, String table) async {
+  Future<int> _addOrUpdateMeritOrFlaw(Merit merit, String table) async {
     if (merit.id != 0) {
       await database.update(
-        table,
+        '$table' 's',
         {
           'name': merit.name,
           'type': intFromType(merit.type),
@@ -411,7 +411,7 @@ class DatabaseController extends GetxController {
       );
     } else {
       merit.id = await database.insert(
-        table,
+        '$table' 's',
         {
           'name': merit.name,
           'txt_id': merit.txtId,
@@ -419,18 +419,29 @@ class DatabaseController extends GetxController {
           'description': merit.description
         },
       );
+      await database.insert(
+          '$table' '_costs',
+          {
+            '$table' '_id': merit.id,
+            'cost': merit.cost,
+          },
+          conflictAlgorithm: ConflictAlgorithm.abort);
     }
-    return database.insert('player_$table', {
-      'player_id': characterId.value,
-      '${table.substring(0, table.length - 1)}_id': merit.id,
-    });
+    return database.insert(
+        'player_$table' 's',
+        {
+          'player_id': characterId.value,
+          '$table' '_id': merit.id,
+          'cost': merit.cost,
+        },
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<int> addOrUpdateMerit(Merit merit) =>
-      addOrUpdateMeritOrFlaw(merit, 'merits');
+      _addOrUpdateMeritOrFlaw(merit, 'merit');
 
   Future<int> addOrUpdateFlaw(Merit flaw) =>
-      addOrUpdateMeritOrFlaw(flaw, 'flaws');
+      _addOrUpdateMeritOrFlaw(flaw, 'flaw');
 
   Future<int> deleteMeritOrFlaw(Merit merit, bool isMerit) =>
       database.delete(isMerit ? 'merits' : 'flaws',

@@ -80,10 +80,10 @@ create table if not exists merits (
 create unique index if not exists idx_merit_txt_id on merits(txt_id);
 
 create table if not exists merit_costs (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
   merit_id INTEGER,
-  cost INTEGER,
-  FOREIGN KEY(merit_id) REFERENCES merits(id)
+  cost INTEGER NOT NULL,
+  FOREIGN KEY(merit_id) REFERENCES merits(id),
+  UNIQUE(merit_id, cost)
 );
 
 -- Flaws description
@@ -98,10 +98,10 @@ create table if not exists flaws (
 create unique index if not exists idx_flaw_txt_id on flaws(txt_id);
 
 create table if not exists flaw_costs (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
   flaw_id INTEGER,
-  cost INTEGER,
-  FOREIGN KEY(flaw_id) REFERENCES flaws(id)
+  cost INTEGER NOT NULL,
+  FOREIGN KEY(flaw_id) REFERENCES flaws(id),
+  UNIQUE(flaw_id, cost)
 );
 
 -- Discipline description
@@ -222,18 +222,18 @@ create table if not exists player_rituals(
 );
 
 create table if not exists player_merits(
-  player_id INTEGER,
-  merit_id INTEGER,
-  cost INTEGER, 
+  player_id INTEGER NOT NULL,
+  merit_id INTEGER NOT NULL,
+  cost INTEGER NOT NULL,
   FOREIGN KEY(player_id) REFERENCES characters(id),
   FOREIGN KEY(merit_id) REFERENCES merits(id),
   UNIQUE(player_id, merit_id)
 );
 
 create table if not exists player_flaws(
-  player_id INTEGER,
-  flaw_id INTEGER,
-  cost INTEGER, 
+  player_id INTEGER NOT NULL,
+  flaw_id INTEGER NOT NULL,
+  cost INTEGER NOT NULL,
   FOREIGN KEY(player_id) REFERENCES characters(id),
   FOREIGN KEY(flaw_id) REFERENCES flaws(id),
   UNIQUE(player_id, flaw_id)
