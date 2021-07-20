@@ -98,7 +98,7 @@ class AbilitiesController extends GetxController {
     return json;
   }
 
-  void fromDatabase(Database database) async {
+  Future<void> fromDatabase(Database database) async {
     talents.values.value = await database.rawQuery(
         'select a.id, a.name, pa.current, pa.specialization '
         'from abilities a inner join player_abilities pa '

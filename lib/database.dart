@@ -251,7 +251,7 @@ class DatabaseController extends GetxController {
           ComplexAbility ability,
           ComplexAbilityEntry entry,
           ComplexAbilityEntryDatabaseDescription description) =>
-      database.transaction((txn) => (ability.id == 0)
+      database.transaction((txn) => (ability.id == null)
           ? txn
               .insert(
                   description.tableName,
@@ -264,13 +264,101 @@ class DatabaseController extends GetxController {
                   },
                   conflictAlgorithm: ConflictAlgorithm.rollback)
               .then(
+                (index) => txn.insert(
+                  description.playerLinkTable,
+                  {
+                    'player_id': characterId.value,
+                    description.fkName: index,
+                    'current': ability.current,
+                    'specialization': ability.specialization,
+                  },
+                ).then((value) => index),
+              )
+          : txn.query(description.tableName, where: 'id = ?', whereArgs: [
+              ability.id
+            ]).then((value) => value.length != 0
+              ? ((value[0]['txt_id'] == null)
+                      ? txn
+                          .update(
+                              description.tableName,
+                              {
+                                'txt_id': ability.txtId ??
+                                    value[0]['txt_id'] as String?,
+                                'name': entry.name,
+                                'description': entry.description ??
+                                    value[0]['txt_id'] as String?,
+                              },
+                              where: 'id = ?',
+                              whereArgs: [ability.id])
+                          .then((value) => ability.id!)
+                      : txn
+                          .update(
+                              description.tableName,
+                              {
+                                'name': entry.name,
+                                'description': entry.description ??
+                                    value[0]['description'] as String?,
+                              },
+                              where: 'id = ?',
+                              whereArgs: [ability.id])
+                          .then((value) => txn.insert(
+                                description.playerLinkTable,
+                                {
+                                  'player_id': characterId.value,
+                                  description.fkName: ability.id,
+                                  'current': ability.current,
+                                  'specialization': ability.specialization,
+                                },
+                                conflictAlgorithm: ConflictAlgorithm.replace,
+                              )))
+                  .then((value) => ability.id!)
+              : txn
+                  .insert(
+                      description.tableName,
+                      {
+                        'id': entry.databaseId,
+                        'txt_id': ability.txtId,
+                        'name': entry.name,
+                        'description': entry.description,
+                        'type': description.filter,
+                      },
+                      conflictAlgorithm: ConflictAlgorithm.rollback)
+                  .then((value) => txn
+                      .insert(
+                        description.playerLinkTable,
+                        {
+                          'player_id': characterId.value,
+                          description.fkName: ability.id,
+                          'current': ability.current,
+                          'specialization': ability.specialization,
+                        },
+                        conflictAlgorithm: ConflictAlgorithm.replace,
+                      )
+                      .then((value) => ability.id!))));
+
+  /// It's only backgrounds, but it doesn't update specializations as well
+  Future<int> _addOrUpdateComplexAbilityWithoutFilter(
+          ComplexAbility ability,
+          ComplexAbilityEntry entry,
+          ComplexAbilityEntryDatabaseDescription description) =>
+      database.transaction((txn) => (ability.id == 0)
+          ? txn
+              .insert(
+                  description.tableName,
+                  {
+                    'id': entry.databaseId,
+                    'txt_id': ability.txtId,
+                    'name': entry.name,
+                    'description': entry.description,
+                  },
+                  conflictAlgorithm: ConflictAlgorithm.rollback)
+              .then(
                 (value) => txn.insert(
                   description.playerLinkTable,
                   {
                     'player_id': characterId.value,
                     description.fkName: value,
                     'current': ability.current,
-                    'specialization': ability.specialization,
                   },
                 ),
               )
@@ -303,9 +391,8 @@ class DatabaseController extends GetxController {
                             description.playerLinkTable,
                             {
                               'player_id': characterId.value,
-                              description.fkName: value,
+                              description.fkName: ability.id,
                               'current': ability.current,
-                              'specialization': ability.specialization,
                             },
                             conflictAlgorithm: ConflictAlgorithm.replace,
                           )))
@@ -316,86 +403,17 @@ class DatabaseController extends GetxController {
                         'id': entry.databaseId,
                         'txt_id': ability.txtId,
                         'name': entry.name,
-                        'description': entry.description,
-                        'type': description.filter,
                       },
                       conflictAlgorithm: ConflictAlgorithm.rollback)
                   .then((value) => txn.insert(
                         description.playerLinkTable,
                         {
                           'player_id': characterId.value,
-                          description.fkName: value,
+                          description.fkName: ability.id,
                           'current': ability.current,
-                          'specialization': ability.specialization,
                         },
                         conflictAlgorithm: ConflictAlgorithm.replace,
                       ))));
-
-  Future<int> _addOrUpdateComplexAbilityWithoutFilter(
-          ComplexAbility ability,
-          ComplexAbilityEntry entry,
-          ComplexAbilityEntryDatabaseDescription description) =>
-      database.transaction((txn) => ability.id == 0
-          ? txn
-              .insert(
-                  description.tableName,
-                  {
-                    'id': entry.databaseId,
-                    'txt_id': ability.txtId,
-                    'name': entry.name,
-                    'description': entry.description,
-                    'type': description.filter,
-                  },
-                  conflictAlgorithm: ConflictAlgorithm.rollback)
-              .then((value) => txn.insert(description.playerLinkTable, {
-                    'player_id': characterId.value,
-                    description.fkName: value,
-                    'current': ability.current,
-                    'specialization': ability.specialization,
-                  }))
-          : txn.query(description.tableName, where: 'id = ?', whereArgs: [
-              ability.id
-            ]).then((value) => value.length != 0
-              ? txn
-                  .update(
-                      description.tableName,
-                      {
-                        'txt_id':
-                            ability.txtId ?? value[0]['txt_id'] as String?,
-                        'name': entry.name,
-                        'description':
-                            entry.description ?? value[0]['txt_id'] as String?,
-                      },
-                      where: 'id = ?',
-                      whereArgs: [ability.id])
-                  .then((value) => txn.insert(
-                      description.playerLinkTable,
-                      {
-                        'player_id': characterId.value,
-                        description.fkName: value,
-                        'current': ability.current,
-                        'specialization': ability.specialization,
-                      },
-                      conflictAlgorithm: ConflictAlgorithm.replace))
-              : txn
-                  .insert(
-                      description.tableName,
-                      {
-                        'id': entry.databaseId,
-                        'txt_id': ability.txtId,
-                        'name': entry.name,
-                        'description': entry.description,
-                      },
-                      conflictAlgorithm: ConflictAlgorithm.rollback)
-                  .then((value) => txn.insert(
-                      description.playerLinkTable,
-                      {
-                        'player_id': characterId.value,
-                        description.fkName: value,
-                        'current': ability.current,
-                        'specialization': ability.specialization,
-                      },
-                      conflictAlgorithm: ConflictAlgorithm.replace))));
 
   Future<void> addOrUpdateRitual(Ritual ritual) async {
     database.transaction((txn) async {

@@ -10,6 +10,8 @@ import 'drawer_menu.dart';
 class AbilitiesSectionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    Get.find<AbilitiesController>()
+        .fromDatabase(Get.find<DatabaseController>().database);
     return Column(
       children: [
         Text("Abilities", style: Theme.of(context).textTheme.headline4),
@@ -82,7 +84,6 @@ class AddSkillsButton extends CommonSpeedDialChild {
                 ComplexAbilityDialog(name: 'New skill'));
             if (ca != null) {
               AbilitiesController ac = Get.find();
-              ac.skills.add(ca.ability);
               var index = ac.skills.add(ca.ability);
               ac.skills.values[index].id = await Get.find<DatabaseController>()
                   .addOrUpdateComplexAbility(
@@ -103,7 +104,6 @@ class AddKnowledgeButton extends CommonSpeedDialChild {
                 ComplexAbilityDialog(name: 'New Knowledge'));
             if (ca != null) {
               AbilitiesController ac = Get.find();
-              ac.knowledges.add(ca.ability);
               var index = ac.knowledges.add(ca.ability);
               ac.knowledges.values[index].id =
                   await Get.find<DatabaseController>()

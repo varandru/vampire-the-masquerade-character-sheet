@@ -80,16 +80,23 @@ class ComplexAbilityWidget extends StatelessWidget {
             name: result[0]['name'] as String,
             description: result[0]['description'] as String?);
 
-        Get.dialog<void>(ComplexAbilityPopup(attribute, entry,
-            updateCallback: (a1, a2, e) {
+        Get.dialog<void>(
+            ComplexAbilityPopup(attribute, entry, updateCallback: (a1, a2, e) {
           updateCallback(a1, a2);
 
           /// Database entry update
           Get.find<DatabaseController>()
               .addOrUpdateComplexAbility(a1, e, description);
-        },
-            deleteCallback: deleteCallback,
-            textTheme: Theme.of(context).textTheme));
+        }, deleteCallback: (ability) {
+          deleteCallback(ability);
+          Get.find<DatabaseController>().database.delete(
+              description.playerLinkTable,
+              where: 'player_id = ? and ${description.fkName} = ?',
+              whereArgs: [
+                Get.find<DatabaseController>().characterId.value,
+                ability.id
+              ]);
+        }, textTheme: Theme.of(context).textTheme));
       },
     );
   }

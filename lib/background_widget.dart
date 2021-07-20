@@ -4,8 +4,8 @@ import 'package:sqflite/sqflite.dart';
 import 'package:vampire_the_masquerade_character_sheet/database.dart';
 
 import 'backgrounds.dart';
-import 'common_widget.dart';
 import 'common_logic.dart';
+import 'common_widget.dart';
 import 'drawer_menu.dart';
 import 'virtues_widget.dart';
 
@@ -20,6 +20,8 @@ class BackgroundColumnWidget extends ComplexAbilityColumnWidget {
     super.editValue = bc.backgrounds.value.editValue;
     super.description = bc.backgrounds.value.description;
     super.deleteValue = bc.backgrounds.value.deleteValue;
+
+    bc.fromDatabase(Get.find<DatabaseController>().database);
   }
 }
 

@@ -1,7 +1,8 @@
 import 'package:get/get.dart';
 import 'package:sqflite_common/sqlite_api.dart';
-import 'database.dart';
+
 import 'common_logic.dart';
+import 'database.dart';
 
 class BackgroundDatabase extends ComplexAbilityEntryDatabaseDescription {
   BackgroundDatabase()
@@ -69,9 +70,9 @@ class BackgroundsController extends GetxController {
         ]).then((value) => List.generate(
         value.length,
         (index) => ComplexAbility(
-              id: value[0]['id'] as int,
-              name: value[0]['name'] as String,
-              current: value[0]['current'] as int,
+              id: value[index]['id'] as int,
+              name: value[index]['name'] as String,
+              current: value[index]['current'] as int,
               hasSpecialization: false,
             )));
   }
