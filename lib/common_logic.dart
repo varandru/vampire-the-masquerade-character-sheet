@@ -18,7 +18,6 @@ class ComplexAbility {
     this.isIncremental = true,
     this.hasSpecialization = true,
     this.isDeletable = true,
-    this.isNameEditable = true,
   });
 
   int? id;
@@ -41,10 +40,6 @@ class ComplexAbility {
   /// Attributes can't. Abilities can. Backgrounds sure as hell can
   bool isDeletable;
 
-  /// Can this ability's name be edited?
-  /// Virtues can't. All the rest can.
-  bool isNameEditable;
-
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -64,8 +59,7 @@ class ComplexAbility {
         specialization = json['specialization'] ?? "",
         min = 1,
         max = 5,
-        isIncremental = true,
-        isNameEditable = true;
+        isIncremental = true;
 
   ComplexAbility.fromOther(this.txtId, ComplexAbility other)
       : name = other.name,
@@ -76,8 +70,7 @@ class ComplexAbility {
         specialization = other.specialization,
         isIncremental = other.isIncremental,
         hasSpecialization = other.hasSpecialization,
-        isDeletable = other.isDeletable,
-        isNameEditable = other.isNameEditable;
+        isDeletable = other.isDeletable;
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = Map();
