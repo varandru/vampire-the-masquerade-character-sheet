@@ -530,28 +530,33 @@ class DatabaseController extends GetxController {
           where: 'player_id = ? and ${isMerit ? 'merit' : 'flaw'}_id = ?',
           whereArgs: [characterId.value, merit.id]);
 
-  Future<void> addXpEntry(XpEntry entry) async {
+  Future<int> addXpEntry(XpEntry entry) async {
     if (entry is XpEntryGained) {
-      database.insert('player_xp', {
+      return database.insert('player_xp', {
         'player_id': characterId.value,
         'cost': entry.gained,
         'description': entry.description
       });
     } else if (entry is XpEntryNewAbility) {
-      database.insert('player_xp', {
+      return database.insert('player_xp', {
         'player_id': characterId.value,
         'description': entry.description,
         'cost': entry.cost,
         'name': entry.name
       });
     } else if (entry is XpEntryUpgradedAbility) {
-      database.insert('player_xp', {
+      return database.insert('player_xp', {
         'player_id': characterId.value,
         'description': entry.description,
         'cost': entry.cost,
         'name': entry.name,
         'old_level': entry.oldLevel,
         'new_level': entry.newLevel,
+      });
+    } else {
+      return database.insert('player_xp', {
+        'player_id': characterId.value,
+        'description': entry.description,
       });
     }
   }
