@@ -1,9 +1,32 @@
 import 'package:get/get.dart';
 import 'package:sqflite_common/sqlite_api.dart';
+
 import 'common_logic.dart';
 import 'database.dart';
 
 enum AttributeColumnType { Physical, Mental, Social }
+
+class Attribute extends ComplexAbility {
+  Attribute({
+    required int? id,
+    required String name,
+    String? txtId,
+    int current = 1,
+    int min = 0,
+    int max = 5,
+    String specialization = "",
+  }) : super(
+            id: id,
+            name: name,
+            txtId: txtId,
+            current: current,
+            min: min,
+            max: max,
+            specialization: specialization,
+            isIncremental: true,
+            hasSpecialization: true,
+            isDeletable: false);
+}
 
 class AttributeDatabase extends ComplexAbilityEntryDatabaseDescription {
   AttributeDatabase(int filter)
@@ -70,16 +93,14 @@ class AttributesController extends GetxController {
         ComplexAbilityEntry? entry = dictionary[id];
 
         // CRUTCH This doesn't allow attributes to go above 5
-        ComplexAbility ca = ComplexAbility(
+        Attribute ca = Attribute(
             txtId: id,
             id: null,
             name: entry?.name ?? "WIP Attribute",
             current: attributes[id]["current"] ?? 1,
             specialization: attributes[id]["specialization"] ?? "",
             min: 0,
-            max: 5,
-            isIncremental: true, // Attributes are incremental, AFAIK
-            isDeletable: false);
+            max: 5);
 
         switch (type) {
           case AttributeColumnType.Physical:
@@ -128,12 +149,11 @@ class AttributesController extends GetxController {
           Get.find<DatabaseController>().characterId.value
         ]).then((value) => List.generate(
         value.length,
-        (index) => ComplexAbility(
+        (index) => Attribute(
               id: value[index]['id'] as int,
               name: value[index]['name'] as String,
               current: value[index]['current'] as int,
               specialization: value[index]['specialization'] as String? ?? "",
-              hasSpecialization: true,
             )));
 
     socialAttributes.values.value = await database.rawQuery(
@@ -144,12 +164,11 @@ class AttributesController extends GetxController {
           Get.find<DatabaseController>().characterId.value
         ]).then((value) => List.generate(
         value.length,
-        (index) => ComplexAbility(
+        (index) => Attribute(
               id: value[index]['id'] as int,
               name: value[index]['name'] as String,
               current: value[index]['current'] as int,
               specialization: value[index]['specialization'] as String? ?? "",
-              hasSpecialization: true,
             )));
 
     mentalAttributes.values.value = await database.rawQuery(
@@ -160,12 +179,11 @@ class AttributesController extends GetxController {
           Get.find<DatabaseController>().characterId.value
         ]).then((value) => List.generate(
         value.length,
-        (index) => ComplexAbility(
+        (index) => Attribute(
               id: value[index]['id'] as int,
               name: value[index]['name'] as String,
               current: value[index]['current'] as int,
               specialization: value[index]['specialization'] as String? ?? "",
-              hasSpecialization: true,
             )));
   }
 }
