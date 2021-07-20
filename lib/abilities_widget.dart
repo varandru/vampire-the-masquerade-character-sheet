@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'database.dart';
+
 import 'abilities.dart';
 import 'common_logic.dart';
 import 'common_widget.dart';
+import 'database.dart';
 import 'drawer_menu.dart';
 
 class AbilitiesSectionWidget extends StatelessWidget {
@@ -63,7 +64,7 @@ class AddTalentButton extends CommonSpeedDialChild {
               AbilitiesController ac = Get.find();
               var index = ac.talents.add(ca.ability);
               ac.talents.values[index].id = await Get.find<DatabaseController>()
-                  .insertComplexAbilityWithFilter(
+                  .addOrUpdateComplexAbility(
                       ca.ability, ca.entry, TalentsDatabase());
             }
           },
@@ -84,7 +85,7 @@ class AddSkillsButton extends CommonSpeedDialChild {
               ac.skills.add(ca.ability);
               var index = ac.skills.add(ca.ability);
               ac.skills.values[index].id = await Get.find<DatabaseController>()
-                  .insertComplexAbilityWithFilter(
+                  .addOrUpdateComplexAbility(
                       ca.ability, ca.entry, SkillsDatabase());
             }
           },
@@ -106,7 +107,7 @@ class AddKnowledgeButton extends CommonSpeedDialChild {
               var index = ac.knowledges.add(ca.ability);
               ac.knowledges.values[index].id =
                   await Get.find<DatabaseController>()
-                      .insertComplexAbilityWithFilter(
+                      .addOrUpdateComplexAbility(
                           ca.ability, ca.entry, KnowledgeDatabase());
             }
           },

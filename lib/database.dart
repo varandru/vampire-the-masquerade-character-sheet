@@ -311,27 +311,163 @@ class DatabaseController extends GetxController {
           },
           conflictAlgorithm: ConflictAlgorithm.replace));
 
-  Future<int> insertComplexAbilityWithFilter(
+  Future<int> addOrUpdateComplexAbility(
           ComplexAbility ability,
           ComplexAbilityEntry entry,
           ComplexAbilityEntryDatabaseDescription description) =>
-      database
-          .insert(
-              description.tableName,
-              {
-                'id': entry.databaseId,
-                'txt_id': ability.txtId,
-                'name': entry.name,
-                'description': entry.description,
-                'type': description.filter,
-              },
-              conflictAlgorithm: ConflictAlgorithm.rollback)
-          .then((value) => database.insert(description.playerLinkTable, {
-                'player_id': characterId.value,
-                description.fkName: value,
-                'current': ability.current,
-                'specialization': ability.specialization,
-              }));
+      description.filter == null
+          ? _addOrUpdateComplexAbilityWithoutFilter(ability, entry, description)
+          : _addOrUpdateComplexAbilityWithFilter(ability, entry, description);
+
+  Future<int> _addOrUpdateComplexAbilityWithFilter(
+          ComplexAbility ability,
+          ComplexAbilityEntry entry,
+          ComplexAbilityEntryDatabaseDescription description) =>
+      database.transaction((txn) => (ability.id == 0)
+          ? txn
+              .insert(
+                  description.tableName,
+                  {
+                    'id': entry.databaseId,
+                    'txt_id': ability.txtId,
+                    'name': entry.name,
+                    'description': entry.description,
+                    'type': description.filter,
+                  },
+                  conflictAlgorithm: ConflictAlgorithm.rollback)
+              .then(
+                (value) => txn.insert(
+                  description.playerLinkTable,
+                  {
+                    'player_id': characterId.value,
+                    description.fkName: value,
+                    'current': ability.current,
+                    'specialization': ability.specialization,
+                  },
+                ),
+              )
+          : txn.query(description.tableName, where: 'id = ?', whereArgs: [
+              ability.id
+            ]).then((value) => value.length != 0
+              ? ((value[0]['txt_id'] == null)
+                  ? txn.update(
+                      description.tableName,
+                      {
+                        'txt_id':
+                            ability.txtId ?? value[0]['txt_id'] as String?,
+                        'name': entry.name,
+                        'description':
+                            entry.description ?? value[0]['txt_id'] as String?,
+                      },
+                      where: 'id = ?',
+                      whereArgs: [ability.id])
+                  : txn
+                      .update(
+                          description.tableName,
+                          {
+                            'name': entry.name,
+                            'description': entry.description ??
+                                value[0]['txt_id'] as String?,
+                          },
+                          where: 'id = ?',
+                          whereArgs: [ability.id])
+                      .then((value) => txn.insert(
+                            description.playerLinkTable,
+                            {
+                              'player_id': characterId.value,
+                              description.fkName: value,
+                              'current': ability.current,
+                              'specialization': ability.specialization,
+                            },
+                            conflictAlgorithm: ConflictAlgorithm.replace,
+                          )))
+              : txn
+                  .insert(
+                      description.tableName,
+                      {
+                        'id': entry.databaseId,
+                        'txt_id': ability.txtId,
+                        'name': entry.name,
+                        'description': entry.description,
+                        'type': description.filter,
+                      },
+                      conflictAlgorithm: ConflictAlgorithm.rollback)
+                  .then((value) => txn.insert(
+                        description.playerLinkTable,
+                        {
+                          'player_id': characterId.value,
+                          description.fkName: value,
+                          'current': ability.current,
+                          'specialization': ability.specialization,
+                        },
+                        conflictAlgorithm: ConflictAlgorithm.replace,
+                      ))));
+
+  Future<int> _addOrUpdateComplexAbilityWithoutFilter(
+          ComplexAbility ability,
+          ComplexAbilityEntry entry,
+          ComplexAbilityEntryDatabaseDescription description) =>
+      database.transaction((txn) => ability.id == 0
+          ? txn
+              .insert(
+                  description.tableName,
+                  {
+                    'id': entry.databaseId,
+                    'txt_id': ability.txtId,
+                    'name': entry.name,
+                    'description': entry.description,
+                    'type': description.filter,
+                  },
+                  conflictAlgorithm: ConflictAlgorithm.rollback)
+              .then((value) => txn.insert(description.playerLinkTable, {
+                    'player_id': characterId.value,
+                    description.fkName: value,
+                    'current': ability.current,
+                    'specialization': ability.specialization,
+                  }))
+          : txn.query(description.tableName, where: 'id = ?', whereArgs: [
+              ability.id
+            ]).then((value) => value.length != 0
+              ? txn
+                  .update(
+                      description.tableName,
+                      {
+                        'txt_id':
+                            ability.txtId ?? value[0]['txt_id'] as String?,
+                        'name': entry.name,
+                        'description':
+                            entry.description ?? value[0]['txt_id'] as String?,
+                      },
+                      where: 'id = ?',
+                      whereArgs: [ability.id])
+                  .then((value) => txn.insert(
+                      description.playerLinkTable,
+                      {
+                        'player_id': characterId.value,
+                        description.fkName: value,
+                        'current': ability.current,
+                        'specialization': ability.specialization,
+                      },
+                      conflictAlgorithm: ConflictAlgorithm.replace))
+              : txn
+                  .insert(
+                      description.tableName,
+                      {
+                        'id': entry.databaseId,
+                        'txt_id': ability.txtId,
+                        'name': entry.name,
+                        'description': entry.description,
+                      },
+                      conflictAlgorithm: ConflictAlgorithm.rollback)
+                  .then((value) => txn.insert(
+                      description.playerLinkTable,
+                      {
+                        'player_id': characterId.value,
+                        description.fkName: value,
+                        'current': ability.current,
+                        'specialization': ability.specialization,
+                      },
+                      conflictAlgorithm: ConflictAlgorithm.replace))));
 
   Future<void> addOrUpdateRitual(Ritual ritual) async {
     database.transaction((txn) async {
@@ -340,7 +476,7 @@ class DatabaseController extends GetxController {
       /// 1. Let's handle school id
       /// 1.1 If it isn't in ritual itself, try from DB
       if (ritual.schoolId == null && ritual.school.isNotEmpty) {
-        ritual.schoolId = await database
+        ritual.schoolId = await txn
             .query(
               'ritual_schools',
               columns: ['id'],
@@ -372,7 +508,7 @@ class DatabaseController extends GetxController {
           ritualId = ritual.dbId;
         } else {
           /// There isn't a corresponding ritual. Let's add it.
-          ritualId = await database.insert('rituals', {
+          ritualId = await txn.insert('rituals', {
             'level': ritual.level,
             'name': ritual.name,
             'system': ritual.system,
@@ -384,7 +520,7 @@ class DatabaseController extends GetxController {
       } else {
         /// There is no database ritual id. Let's just add a new one,
         /// and if there are duplicates, look here
-        ritualId = await database.insert('rituals', {
+        ritualId = await txn.insert('rituals', {
           'level': ritual.level,
           'name': ritual.name,
           'system': ritual.system,
@@ -393,7 +529,7 @@ class DatabaseController extends GetxController {
           'discipline_id': ritual.schoolId!
         });
       }
-      return database.insert('player_rituals',
+      return txn.insert('player_rituals',
           {'player_id': characterId.value, 'ritual_id': ritualId},
           conflictAlgorithm: ConflictAlgorithm.rollback);
     });

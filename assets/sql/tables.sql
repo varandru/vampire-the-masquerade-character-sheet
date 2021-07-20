@@ -1,7 +1,7 @@
 -- General attribute description
 create table if not exists attributes(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  txt_id TEXT UNIQUE,
+  txt_id TEXT,
   name TEXT,
   description TEXT,
   type INTEGER NOT NULL -- 0 - physical, 1 - social, 2 - mental
@@ -27,7 +27,7 @@ create table if not exists attribute_levels (
 -- General ability description
 create table if not exists abilities(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  txt_id TEXT UNIQUE,
+  txt_id TEXT,
   name TEXT,
   description TEXT,
   type INTEGER NOT NULL 
@@ -53,7 +53,7 @@ create table if not exists ability_levels (
 -- General background description
 create table if not exists backgrounds(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  txt_id TEXT UNIQUE,
+  txt_id TEXT,
   name TEXT,
   description TEXT
 );

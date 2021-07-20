@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'database.dart';
 import 'common_logic.dart';
+import 'database.dart';
 
 List<Widget> makeIconRow(
     int current, int max, IconData filled, IconData empty) {
@@ -85,12 +85,8 @@ class ComplexAbilityWidget extends StatelessWidget {
           updateCallback(a1, a2);
 
           /// Database entry update
-          if (description.filter == null)
-            Get.find<DatabaseController>()
-                .updateComplexAbilityNoFilter(a1, e, description);
-          else
-            Get.find<DatabaseController>()
-                .updateComplexAbilityWithFilter(a1, e, description);
+          Get.find<DatabaseController>()
+              .addOrUpdateComplexAbility(a1, e, description);
         },
             deleteCallback: deleteCallback,
             textTheme: Theme.of(context).textTheme));
@@ -178,6 +174,7 @@ class ComplexAbilityPopup extends Dialog {
                     await Get.dialog<ComplexAbilityPair>(ComplexAbilityDialog(
                   name: 'Edit ${_attribute.name}',
                   ability: _attribute,
+                  entry: entry,
                 ));
                 if (ca != null) {
                   updateCallback(ca.ability, _attribute, ca.entry);
