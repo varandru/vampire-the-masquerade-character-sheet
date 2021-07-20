@@ -219,78 +219,6 @@ class DatabaseController extends GetxController {
     });
   }
 
-  /// This is basically backgrounds, lol
-  Future<int> updateComplexAbilityNoFilter(
-          ComplexAbility ability,
-          ComplexAbilityEntry entry,
-          ComplexAbilityEntryDatabaseDescription description) =>
-      database
-          .query(
-            description.tableName,
-            where: 'id = ?',
-            whereArgs: [entry.databaseId],
-          )
-          .then((value) => Get.find<DatabaseController>().database.insert(
-                description.tableName,
-                {
-                  'id': entry.databaseId,
-                  'name': entry.name,
-                  'description': entry.description ??
-                      (value.length > 0 ? value[0]['description'] : null),
-                },
-                conflictAlgorithm: ConflictAlgorithm.rollback,
-              ))
-
-          /// Current, possibly new id
-          .then((value) => Get.find<DatabaseController>().database.insert(
-                description.playerLinkTable,
-                {
-                  'player_id': Get.find<DatabaseController>().characterId.value,
-                  description.fkName: value,
-                  'current': ability.current,
-                },
-                conflictAlgorithm: ConflictAlgorithm.rollback,
-              ));
-
-  Future<int> updateComplexAbilityWithFilter(
-          ComplexAbility ability,
-          ComplexAbilityEntry entry,
-          ComplexAbilityEntryDatabaseDescription description) =>
-      database
-          .query(
-            description.tableName,
-            columns: ['description', 'txt_id'],
-            where: 'id = ?',
-            whereArgs: [entry.databaseId],
-          )
-          .then((value) => Get.find<DatabaseController>().database.insert(
-                description.tableName,
-                {
-                  'id': entry.databaseId,
-                  'txt_id':
-                      (value.length > 0 ? value[0]['txt_id'] : ability.txtId),
-                  'name': entry.name,
-                  'type': description.filter,
-                  'description': entry.description ??
-                      (value.length > 0 ? value[0]['description'] : null),
-                },
-                conflictAlgorithm: ConflictAlgorithm.rollback,
-              ))
-
-          /// Current, possibly new id
-          .then((value) => Get.find<DatabaseController>().database.insert(
-                description.playerLinkTable,
-                {
-                  'player_id': Get.find<DatabaseController>().characterId.value,
-                  description.fkName: value,
-                  'current': ability.current,
-                  'specialization': ability.specialization.isNotEmpty
-                      ? ability.specialization
-                      : null
-                },
-                conflictAlgorithm: ConflictAlgorithm.rollback,
-              ));
-
   Future<int> addDiscipline(Discipline discipline) => database
       .insert(
           'disciplines',
@@ -367,7 +295,7 @@ class DatabaseController extends GetxController {
                           {
                             'name': entry.name,
                             'description': entry.description ??
-                                value[0]['txt_id'] as String?,
+                                value[0]['description'] as String?,
                           },
                           where: 'id = ?',
                           whereArgs: [ability.id])

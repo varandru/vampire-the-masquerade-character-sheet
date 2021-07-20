@@ -331,6 +331,7 @@ class ComplexAbilityDialog extends Dialog {
                 e.value.description = null;
 
               if (e.value.databaseId == null) e.value.databaseId = ca.value.id;
+              if (e.value.name != ca.value.name) e.value.name = ca.value.name;
 
               Get.back(result: ComplexAbilityPair(ca.value, e.value));
             } else {
