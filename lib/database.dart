@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:vampire_the_masquerade_character_sheet/common_logic.dart';
+import 'package:vampire_the_masquerade_character_sheet/damage.dart';
 import 'package:vampire_the_masquerade_character_sheet/xp.dart';
 
 import 'abilities.dart';
@@ -119,6 +120,9 @@ class DatabaseController extends GetxController {
       Get.put(RitualController());
       Get.find<RitualController>().load(characterFile['rituals'], rd, dd);
 
+      Get.put(DamageController());
+      Get.find<DamageController>().fillDefaultHealthLevels(database);
+
       await database.delete('characters');
 
       int id = await database.insert(
@@ -188,6 +192,9 @@ class DatabaseController extends GetxController {
             conflictAlgorithm: ConflictAlgorithm.rollback);
       }
 
+      Get.find<DamageController>()
+          .fillDefaultHealthLevelsForPlayer(database, id);
+
       print("Default database initialized");
     }, onOpen: (database) async {
       print("Loading character data");
@@ -216,6 +223,8 @@ class DatabaseController extends GetxController {
       Get.find<MeritsAndFlawsController>().fromDatabase(database);
       Get.put(XpController());
       Get.find<XpController>().fromDatabase(database);
+      Get.put(DamageController());
+      Get.find<DamageController>().fromDatabase(database);
     });
   }
 

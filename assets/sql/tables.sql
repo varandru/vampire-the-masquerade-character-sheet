@@ -251,3 +251,20 @@ create table if not exists player_xp(
 
   FOREIGN KEY(player_id) REFERENCES characters(id)
 );
+
+create table if not exists health_levels (
+  level INTEGER NOT NULL UNIQUE,
+  name TEXT NOT NULL,
+  penalty INT NOT NULL
+);
+
+create table if not exists player_damage (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  player_id INTEGER NOT NULL,
+  level INTEGER NOT NULL, -- position in damage column
+  status INTEGER NOT NULL, -- 0 - not damaged ( ), 1 - bludgeoning/lethal (/), 2 - aggravated (X)
+  UNIQUE(player_id, level),
+  FOREIGN KEY(player_id) REFERENCES characters(id),
+  FOREIGN KEY(level) REFERENCES health_levels(level)
+);
+
