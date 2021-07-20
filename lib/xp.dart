@@ -79,8 +79,9 @@ class XpController extends GetxController {
 }
 
 abstract class XpEntry {
-  XpEntry(this.description);
+  XpEntry(this.id, this.description);
 
+  int id;
   String description;
 
   Map<String, dynamic> toJson() {
@@ -98,15 +99,16 @@ abstract class XpEntry {
 
 class XpEntryNewAbility extends XpEntry {
   XpEntryNewAbility({
+    required int id,
     required this.cost,
     required this.name,
     required String description,
-  }) : super(description);
+  }) : super(id, description);
 
   XpEntryNewAbility.fromJson(Map<String, dynamic> json)
       : name = json["name"],
         cost = json["cost"],
-        super(json["description"] ?? "");
+        super(0, json["description"] ?? "");
 
   String name;
   int cost;
@@ -132,7 +134,7 @@ class XpEntryNewAbility extends XpEntry {
   XpEntryNewAbility.fromDatabase(Map<String, Object?> entry)
       : name = entry['name'] as String,
         cost = entry['cost'] as int,
-        super(entry['description'] as String? ?? '');
+        super(entry['id'] as int, entry['description'] as String? ?? '');
 
   Map<String, Object?> toDatabase() =>
       {'name': name, 'cost': cost, 'description': description};
@@ -140,19 +142,20 @@ class XpEntryNewAbility extends XpEntry {
 
 class XpEntryUpgradedAbility extends XpEntry {
   XpEntryUpgradedAbility({
+    required int id,
     required this.cost,
     required this.name,
     required this.oldLevel,
     required this.newLevel,
     required String description,
-  }) : super(description);
+  }) : super(id, description);
 
   XpEntryUpgradedAbility.fromJson(Map<String, dynamic> json)
       : name = json["name"],
         cost = json["cost"],
         oldLevel = json["old_level"],
         newLevel = json["new_level"],
-        super(json["description"] ?? "");
+        super(0, json["description"] ?? "");
 
   int cost;
   String name;
@@ -176,7 +179,7 @@ class XpEntryUpgradedAbility extends XpEntry {
         cost = entry['cost'] as int,
         newLevel = entry['new_level'] as int,
         oldLevel = entry['old_level'] as int,
-        super(entry['description'] as String? ?? '');
+        super(entry['id'] as int, entry['description'] as String? ?? '');
 
   Map<String, Object?> toDatabase() => {
         'name': name,
@@ -189,13 +192,14 @@ class XpEntryUpgradedAbility extends XpEntry {
 
 class XpEntryGained extends XpEntry {
   XpEntryGained({
+    required int id,
     required this.gained,
     required String description,
-  }) : super(description);
+  }) : super(id, description);
 
   XpEntryGained.fromJson(Map<String, dynamic> json)
       : gained = json["gained"],
-        super(json["description"] ?? "");
+        super(0, json["description"] ?? "");
 
   int gained;
 
@@ -209,12 +213,13 @@ class XpEntryGained extends XpEntry {
 
   XpEntryGained.fromDatabase(Map<String, Object?> entry)
       : gained = entry['cost'] as int,
-        super(entry['description'] as String? ?? '');
+        super(entry['id'] as int, entry['description'] as String? ?? '');
 
   Map<String, Object?> toDatabase() =>
       {'gained': gained, 'description': description};
 }
 
 class XpEntryFailedLoad extends XpEntry {
-  XpEntryFailedLoad(Map<String, Object?> dbEntry) : super(dbEntry.toString());
+  XpEntryFailedLoad(Map<String, Object?> dbEntry)
+      : super(dbEntry['id'] as int? ?? 0, dbEntry.toString());
 }

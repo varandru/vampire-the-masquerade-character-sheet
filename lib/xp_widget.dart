@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vampire_the_masquerade_character_sheet/common_widget.dart';
+import 'package:vampire_the_masquerade_character_sheet/database.dart';
 import 'package:vampire_the_masquerade_character_sheet/xp.dart';
 
 import 'drawer_menu.dart';
@@ -10,7 +11,14 @@ class XpSectionWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final XpController xpc = Get.find();
 
-    final deleteCallback = (int index) => xpc.log.removeAt(index);
+    final deleteCallback = (int index) {
+      Get.find<DatabaseController>().database.delete(
+        'player_xp',
+        where: 'id = ?',
+        whereArgs: [xpc.log[index].id],
+      );
+      xpc.log.removeAt(index);
+    };
 
     return Column(
       children: [
@@ -74,6 +82,16 @@ class XpEntryNewAbilityWidget extends StatelessWidget {
           ));
           if (ca != null) {
             final XpController xpc = Get.find();
+            Get.find<DatabaseController>().database.update(
+                  'player_xp',
+                  {
+                    'description': ca.description,
+                    'cost': ca.cost,
+                    'name': ca.name
+                  },
+                  where: 'id = ?',
+                  whereArgs: [ca.id],
+                );
             xpc.xpSpent.value += ca.cost - ability.value.cost;
             ability.update((val) => val?.copy(ca));
           }
@@ -94,7 +112,7 @@ class XpEntryNewAbilityDialog extends Dialog {
   @override
   Widget build(BuildContext context) {
     var entry = (entryNewAbility ??
-            XpEntryNewAbility(cost: 0, name: "", description: ""))
+            XpEntryNewAbility(id: 0, cost: 0, name: "", description: ""))
         .obs;
 
     return SimpleDialog(
@@ -170,6 +188,7 @@ class XpEntryNewAbilityButton extends CommonSpeedDialChild {
             if (ca != null) {
               XpController xpc = Get.find();
               xpc.xpSpent.value += ca.cost;
+              ca.id = await Get.find<DatabaseController>().addXpEntry(ca);
               xpc.log.add(ca);
             }
           },
@@ -209,6 +228,18 @@ class XpEntryUpgradedAbilityWidget extends StatelessWidget {
           if (ca != null) {
             final XpController xpc = Get.find();
             xpc.xpSpent.value += ca.cost - entry.value.cost;
+            Get.find<DatabaseController>().database.update(
+                  'player_xp',
+                  {
+                    'description': ca.description,
+                    'cost': ca.cost,
+                    'name': ca.name,
+                    'old_level': ca.oldLevel,
+                    'new_level': ca.newLevel,
+                  },
+                  where: 'id = ?',
+                  whereArgs: [ca.id],
+                );
             entry.update((val) => val?.copy(ca));
           }
         },
@@ -229,7 +260,12 @@ class XpEntryUpgradedAbilityDialog extends Dialog {
   Widget build(BuildContext context) {
     var entry = (entryUpgradedAbility ??
             XpEntryUpgradedAbility(
-                cost: 0, name: "", description: "", oldLevel: 1, newLevel: 1))
+                id: 0,
+                cost: 0,
+                name: "",
+                description: "",
+                oldLevel: 1,
+                newLevel: 1))
         .obs;
 
     return SimpleDialog(
@@ -348,6 +384,7 @@ class XpEntryUpgradedAbilityButton extends CommonSpeedDialChild {
             if (ca != null) {
               XpController xpc = Get.find();
               xpc.xpSpent.value += ca.cost;
+              ca.id = await Get.find<DatabaseController>().addXpEntry(ca);
               xpc.log.add(ca);
             }
           },
@@ -384,6 +421,12 @@ class XpEntryGainedWidget extends StatelessWidget {
           if (ca != null) {
             final XpController xpc = Get.find();
             xpc.xpTotal.value += ca.gained - entry.value.gained;
+            Get.find<DatabaseController>().database.update(
+                  'player_xp',
+                  {'cost': ca.gained, 'description': ca.description},
+                  where: 'id = ?',
+                  whereArgs: [ca.id],
+                );
             entry.update((val) => val?.copy(ca));
           }
         },
@@ -402,7 +445,8 @@ class XpEntryGainedDialog extends Dialog {
 
   @override
   Widget build(BuildContext context) {
-    var entry = (entryGained ?? XpEntryGained(gained: 0, description: "")).obs;
+    var entry =
+        (entryGained ?? XpEntryGained(id: 0, gained: 0, description: "")).obs;
 
     return SimpleDialog(
       title: entryGained == null ? Text("Gain XP") : Text("Edit XP gain"),
@@ -492,6 +536,7 @@ class AddXpEntryGainedButton extends CommonSpeedDialChild {
             if (ca != null) {
               XpController xpc = Get.find();
               xpc.xpTotal.value += ca.gained;
+              ca.id = await Get.find<DatabaseController>().addXpEntry(ca);
               xpc.log.add(ca);
             }
           },
