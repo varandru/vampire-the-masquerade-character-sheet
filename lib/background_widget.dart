@@ -6,6 +6,7 @@ import 'package:vampire_the_masquerade_character_sheet/database.dart';
 import 'backgrounds.dart';
 import 'common_logic.dart';
 import 'common_widget.dart';
+import 'damage_widget.dart';
 import 'drawer_menu.dart';
 import 'virtues_widget.dart';
 
@@ -36,7 +37,15 @@ class AdvantagesWidget extends StatelessWidget {
           children: [
             BackgroundColumnWidget(),
             VirtuesColumnWidget(),
-            SummarizedInfoWidget(),
+            SummarizedInfoWidgetTop(),
+            Row(
+              children: [
+                Flexible(child: SummarizedInfoWidgetBottom()),
+                Flexible(child: DamageSection()),
+              ],
+              mainAxisSize: MainAxisSize.min,
+            ),
+            Container(height: 70)
           ],
         ),
       ],

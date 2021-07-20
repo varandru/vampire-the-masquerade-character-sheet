@@ -235,96 +235,13 @@ class CourageDialog extends VirtueEditWidget {
         );
 }
 
-class SummarizedInfoWidget extends StatelessWidget {
+class SummarizedInfoWidgetTop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final noTitleRestraint = BoxConstraints(
         maxHeight: 22, minHeight: 22, maxWidth: 220, minWidth: 220);
 
-    List<Widget> elements = [];
-
-    final MostVariedController mvc = Get.find();
     final VirtuesController vc = Get.find();
-
-    Color highlightColor = Theme.of(context).accentColor;
-
-    // Humanity
-    elements.add(Text(
-      "Humanity",
-      style: Theme.of(context).textTheme.headline6,
-      textAlign: TextAlign.center,
-    ));
-    elements.add(
-      Container(
-        child: InkWell(
-          child: Obx(() => NoTitleCounterWidget(current: vc.humanity)),
-          onTap: () async {
-            var val = await Get.dialog<int>(
-                SingleNumberEditor(vc.humanity, "Edit Humanity"));
-            if (val != null) {
-              vc.humanity += val - vc.humanity;
-            }
-          },
-        ),
-        constraints: noTitleRestraint,
-      ),
-    );
-
-    // Willpower
-    elements.add(Text(
-      "Willpower",
-      style: Theme.of(context).textTheme.headline6,
-      textAlign: TextAlign.center,
-    ));
-    elements.add(Container(
-      child: InkWell(
-        child: Obx(() => NoTitleCounterWidget(
-              current: vc.willpower,
-              max: maxWillpowerCount,
-            )),
-        onTap: () async {
-          var val = await Get.dialog<int>(
-              SingleNumberEditor(vc.willpower, "Edit Willpower maximum"));
-          if (val != null) {
-            vc.willpower += val - vc.willpower;
-          }
-        },
-      ),
-      constraints: noTitleRestraint,
-    ));
-    elements.add(
-      Obx(() => SquareButtonsRow(
-              mvc.will, vc.willpower, 20, (value) => mvc.will = value,
-              highlight: highlightColor)
-          // Wrap(children: makeWillPowerRow(mvc.will.value, vc.willpower))
-          ),
-    );
-
-    elements.add(
-      InkWell(
-          child: Text(
-            "Bloodpool",
-            style: Theme.of(context).textTheme.headline6,
-            textAlign: TextAlign.center,
-          ),
-          onTap: () async {
-            var val = await Get.dialog<int>(
-                SingleNumberEditor(mvc.bloodMax, "Edit Bloodpool maximum"));
-            if (val != null) {
-              mvc.bloodMax = val;
-            }
-          }),
-    );
-
-    elements.add(
-      Obx(() => SquareButtonsRow(
-          mvc.blood, mvc.bloodMax, 20, (value) => mvc.blood = value,
-          highlight: highlightColor)),
-    );
-
-    // return Column(
-    //   children: elements,
-    // );
 
     return ListView.builder(
       itemBuilder: (context, i) {
@@ -379,13 +296,41 @@ class SummarizedInfoWidget extends StatelessWidget {
               ),
               constraints: noTitleRestraint,
             );
-          case 4:
+          default:
+            return Placeholder();
+        }
+      },
+      itemCount: 4,
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+    );
+  }
+}
+
+class SummarizedInfoWidgetBottom extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final MostVariedController mvc = Get.find();
+    final VirtuesController vc = Get.find();
+
+    Color highlightColor = Theme.of(context).accentColor;
+
+    return ListView.builder(
+      itemBuilder: (context, i) {
+        switch (i) {
+          case 0:
+            return Text(
+              "Willpower",
+              style: Theme.of(context).textTheme.headline6,
+              textAlign: TextAlign.center,
+            );
+          case 1:
             return Obx(() => SquareButtonsRow(mvc.will, vc.willpower,
                     maxWillpowerCount, (value) => mvc.will = value,
                     highlight: highlightColor)
                 // Wrap(children: makeWillPowerRow(mvc.will.value, vc.willpower))
                 );
-          case 5:
+          case 2:
             return InkWell(
                 child: Text(
                   "Bloodpool",
@@ -403,7 +348,7 @@ class SummarizedInfoWidget extends StatelessWidget {
                     if (mvc.blood > val) mvc.blood = val;
                   }
                 });
-          case 6:
+          case 3:
             return Obx(() => SquareButtonsRow(mvc.blood, mvc.bloodMax,
                 maxBloodCount, (value) => mvc.blood = value,
                 highlight: highlightColor));
@@ -411,7 +356,7 @@ class SummarizedInfoWidget extends StatelessWidget {
             return Placeholder();
         }
       },
-      itemCount: 7,
+      itemCount: 4,
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
     );
