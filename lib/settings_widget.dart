@@ -42,25 +42,14 @@ class SettingsSection extends StatelessWidget {
       itemBuilder: (context, index) {
         switch (index) {
           case 0:
-            return Obx(
-              () => SwitchListTile(
-                value: Get.isDarkMode.obs.value,
-                onChanged: (isDark) {
-                  Get.changeTheme(
-                    isDark
-                        ? ThemeData.dark().copyWith(
-                            primaryColor: Colors.red,
-                            accentColor: Colors.redAccent,
-                            toggleableActiveColor: Colors.redAccent)
-                        : ThemeData.light().copyWith(
-                            primaryColor: Colors.red,
-                            accentColor: Colors.redAccent,
-                            toggleableActiveColor: Colors.redAccent),
-                  );
-                },
-                title: Text("Dark theme"),
-              ),
+            return SwitchListTile(
+              value: Get.isDarkMode,
+              onChanged: (isDark) {
+                Get.changeThemeMode(isDark ? ThemeMode.dark : ThemeMode.light);
+              },
+              title: Text("Dark theme"),
             );
+
           case 1:
             return ListTile(
               title: Text('Pick a character portrait'),
