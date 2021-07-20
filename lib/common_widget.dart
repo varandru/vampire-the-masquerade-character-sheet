@@ -80,20 +80,23 @@ class ComplexAbilityWidget extends StatelessWidget {
             name: result[0]['name'] as String,
             description: result[0]['description'] as String?);
 
-        Get.dialog<void>(ComplexAbilityPopup(attribute, entry,
-            updateCallback: (a1, a2, e) {
+        Get.dialog<void>(
+            ComplexAbilityPopup(attribute, entry, updateCallback: (a1, a2, e) {
           updateCallback(a1, a2);
 
           /// Database entry update
-          if (description.filter == null)
-            Get.find<DatabaseController>()
-                .updateComplexAbilityNoFilter(a1, e, description);
-          else
-            Get.find<DatabaseController>()
-                .updateComplexAbilityWithFilter(a1, e, description);
-        },
-            deleteCallback: deleteCallback,
-            textTheme: Theme.of(context).textTheme));
+          Get.find<DatabaseController>()
+              .addOrUpdateComplexAbility(a1, e, description);
+        }, deleteCallback: (ability) {
+          deleteCallback(ability);
+          Get.find<DatabaseController>().database.delete(
+              description.playerLinkTable,
+              where: 'player_id = ? and ${description.fkName} = ?',
+              whereArgs: [
+                Get.find<DatabaseController>().characterId.value,
+                ability.id
+              ]);
+        }, textTheme: Theme.of(context).textTheme));
       },
     );
   }
@@ -178,6 +181,7 @@ class ComplexAbilityPopup extends Dialog {
                     await Get.dialog<ComplexAbilityPair>(ComplexAbilityDialog(
                   name: 'Edit ${_attribute.name}',
                   ability: _attribute,
+                  entry: entry,
                 ));
                 if (ca != null) {
                   updateCallback(ca.ability, _attribute, ca.entry);
@@ -334,6 +338,7 @@ class ComplexAbilityDialog extends Dialog {
                 e.value.description = null;
 
               if (e.value.databaseId == null) e.value.databaseId = ca.value.id;
+              if (e.value.name != ca.value.name) e.value.name = ca.value.name;
 
               Get.back(result: ComplexAbilityPair(ca.value, e.value));
             } else {
