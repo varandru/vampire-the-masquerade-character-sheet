@@ -256,22 +256,18 @@ class ComplexAbilityDialog extends Dialog {
         : ComplexAbilityEntry(name: 'Undefined').obs;
 
     List<Widget> children = [];
-    if (ca.value.isNameEditable) {
-      children.add(TextField(
-        controller: TextEditingController()..text = ca.value.name,
-        onChanged: (value) {
-          ca.update(
-            (val) => val?.name = value,
-          );
-          e.update(
-            (val) => val?.name = value,
-          );
-        },
-        decoration: InputDecoration(labelText: "Name"),
-      ));
-    } else {
-      children.add(Text(ca.value.name));
-    }
+    children.add(TextField(
+      controller: TextEditingController()..text = ca.value.name,
+      onChanged: (value) {
+        ca.update(
+          (val) => val?.name = value,
+        );
+        e.update(
+          (val) => val?.name = value,
+        );
+      },
+      decoration: InputDecoration(labelText: "Name"),
+    ));
 
     children.add(Row(
       children: [
