@@ -48,152 +48,162 @@ class DatabaseController extends GetxController {
     database = await openDatabase(
         join(await getDatabasesPath(), 'kindred_database.db'),
         version: 1, onCreate: (database, version) async {
-      // 1. Get assets/json/sql/tables.sql. It creates the tables
-      String tableScript = await rootBundle.loadString('assets/sql/tables.sql');
+      if (version >= 1) {
+        // 1. Get assets/json/sql/tables.sql. It creates the tables
+        String tableScript =
+            await rootBundle.loadString('assets/sql/tables.sql');
 
-      var scripts = tableScript.split(';');
-      scripts.removeLast();
-      for (var script in scripts) {
-        await database.execute(script);
-      }
+        var scripts = tableScript.split(';');
+        scripts.removeLast();
+        for (var script in scripts) {
+          await database.execute(script);
+        }
 
-      // 2. Load default_*.json into the tables
-      // Attribute dictionary
-      AttributeDictionary atrd =
-          AttributeDictionary(await _loadAttributeList());
-      await atrd.loadAllToDatabase(database);
+        // 2. Load default_*.json into the tables
+        // Attribute dictionary
+        AttributeDictionary atrd =
+            AttributeDictionary(await _loadAttributeList());
+        await atrd.loadAllToDatabase(database);
 
-      // Abilities dictionary
-      AbilitiesDictionary abd = AbilitiesDictionary(await _loadAbilitiesList());
-      await abd.loadAllToDatabase(database);
+        // Abilities dictionary
+        AbilitiesDictionary abd =
+            AbilitiesDictionary(await _loadAbilitiesList());
+        await abd.loadAllToDatabase(database);
 
-      // Backgrounds dictionary
-      BackgroundDictionary backd =
-          BackgroundDictionary(await _loadBackgroundList());
-      await backd.loadAllToDatabase(database);
+        // Backgrounds dictionary
+        BackgroundDictionary backd =
+            BackgroundDictionary(await _loadBackgroundList());
+        await backd.loadAllToDatabase(database);
 
-      // Merits and Flaws dictionary
-      MeritsAndFlawsDictionary mfd =
-          MeritsAndFlawsDictionary(await _loadMeritsAndFlawsList());
-      await mfd.loadAllToDatabase(database);
+        // Merits and Flaws dictionary
+        MeritsAndFlawsDictionary mfd =
+            MeritsAndFlawsDictionary(await _loadMeritsAndFlawsList());
+        await mfd.loadAllToDatabase(database);
 
-      // Disciplines dictionary
-      DisciplineDictionary dd =
-          DisciplineDictionary(await _loadDisciplineList());
-      await dd.loadAllToDatabase(database);
+        // Disciplines dictionary
+        DisciplineDictionary dd =
+            DisciplineDictionary(await _loadDisciplineList());
+        await dd.loadAllToDatabase(database);
 
-      // Rituals dictionary
-      RitualDictionary rd = RitualDictionary(await _loadRitualsList());
-      await rd.loadAllToDatabase(database);
+        // Rituals dictionary
+        RitualDictionary rd = RitualDictionary(await _loadRitualsList());
+        await rd.loadAllToDatabase(database);
 
-      print("Loading default character");
-      var characterFile = jsonDecode(await _loadCharacter());
-      Get.put(MostVariedController());
-      Get.find<MostVariedController>()
-          .fromJson(characterFile['most_varied_variables']);
+        print("Loading default character");
+        var characterFile = jsonDecode(await _loadCharacter());
+        Get.put(MostVariedController());
+        Get.find<MostVariedController>()
+            .fromJson(characterFile['most_varied_variables']);
 
-      Get.put(VirtuesController());
-      Get.find<VirtuesController>().load(characterFile['virtues']);
+        Get.put(VirtuesController());
+        Get.find<VirtuesController>().load(characterFile['virtues']);
 
-      Get.put(MainInfoController());
-      Get.find<MainInfoController>().load(characterFile['main_info']);
+        Get.put(MainInfoController());
+        Get.find<MainInfoController>().load(characterFile['main_info']);
 
-      Get.put(AttributesController());
-      Get.find<AttributesController>().load(characterFile['attributes'], atrd);
+        Get.put(AttributesController());
+        Get.find<AttributesController>()
+            .load(characterFile['attributes'], atrd);
 
-      Get.put(AbilitiesController());
-      Get.find<AbilitiesController>().fromJson(characterFile['abilities'], abd);
+        Get.put(AbilitiesController());
+        Get.find<AbilitiesController>()
+            .fromJson(characterFile['abilities'], abd);
 
-      Get.put(BackgroundsController());
-      Get.find<BackgroundsController>()
-          .fromJson(characterFile['backgrounds'], backd);
+        Get.put(BackgroundsController());
+        Get.find<BackgroundsController>()
+            .fromJson(characterFile['backgrounds'], backd);
 
-      Get.put(MeritsAndFlawsController());
-      Get.find<MeritsAndFlawsController>()
-          .loadMerits(characterFile['merits'], mfd);
-      Get.find<MeritsAndFlawsController>()
-          .loadFlaws(characterFile['flaws'], mfd);
+        Get.put(MeritsAndFlawsController());
+        Get.find<MeritsAndFlawsController>()
+            .loadMerits(characterFile['merits'], mfd);
+        Get.find<MeritsAndFlawsController>()
+            .loadFlaws(characterFile['flaws'], mfd);
 
-      Get.put(DisciplineController());
-      Get.find<DisciplineController>().load(characterFile['disciplines'], dd);
+        Get.put(DisciplineController());
+        Get.find<DisciplineController>().load(characterFile['disciplines'], dd);
 
-      Get.put(RitualController());
-      Get.find<RitualController>().load(characterFile['rituals'], rd, dd);
+        Get.put(RitualController());
+        Get.find<RitualController>().load(characterFile['rituals'], rd, dd);
 
-      Get.put(DamageController());
-      Get.find<DamageController>().fillDefaultHealthLevels(database);
+        Get.put(DamageController());
+        Get.find<DamageController>().fillDefaultHealthLevels(database);
 
-      await database.delete('characters');
+        await database.delete('characters');
 
-      int id = await database.insert(
-          'characters',
-          {
-            'name': Get.find<MainInfoController>().characterName,
-            'player_name': Get.find<MainInfoController>().playerName,
-            'chronicle': Get.find<MainInfoController>().chronicle,
-            'nature': Get.find<MainInfoController>().nature,
-            'demeanor': Get.find<MainInfoController>().demeanor,
-            'concept': Get.find<MainInfoController>().concept,
-            'clan': Get.find<MainInfoController>().clan,
-            'generation': Get.find<MainInfoController>().generation,
-            'sire': Get.find<MainInfoController>().sire,
-            'conscience': Get.find<VirtuesController>().conscience,
-            'self_control': Get.find<VirtuesController>().selfControl,
-            'courage': Get.find<VirtuesController>().courage,
-            'humanity': Get.find<VirtuesController>().humanity,
-            'willpower': Get.find<VirtuesController>().willpower,
-            'blood_max': Get.find<MostVariedController>().bloodMax,
-            'will': Get.find<MostVariedController>().will,
-            'blood': Get.find<MostVariedController>().blood,
-          },
-          conflictAlgorithm: ConflictAlgorithm.rollback);
-
-      for (var attribute in Get.find<AttributesController>().attributes) {
-        var response = await database.query('attributes',
-            columns: ['id'], where: 'txt_id = ?', whereArgs: [attribute.txtId]);
-
-        await database.insert(
-            'player_attributes',
+        int id = await database.insert(
+            'characters',
             {
-              'player_id': id,
-              'attribute_id': response[0]['id'] as int,
-              'current': attribute.current,
+              'name': Get.find<MainInfoController>().characterName,
+              'player_name': Get.find<MainInfoController>().playerName,
+              'chronicle': Get.find<MainInfoController>().chronicle,
+              'nature': Get.find<MainInfoController>().nature,
+              'demeanor': Get.find<MainInfoController>().demeanor,
+              'concept': Get.find<MainInfoController>().concept,
+              'clan': Get.find<MainInfoController>().clan,
+              'generation': Get.find<MainInfoController>().generation,
+              'sire': Get.find<MainInfoController>().sire,
+              'conscience': Get.find<VirtuesController>().conscience,
+              'self_control': Get.find<VirtuesController>().selfControl,
+              'courage': Get.find<VirtuesController>().courage,
+              'humanity': Get.find<VirtuesController>().humanity,
+              'willpower': Get.find<VirtuesController>().willpower,
+              'blood_max': Get.find<MostVariedController>().bloodMax,
+              'will': Get.find<MostVariedController>().will,
+              'blood': Get.find<MostVariedController>().blood,
             },
             conflictAlgorithm: ConflictAlgorithm.rollback);
+
+        for (var attribute in Get.find<AttributesController>().attributes) {
+          var response = await database.query('attributes',
+              columns: ['id'],
+              where: 'txt_id = ?',
+              whereArgs: [attribute.txtId]);
+
+          await database.insert(
+              'player_attributes',
+              {
+                'player_id': id,
+                'attribute_id': response[0]['id'] as int,
+                'current': attribute.current,
+              },
+              conflictAlgorithm: ConflictAlgorithm.rollback);
+        }
+
+        for (var ability in Get.find<AbilitiesController>().abilities) {
+          var response = await database.query('abilities',
+              columns: ['id'], where: 'txt_id = ?', whereArgs: [ability.txtId]);
+          print('Adding ability ${ability.txtId}');
+
+          await database.insert(
+              'player_abilities',
+              {
+                'player_id': id,
+                'ability_id': response[0]['id'] as int,
+                'current': ability.current,
+              },
+              conflictAlgorithm: ConflictAlgorithm.rollback);
+        }
+
+        for (var attribute
+            in Get.find<BackgroundsController>().backgrounds.value.values) {
+          var response = await database.query('backgrounds',
+              columns: ['id'],
+              where: 'txt_id = ?',
+              whereArgs: [attribute.txtId]);
+
+          await database.insert(
+              'player_backgrounds',
+              {
+                'player_id': id,
+                'background_id': response[0]['id'] as int,
+                'current': attribute.current,
+              },
+              conflictAlgorithm: ConflictAlgorithm.rollback);
+        }
+
+        Get.find<DamageController>()
+            .fillDefaultHealthLevelsForPlayer(database, id);
       }
-
-      for (var ability in Get.find<AbilitiesController>().abilities) {
-        var response = await database.query('abilities',
-            columns: ['id'], where: 'txt_id = ?', whereArgs: [ability.txtId]);
-        print('Adding ability ${ability.txtId}');
-
-        await database.insert(
-            'player_abilities',
-            {
-              'player_id': id,
-              'ability_id': response[0]['id'] as int,
-              'current': ability.current,
-            },
-            conflictAlgorithm: ConflictAlgorithm.rollback);
-      }
-
-      for (var attribute
-          in Get.find<BackgroundsController>().backgrounds.value.values) {
-        var response = await database.query('backgrounds',
-            columns: ['id'], where: 'txt_id = ?', whereArgs: [attribute.txtId]);
-
-        await database.insert(
-            'player_backgrounds',
-            {
-              'player_id': id,
-              'background_id': response[0]['id'] as int,
-              'current': attribute.current,
-            },
-            conflictAlgorithm: ConflictAlgorithm.rollback);
-      }
-
-      Get.find<DamageController>()
-          .fillDefaultHealthLevelsForPlayer(database, id);
 
       print("Default database initialized");
     }, onOpen: (database) async {
