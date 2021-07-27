@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:get/get.dart';
 import 'package:vampire_the_masquerade_character_sheet/database.dart';
 
@@ -115,7 +116,9 @@ class MeritPopUp extends Dialog {
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.headline6,
         ),
-        Text(merit.description),
+        MarkdownBody(
+          data: merit.description,
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

@@ -1,5 +1,6 @@
 // A widget for a single discipline, ExpansionTile
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:get/get.dart';
 import 'package:sqflite/sqlite_api.dart';
 import 'package:vampire_the_masquerade_character_sheet/common_logic.dart';
@@ -23,20 +24,20 @@ class DisciplineWidget extends StatelessWidget {
     List<Widget> children = [];
 
     if (_discipline.description != null)
-      children.add(Text(discipline.value.description!));
+      children.add(Markdown(
+        data: discipline.value.description!,
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      ));
 
     if (_discipline.system != null) {
-      children.add(RichText(
-          text: TextSpan(
-              // text: "System: ",
-              style: DefaultTextStyle.of(context).style,
-              children: [
-            TextSpan(
-              text: "System: ",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            TextSpan(text: discipline.value.system),
-          ])));
+      children.add(Markdown(
+        data: "**System:**\n" + (discipline.value.system ?? ""),
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      ));
     }
 
     if (discipline.value.levels != null &&

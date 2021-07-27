@@ -36,12 +36,17 @@ class MainInfoWidget extends StatelessWidget {
     return Container(
       margin: EdgeInsets.all(10.0),
       child: TextButton(
-        child: Obx(
-          () => Text(
-            "${controller.getByType(_type)}",
+        child: IntrinsicWidth(
+            child: Obx(
+          () => TextField(
+            controller: TextEditingController()
+              ..text = "${controller.getByType(_type)}",
+            decoration: InputDecoration(labelText: controller.getByType(_type)),
             style: Theme.of(context).textTheme.headline6,
+            enabled: false,
+            readOnly: true,
           ),
-        ),
+        )),
         onPressed: () async {
           TextEditingController _controller =
               TextEditingController(text: "${controller.getByType(_type)}");

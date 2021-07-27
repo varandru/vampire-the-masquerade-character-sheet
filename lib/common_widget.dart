@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:get/get.dart';
 
 import 'common_logic.dart';
@@ -167,9 +168,14 @@ class ComplexAbilityPopup extends Dialog {
     children.addIf(_attribute.specialization.isNotEmpty,
         Text(_attribute.specialization, style: textTheme.headline5));
 
-    children.addIf(entry.description != null,
-        Text("Description:", style: textTheme.headline6));
-    if (entry.description != null) children.add(Text(entry.description!));
+    if (entry.description != null) {
+      children.add(Text("Description:", style: textTheme.headline6));
+      children.add(MarkdownBody(
+        data: entry.description!,
+        shrinkWrap: true,
+      ));
+      children.add(Text(entry.description!));
+    }
 
     if (_attribute.isDeletable) {
       children.add(Row(
