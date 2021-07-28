@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:get/get.dart';
-import 'common_logic.dart';
-import 'database.dart';
 
+import 'common_logic.dart';
 import 'common_widget.dart';
+import 'database.dart';
 import 'drawer_menu.dart';
 import 'rituals.dart';
 
@@ -64,13 +65,13 @@ class RitualPopup extends StatelessWidget {
             ? Text("Description", style: Theme.of(context).textTheme.headline6)
             : Container(),
         ritual.value.description != null
-            ? Obx(() => Text(ritual.value.description!))
+            ? Obx(() => MarkdownBody(data: ritual.value.description!))
             : Container(),
         Text(
           "System",
           style: Theme.of(context).textTheme.headline6,
         ),
-        Obx(() => Text(ritual.value.system)),
+        Obx(() => MarkdownBody(data: ritual.value.system)),
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           IconButton(
               onPressed: () async {
