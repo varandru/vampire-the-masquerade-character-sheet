@@ -69,6 +69,29 @@ class MainInfoController extends GetxController {
     }
   }
 
+  String getFieldNameByType(MainInfoFieldType type) {
+    switch (type) {
+      case MainInfoFieldType.CharacterName:
+        return "Character Name";
+      case MainInfoFieldType.Nature:
+        return "Nature";
+      case MainInfoFieldType.Clan:
+        return "Clan";
+      case MainInfoFieldType.PlayerName:
+        return "Player Name";
+      case MainInfoFieldType.Demeanor:
+        return "Demeanor";
+      case MainInfoFieldType.Chronicle:
+        return "Chronicle";
+      case MainInfoFieldType.Concept:
+        return "Concept";
+      case MainInfoFieldType.Sire:
+        return "Sire";
+      case MainInfoFieldType.Generation:
+        return "Generation";
+    }
+  }
+
   String getByType(MainInfoFieldType type) {
     switch (type) {
       case MainInfoFieldType.CharacterName:

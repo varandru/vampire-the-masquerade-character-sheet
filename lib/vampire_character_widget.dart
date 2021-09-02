@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vampire_the_masquerade_character_sheet/settings_widget.dart';
 
-import 'vampire_character.dart';
 import 'drawer_menu.dart';
+import 'vampire_character.dart';
 
 // Основной виджет, пока что. На самом деле их несколько, но этот организует все
 // Рисует главный виджет, включает в себя файлы с разделами
@@ -54,7 +54,10 @@ class MenuScaffold extends Scaffold {
       : super(
           appBar: AppBar(
             title: Text(name),
-            actions: actions,
+            actions: [
+              ...actions,
+              IconButton(onPressed: () => null, icon: Icon(Icons.more_vert))
+            ],
           ),
           body: body,
           drawer: Drawer(
